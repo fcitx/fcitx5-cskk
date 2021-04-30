@@ -23,7 +23,7 @@ CskkEngine::CskkEngine(Instance *instance)
         auto newCskkContext = new FcitxCskkContext(this, &ic);
         return newCskkContext;
       }) {
-  instance_->inputContextManager().registerProperty("skkState", &factory_);
+  instance_->inputContextManager().registerProperty("cskkcontext", &factory_);
 };
 CskkEngine::~CskkEngine() = default;
 void CskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
