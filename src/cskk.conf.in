@@ -1,0 +1,7 @@
+[InputMethod]
+Name=Cskk
+Icon=fcitx-cskk
+LangCode=ja
+Addon=cskk
+Label=CSKK
+Configurable=False

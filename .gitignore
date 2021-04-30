@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Common cmake build dirs
+cmake-build-*/
+build/

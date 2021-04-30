@@ -1,0 +1,9 @@
+[Addon]
+Name=Cskk
+Comment=Cskk Input Method For Fcitx
+Category=InputMethod
+Library=cskk
+Type=SharedLibrary
+OnDemand=True
+Configurable=False
+Version=@PROJECT_VERSION@

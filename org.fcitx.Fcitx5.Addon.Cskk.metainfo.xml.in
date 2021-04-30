@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="addon">
+  <id>org.fcitx.Fcitx5.Addon.Cskk</id>
+  <extends>org.fcitx.Fcitx5</extends>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <name>CSKK</name>
+  <summary>libCSKK Japanese input method</summary>
+  <url type="homepage">https://github.com/naokiri/fcitx5-cskk</url>
+  <url type="bugtracker">https://github.com/naokiri/fcitx5-cskk/issues</url>
+  <project_group>Fcitx</project_group>
+  <releases>
+    <release version="0.0.1" date="2021-04-30"/>
+  </releases>
+</component>
