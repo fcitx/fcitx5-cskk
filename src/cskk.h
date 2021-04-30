@@ -18,6 +18,9 @@ extern "C" {
 #include <cskk/libcskk.h>
 }
 
+#include <fcitx-utils/i18n.h>
+#include <fcitx/addonfactory.h>
+#include <fcitx/addonmanager.h>
 #include <fcitx/inputmethodengine.h>
 #include <fcitx/instance.h>
 
@@ -29,10 +32,11 @@ public:
   ~CskkEngine() override;
 
   void keyEvent(const InputMethodEntry &entry, KeyEvent &keyEvent) override;
-  //  void activate(const InputMethodEntry &, InputContextEvent &) override;
-  //  void deactivate(const InputMethodEntry &entry,
-  //                  InputContextEvent &event) override;
-
+  void activate(const InputMethodEntry &, InputContextEvent &) override;
+  void deactivate(const InputMethodEntry &entry,
+                  InputContextEvent &event) override;
+  void reset(const InputMethodEntry &entry,
+             InputContextEvent &event) override;
   void save() override;
 
 private:
@@ -45,11 +49,20 @@ public:
   FcitxCskkContext(CskkEngine *engine, InputContext *ic);
   ~FcitxCskkContext() override;
   void keyEvent(KeyEvent &keyEvent);
+  void commitPreedit();
+  void reset();
 
 private:
   // TODO: unique_ptr using some wrapper class for Rust exposed pointer? Need
   // bit more research.
   CskkContext *context_;
+  InputContext *ic_;
+  CskkEngine *engine_;
+};
+
+class CskkFactory final : public AddonFactory {
+public:
+  AddonInstance *create(AddonManager *manager) override;
 };
 
 } // namespace fcitx

@@ -14,6 +14,10 @@
 #include <iostream>
 
 namespace fcitx {
+/*******************************************************************************
+ * CskkEngine
+ ******************************************************************************/
+
 CskkEngine::CskkEngine(Instance *instance)
     : instance_{instance}, factory_([this](InputContext &ic) {
         auto newCskkContext = new FcitxCskkContext(this, &ic);
@@ -23,21 +27,33 @@ CskkEngine::CskkEngine(Instance *instance)
 };
 CskkEngine::~CskkEngine() = default;
 void CskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
-  // delegate to state
+  // delegate to context
   auto ic = keyEvent.inputContext();
-  auto state = ic->propertyFor(&factory_);
-  state->keyEvent(keyEvent);
+  auto context = ic->propertyFor(&factory_);
+  context->keyEvent(keyEvent);
 }
 void CskkEngine::save() {}
-
-////////////////////////////////////////////////////////////////////////////////
-/// CskkContext
-////////////////////////////////////////////////////////////////////////////////
-FcitxCskkContext::FcitxCskkContext(CskkEngine *_engine, InputContext *_ic)
-    : context_(skk_context_new(nullptr, 0)) {
-          FCITX_UNUSED(_engine);
-          FCITX_UNUSED(_ic);
+void CskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
+void CskkEngine::deactivate(const InputMethodEntry &entry,
+                            InputContextEvent &event) {
+  FCITX_UNUSED(entry);
+  auto context = event.inputContext()->propertyFor(&factory_);
+  context->commitPreedit();
 }
+void CskkEngine::reset(const InputMethodEntry &entry,
+                       InputContextEvent &event) {
+  FCITX_UNUSED(entry);
+  auto ic = event.inputContext();
+  auto context = ic->propertyFor(&factory_);
+  context->reset();
+}
+
+/*******************************************************************************
+ * CskkContext
+ ******************************************************************************/
+
+FcitxCskkContext::FcitxCskkContext(CskkEngine *engine, InputContext *ic)
+    : context_(skk_context_new(nullptr, 0)), ic_(ic), engine_(engine) {}
 FcitxCskkContext::~FcitxCskkContext() = default;
 void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
   // TODO: handleCandidate to utilize fcitx's paged candidate list
@@ -52,4 +68,23 @@ void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
     keyEvent.filterAndAccept();
   }
 }
+void FcitxCskkContext::commitPreedit() {
+  auto str = skk_context_get_preedit(context_);
+  ic_->commitString(str);
+  skk_free_string(str);
+}
+void FcitxCskkContext::reset() { skk_context_reset(context_); }
+
+/*******************************************************************************
+ * CskkFactory
+ ******************************************************************************/
+
+AddonInstance *CskkFactory::create(AddonManager *manager) {
+  {
+    registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
+    return new CskkEngine(manager->instance());
+  }
+}
 } // namespace fcitx
+
+FCITX_ADDON_FACTORY(fcitx::CskkFactory);
