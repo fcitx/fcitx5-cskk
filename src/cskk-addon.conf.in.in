@@ -1,8 +1,8 @@
 [Addon]
-Name=Cskk
-Comment=Cskk Input Method For Fcitx
+Name=Cskk input method for Fcitx5
+Comment=IM using libcskk
 Category=InputMethod
-Library=cskk
+Library=fcitx5-cskk
 Type=SharedLibrary
 OnDemand=True
 Configurable=False

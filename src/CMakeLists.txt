@@ -1,14 +1,14 @@
 set(CSKK_SOURCES
         cskk.cpp
     )
-add_library(fcitx-cskk MODULE ${CSKK_SOURCES})
-target_link_libraries(fcitx-cskk
+add_library(fcitx5-cskk MODULE ${CSKK_SOURCES})
+target_link_libraries(fcitx5-cskk
         Fcitx5::Core
         Fcitx5::Config
         ${LIBCSKK_LIBRARIES}
         )
-
-install(TARGETS fcitx-cskk DESTINATION "${CMAKE_INSTALL_LIBDIR}/fcitx5")
+set_target_properties(fcitx5-cskk PROPERTIES PREFIX "")
+install(TARGETS fcitx5-cskk DESTINATION "${CMAKE_INSTALL_LIBDIR}/fcitx5")
 
 fcitx5_translate_desktop_file(cskk.conf.in cskk.conf)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cskk.conf" DESTINATION "${CMAKE_INSTALL_DATADIR}/fcitx5/inputmethod")

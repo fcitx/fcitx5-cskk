@@ -2,8 +2,9 @@
  * Copyright (c) 2021 Naoaki Iwakiri
  * This program is released under GNU General Public License version 3 or later
  * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>. Creation Date:
- * 2021-04-30
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Creation Date: 2021-04-30
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  * SPDX-FileType: SOURCE

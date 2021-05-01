@@ -1,0 +1,24 @@
+Notes
+* Dogfooding
+** Ubuntu Gnome
+Exit the default fcitx5 and then run
+fcitx5 -d --verbose=*=5 or --verbose={categoryname}=5,{categoryname}=5
+
+Use with care that category:keytrace will output my passwords inputting to browser etc to error logs.
+On last resort, hook into imconfig's run im script /usr/share/im-config/data/??_fcitx5.rc or /usr/bin/fcitx5.
+
+
+* Q
+** What is d_func and q_func in fcitx?
+Keeping lib binary interface same, access all data via d_ptr.
+Same reason, access all methods via q_ptr.
+Probably same as Qt library.
+
+** conf and addon.conf
+What is Addon entry? name of lib? filename? fedora metainfo like name? What option is configurable here?
+fcitx5/src/lib/fcitx/addoninfo.cpp's list is addon.conf
+
+
+** metainfo
+metainfo project group == Fcitx??
+https://docs.fedoraproject.org/en-US/packaging-guidelines/AppData/ doesn't define what each field means.
