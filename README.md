@@ -1,5 +1,6 @@
 # fcitx5-cskk
 
+## Build and Install
 
     $ mkdir build
     $ cd build
@@ -9,3 +10,6 @@
 
 
     $ make uninstall
+
+## Development status
+Dogfoodable. Barely.

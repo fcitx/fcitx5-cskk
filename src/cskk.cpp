@@ -34,12 +34,12 @@ CskkEngine::CskkEngine(Instance *instance)
 }
 CskkEngine::~CskkEngine() = default;
 void CskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
-  CSKK_DEBUG() << "engine keyEvent start: " << keyEvent.rawKey();
+  CSKK_DEBUG() << "**** CSKK Engine keyEvent start: " << keyEvent.rawKey();
   // delegate to context
   auto ic = keyEvent.inputContext();
   auto context = ic->propertyFor(&factory_);
   context->keyEvent(keyEvent);
-  CSKK_DEBUG() << "keyEvent end";
+  CSKK_DEBUG() << "**** CSKK Engine keyEvent end";
 }
 void CskkEngine::save() {}
 void CskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
@@ -48,6 +48,7 @@ void CskkEngine::deactivate(const InputMethodEntry &entry,
   FCITX_UNUSED(entry);
   auto context = event.inputContext()->propertyFor(&factory_);
   context->commitPreedit();
+  reset(entry, event);
 }
 void CskkEngine::reset(const InputMethodEntry &entry,
                        InputContextEvent &event) {
@@ -75,7 +76,11 @@ void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
       keyEvent.rawKey().sym(), modifiers, keyEvent.isRelease());
 
   if (skk_context_process_key_event(context_, cskkKeyEvent)) {
+    CSKK_DEBUG() << "Key processed in context.";
     keyEvent.filterAndAccept();
+  }
+  if (keyEvent.filtered()) {
+    updateUI();
   }
 }
 void FcitxCskkContext::commitPreedit() {
@@ -84,6 +89,35 @@ void FcitxCskkContext::commitPreedit() {
   skk_free_string(str);
 }
 void FcitxCskkContext::reset() { skk_context_reset(context_); }
+void FcitxCskkContext::updateUI() {
+  auto &inputPanel = ic_->inputPanel();
+
+  // Output
+  if (auto output = skk_context_poll_output(context_)) {
+    FCITX_DEBUG() << "**** CSKK output " << output;
+    if (strlen(output) > 0) {
+      ic_->commitString(output);
+    }
+    skk_free_string(output);
+  }
+
+  // Preedit
+  // TODO: candidate in preedit?
+  inputPanel.reset();
+  auto preedit = skk_context_get_preedit(context_);
+  Text preeditText;
+  // FIXME: Pretty text format someday.
+  preeditText.append(std::string(preedit));
+  // FIXME: Narrowing conversion without check
+  preeditText.setCursor(static_cast<int>(strlen(preedit)));
+
+  if (ic_->capabilityFlags().test(CapabilityFlag::Preedit)) {
+    inputPanel.setClientPreedit(preeditText);
+    ic_->updatePreedit();
+  } else {
+    inputPanel.setPreedit(preeditText);
+  }
+}
 
 /*******************************************************************************
  * CskkFactory
@@ -91,12 +125,9 @@ void FcitxCskkContext::reset() { skk_context_reset(context_); }
 
 AddonInstance *CskkFactory::create(AddonManager *manager) {
   {
-    CSKK_DEBUG() << "CSKK CskkFactory Create";
-    FCITX_DEBUG() << "debug************************";
-    FCITX_INFO() << "info************************";
+    CSKK_DEBUG() << "**** CSKK CskkFactory Create ****";
     registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
     auto engine = new CskkEngine(manager->instance());
-    CSKK_DEBUG() << engine;
     return engine;
   }
 }

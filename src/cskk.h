@@ -23,6 +23,7 @@ extern "C" {
 #include <fcitx/addonfactory.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/inputmethodengine.h>
+#include <fcitx/inputpanel.h>
 #include <fcitx/instance.h>
 
 namespace fcitx {
@@ -36,8 +37,7 @@ public:
   void activate(const InputMethodEntry &, InputContextEvent &) override;
   void deactivate(const InputMethodEntry &entry,
                   InputContextEvent &event) override;
-  void reset(const InputMethodEntry &entry,
-             InputContextEvent &event) override;
+  void reset(const InputMethodEntry &entry, InputContextEvent &event) override;
   void save() override;
 
 private:
@@ -52,6 +52,7 @@ public:
   void keyEvent(KeyEvent &keyEvent);
   void commitPreedit();
   void reset();
+  void updateUI();
 
 private:
   // TODO: unique_ptr using some wrapper class for Rust exposed pointer? Need
