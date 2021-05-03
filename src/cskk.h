@@ -34,26 +34,28 @@ FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
 
 class FcitxCskkContext;
 // TODO: Check how to use i18n annotation creation macro
-FCITX_CONFIG_ENUM_NAME(InputMode, "Hiragana", "Katakana", "HankakuKana", "Zenkaku", "Ascii");
+FCITX_CONFIG_ENUM_NAME(InputMode, "Hiragana", "Katakana", "HankakuKana",
+                       "Zenkaku", "Ascii");
 
 struct InputModeAnnotation : public EnumAnnotation {
   void dumpDescription(RawConfig &config) const {
     EnumAnnotation::dumpDescription(config);
     int length = sizeof(_InputMode_Names) / sizeof(_InputMode_Names[0]);
     for (int i = 0; i < length; i++) {
-      // FIXME: bit not sure if path is correct. Might need namespacing per each configuration?
+      // FIXME: bit not sure if path is correct. Might need namespacing per each
+      // configuration?
       config.setValueByPath("Enum/" + std::to_string(i), _InputMode_Names[i]);
       config.setValueByPath("EnumI18n/" + std::to_string(i),
                             _(_InputMode_Names[i]));
     }
   }
 };
-FCITX_CONFIGURATION(CskkConfig,
-                    OptionWithAnnotation<InputMode, InputModeAnnotation>
-                        inputMode{this, "InitialInputMode", _("InitialInputMode. Fake yet."),
-                                  Hiragana};
-                    Option<bool> showAnnotation{this, "ShowAnnotation",
-                                                _("Show Annotation. Fake yet."), true};);
+FCITX_CONFIGURATION(
+    CskkConfig,
+    OptionWithAnnotation<InputMode, InputModeAnnotation> inputMode{
+        this, "InitialInputMode", _("InitialInputMode. Fake yet."), Hiragana};
+    Option<bool> showAnnotation{this, "ShowAnnotation",
+                                _("Show Annotation. Fake yet."), true};);
 
 class CskkEngine final : public InputMethodEngine {
 public:
