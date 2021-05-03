@@ -16,9 +16,7 @@
 #include <iostream>
 
 namespace fcitx {
-FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
 
-#define CSKK_DEBUG() FCITX_LOGC(cskk_log, Debug)
 
 /*******************************************************************************
  * CskkEngine

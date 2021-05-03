@@ -19,6 +19,7 @@ extern "C" {
 #include <cskk/libcskk.h>
 }
 
+#include <fcitx-config/configuration.h>
 #include <fcitx-utils/i18n.h>
 #include <fcitx/addonfactory.h>
 #include <fcitx/addonmanager.h>
@@ -27,7 +28,33 @@ extern "C" {
 #include <fcitx/instance.h>
 
 namespace fcitx {
+FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
+
+#define CSKK_DEBUG() FCITX_LOGC(cskk_log, Debug)
+
 class FcitxCskkContext;
+// TODO: Check how to use i18n annotation creation macro
+FCITX_CONFIG_ENUM_NAME(InputMode, "Hiragana", "Katakana", "HankakuKana", "Zenkaku", "Ascii");
+
+struct InputModeAnnotation : public EnumAnnotation {
+  void dumpDescription(RawConfig &config) const {
+    EnumAnnotation::dumpDescription(config);
+    int length = sizeof(_InputMode_Names) / sizeof(_InputMode_Names[0]);
+    for (int i = 0; i < length; i++) {
+      // FIXME: bit not sure if path is correct. Might need namespacing per each configuration?
+      config.setValueByPath("Enum/" + std::to_string(i), _InputMode_Names[i]);
+      config.setValueByPath("EnumI18n/" + std::to_string(i),
+                            _(_InputMode_Names[i]));
+    }
+  }
+};
+FCITX_CONFIGURATION(CskkConfig,
+                    OptionWithAnnotation<InputMode, InputModeAnnotation>
+                        inputMode{this, "InitialInputMode", _("InitialInputMode. Fake yet."),
+                                  Hiragana};
+                    Option<bool> showAnnotation{this, "ShowAnnotation",
+                                                _("Show Annotation. Fake yet."), true};);
+
 class CskkEngine final : public InputMethodEngine {
 public:
   CskkEngine(Instance *instance);
@@ -40,9 +67,17 @@ public:
   void reset(const InputMethodEntry &entry, InputContextEvent &event) override;
   void save() override;
 
+  const Configuration *getConfig() const override { return &config_; }
+  void setConfig(const RawConfig &config) override {
+    CSKK_DEBUG() << "*** Cskk setconfig";
+    config_.load(config, true);
+    // TODO: Save. Any file name convention etc?
+  }
+
 private:
   Instance *instance_;
   FactoryFor<FcitxCskkContext> factory_;
+  CskkConfig config_;
 };
 
 class FcitxCskkContext final : public InputContextProperty {

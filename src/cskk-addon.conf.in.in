@@ -5,5 +5,5 @@ Category=InputMethod
 Library=fcitx5-cskk
 Type=SharedLibrary
 OnDemand=True
-Configurable=False
+Configurable=True
 Version=@PROJECT_VERSION@

@@ -9,6 +9,13 @@ On last resort, hook into imconfig's run im script /usr/share/im-config/data/??_
 
 
 * Q
+** How config works?
+Create Option class.
+Create a Configuration class.
+Override setConfig, getConfig.
+Set configurable on conf file.
+
+
 ** What is d_func and q_func in fcitx?
 Keeping lib binary interface same, access all data via d_ptr.
 Same reason, access all methods via q_ptr.
