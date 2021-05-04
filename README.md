@@ -1,4 +1,7 @@
 ## fcitx5-cskk
+Fcitx5でskk入力方式で入力するためのインプットメソッドプラグイン。
+
+libcskk (https://github.com/naokiri/cskk) を用いる。
 
 ## インストール方法
 
