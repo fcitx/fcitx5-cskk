@@ -20,17 +20,14 @@ extern "C" {
 }
 
 #include <fcitx-config/configuration.h>
+#include <fcitx-config/enum.h>
 #include <fcitx-utils/i18n.h>
 #include <fcitx/addonfactory.h>
-#include <fcitx/addonmanager.h>
 #include <fcitx/inputmethodengine.h>
-#include <fcitx/inputpanel.h>
 #include <fcitx/instance.h>
+#include <string>
 
 namespace fcitx {
-FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
-
-#define CSKK_DEBUG() FCITX_LOGC(cskk_log, Debug)
 
 class FcitxCskkContext;
 // TODO: Check how to use i18n annotation creation macro
@@ -59,7 +56,7 @@ FCITX_CONFIGURATION(
 
 class CskkEngine final : public InputMethodEngine {
 public:
-  CskkEngine(Instance *instance);
+  explicit CskkEngine(Instance *instance);
   ~CskkEngine() override;
 
   void keyEvent(const InputMethodEntry &entry, KeyEvent &keyEvent) override;
@@ -69,17 +66,24 @@ public:
   void reset(const InputMethodEntry &entry, InputContextEvent &event) override;
   void save() override;
 
+  // Configuration methods are called from fctix5-configtool via DBus message
+  // to fcitx5 server.
   const Configuration *getConfig() const override { return &config_; }
-  void setConfig(const RawConfig &config) override {
-    CSKK_DEBUG() << "*** Cskk setconfig";
-    config_.load(config, true);
-    // TODO: Save. Any file name convention etc?
-  }
+  void setConfig(const RawConfig &config) override;
+  void reloadConfig() override;
+  const auto &dictionaries() { return dictionaries_; }
 
 private:
   Instance *instance_;
   FactoryFor<FcitxCskkContext> factory_;
   CskkConfig config_;
+  std::vector<CskkDictionaryFfi *> dictionaries_;
+
+  void loadDictionary();
+  static std::string getXDGDataHome();
+  static std::vector<std::string> getXDGDataDirs();
+
+  void freeDictionaries();
 };
 
 class FcitxCskkContext final : public InputContextProperty {
@@ -90,6 +94,8 @@ public:
   void commitPreedit();
   void reset();
   void updateUI();
+
+  void applyConfig();
 
 private:
   // TODO: unique_ptr using some wrapper class for Rust exposed pointer? Need

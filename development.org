@@ -7,6 +7,9 @@ fcitx5 -d --verbose=*=5 or --verbose={categoryname}=5,{categoryname}=5
 Use with care that category:keytrace will output my passwords inputting to browser etc to error logs.
 On last resort, hook into imconfig's run im script /usr/share/im-config/data/??_fcitx5.rc or /usr/bin/fcitx5.
 
+** Dictionary place
+As a desktop app following the standard, data should better be loaded from subdir for this component only under XDG_DATA_HOME for personal dictionary and XDG_DATA_DIRS for static common dictionary.
+Although, emacs + SKK users tend to share dictionary file among ddskk and IME so this might have to be fixed to be configurable in the future.
 
 * Q
 ** How config works?
