@@ -4,20 +4,13 @@ Fcitx5でskk入力方式で入力するためのインプットメソッドプ�
 libcskk (https://github.com/naokiri/cskk) を用いる。
 
 ## インストール方法
-fcitx5をソースからインストールしている場合、/usr/local/lib 以下のディレクトリにインストールする。
 
     $ mkdir build
     $ cd build
     $ cmake ..
     $ make && make install
 
-fcitx5をバイナリパッケージでインストールしている場合、現在はライブラリをシステムディレクトリの/usr/lib 以下にインストールしなければならない。(非推奨)
-
-    $ mkdir build
-    $ cd build
-    $ cmake .. -DCMAKE_INSTALL_PREFIX=/usr
-    $ make && make install
-
+## アンインストール方法
 
     $ make uninstall
 
