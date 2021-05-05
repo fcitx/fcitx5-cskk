@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(fcitx5-cskk VERSION 0.0.1)
+project(fcitx5-cskk VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(ECM 1.0.0 REQUIRED)
