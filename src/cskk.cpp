@@ -13,6 +13,7 @@
  */
 #include "cskk.h"
 #include <cstdlib>
+#include <fcitx-config/iniparser.h>
 #include <fcitx-utils/log.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/inputpanel.h>
@@ -32,7 +33,7 @@ FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
 /*******************************************************************************
  * CskkEngine
  ******************************************************************************/
-
+const string CskkEngine::config_file_path = "conf/fcitx5-cskk";
 CskkEngine::CskkEngine(Instance *instance)
     : instance_{instance}, factory_([this](InputContext &ic) {
         auto newCskkContext = new FcitxCskkContext(this, &ic);
@@ -49,7 +50,7 @@ void CskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
   auto ic = keyEvent.inputContext();
   auto context = ic->propertyFor(&factory_);
   context->keyEvent(keyEvent);
-  CSKK_DEBUG() << "CSKK Engine keyEvent end";
+  CSKK_DEBUG() << "Engine keyEvent end";
 }
 void CskkEngine::save() {}
 void CskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
@@ -69,10 +70,13 @@ void CskkEngine::reset(const InputMethodEntry &entry,
 void CskkEngine::setConfig(const RawConfig &config) {
   CSKK_DEBUG() << "Cskk setconfig";
   config_.load(config, true);
-  // TODO: Save. Any file name convention etc?
+  safeSaveAsIni(config_, CskkEngine::config_file_path);
+  reloadConfig();
 }
 void CskkEngine::reloadConfig() {
   CSKK_DEBUG() << "Cskkengine reload config";
+  readAsIni(config_, CskkEngine::config_file_path);
+
   loadDictionary();
   if (factory_.registered()) {
     instance_->inputContextManager().foreach ([this](InputContext *ic) {
@@ -175,6 +179,7 @@ void CskkEngine::freeDictionaries() {
 FcitxCskkContext::FcitxCskkContext(CskkEngine *engine, InputContext *ic)
     : context_(skk_context_new(nullptr, 0)), ic_(ic), engine_(engine) {
   CSKK_DEBUG() << "Cskk context new";
+  skk_context_set_input_mode(context_, *engine_->config().inputMode);
 }
 FcitxCskkContext::~FcitxCskkContext() = default;
 void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
@@ -234,6 +239,11 @@ void FcitxCskkContext::applyConfig() {
   CSKK_DEBUG() << "apply config";
   skk_context_set_dictionaries(context_, engine_->dictionaries().data(),
                                engine_->dictionaries().size());
+}
+void FcitxCskkContext::copyTo(InputContextProperty *context) {
+  auto otherContext = dynamic_cast<FcitxCskkContext *>(context);
+  skk_context_set_input_mode(otherContext->context(),
+                             skk_context_get_input_mode(context_));
 }
 
 /*******************************************************************************

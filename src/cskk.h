@@ -50,7 +50,7 @@ struct InputModeAnnotation : public EnumAnnotation {
 FCITX_CONFIGURATION(
     CskkConfig,
     OptionWithAnnotation<InputMode, InputModeAnnotation> inputMode{
-        this, "InitialInputMode", _("InitialInputMode. Fake yet."), Hiragana};
+        this, "InitialInputMode", _("InitialInputMode"), Hiragana};
     Option<bool> showAnnotation{this, "ShowAnnotation",
                                 _("Show Annotation. Fake yet."), true};);
 
@@ -71,13 +71,17 @@ public:
   const Configuration *getConfig() const override { return &config_; }
   void setConfig(const RawConfig &config) override;
   void reloadConfig() override;
+
   const auto &dictionaries() { return dictionaries_; }
+  const auto &config() { return config_; }
 
 private:
   Instance *instance_;
   FactoryFor<FcitxCskkContext> factory_;
   CskkConfig config_;
   std::vector<CskkDictionaryFfi *> dictionaries_;
+
+  static const std::string config_file_path;
 
   void loadDictionary();
   static std::string getXDGDataHome();
@@ -90,12 +94,16 @@ class FcitxCskkContext final : public InputContextProperty {
 public:
   FcitxCskkContext(CskkEngine *engine, InputContext *ic);
   ~FcitxCskkContext() override;
+  // Copy used for sharing state among programs
+  void copyTo(InputContextProperty *state) override;
+
   void keyEvent(KeyEvent &keyEvent);
   void commitPreedit();
   void reset();
   void updateUI();
-
   void applyConfig();
+
+  auto &context() { return context_; }
 
 private:
   // TODO: unique_ptr using some wrapper class for Rust exposed pointer? Need
