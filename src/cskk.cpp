@@ -12,8 +12,11 @@
  * SPDX-FileCopyrightText: Copyright (c) 2021 Naoaki Iwakiri
  */
 #include "cskk.h"
+#include "cskkcandidatelist.h"
+#include "log.h"
 #include <cstdlib>
-#include <fcitx-utils/log.h>
+#include <cstring>
+#include <fcitx-config/iniparser.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/inputpanel.h>
 #include <filesystem>
@@ -23,17 +26,23 @@
 using std::getenv;
 using std::string;
 
-namespace fcitx {
 FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
 
-#define CSKK_DEBUG() FCITX_LOGC(cskk_log, Debug) << "\t**CSKK** "
-#define CSKK_WARN() FCITX_LOGC(cskk_log, Warn) << "\t**CSKK** "
+namespace fcitx {
 
 /*******************************************************************************
- * CskkEngine
+ * FcitxCskkEngine
  ******************************************************************************/
+const string FcitxCskkEngine::config_file_path = string{"conf/fcitx5-cskk"};
 
-CskkEngine::CskkEngine(Instance *instance)
+// TODO: move to config
+const uint FcitxCskkEngine::pageStartIdx = 3;
+const uint FcitxCskkEngine::pageSize = 5;
+const char FcitxCskkEngine::labels[11] = "1234567890";
+const CandidateLayoutHint FcitxCskkEngine::layoutHint =
+    CandidateLayoutHint::Horizontal;
+
+FcitxCskkEngine::FcitxCskkEngine(Instance *instance)
     : instance_{instance}, factory_([this](InputContext &ic) {
         auto newCskkContext = new FcitxCskkContext(this, &ic);
         newCskkContext->applyConfig();
@@ -42,37 +51,40 @@ CskkEngine::CskkEngine(Instance *instance)
   reloadConfig();
   instance_->inputContextManager().registerProperty("cskkcontext", &factory_);
 }
-CskkEngine::~CskkEngine() = default;
-void CskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
+FcitxCskkEngine::~FcitxCskkEngine() = default;
+void FcitxCskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
   CSKK_DEBUG() << "Engine keyEvent start: " << keyEvent.rawKey();
   // delegate to context
   auto ic = keyEvent.inputContext();
   auto context = ic->propertyFor(&factory_);
   context->keyEvent(keyEvent);
-  CSKK_DEBUG() << "CSKK Engine keyEvent end";
+  CSKK_DEBUG() << "Engine keyEvent end";
 }
-void CskkEngine::save() {}
-void CskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
-void CskkEngine::deactivate(const InputMethodEntry &entry,
-                            InputContextEvent &event) {
+void FcitxCskkEngine::save() {}
+void FcitxCskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
+void FcitxCskkEngine::deactivate(const InputMethodEntry &entry,
+                                 InputContextEvent &event) {
   FCITX_UNUSED(entry);
   reset(entry, event);
 }
-void CskkEngine::reset(const InputMethodEntry &entry,
-                       InputContextEvent &event) {
+void FcitxCskkEngine::reset(const InputMethodEntry &entry,
+                            InputContextEvent &event) {
   FCITX_UNUSED(entry);
   CSKK_DEBUG() << "Reset";
   auto ic = event.inputContext();
   auto context = ic->propertyFor(&factory_);
   context->reset();
 }
-void CskkEngine::setConfig(const RawConfig &config) {
+void FcitxCskkEngine::setConfig(const RawConfig &config) {
   CSKK_DEBUG() << "Cskk setconfig";
   config_.load(config, true);
-  // TODO: Save. Any file name convention etc?
+  safeSaveAsIni(config_, FcitxCskkEngine::config_file_path);
+  reloadConfig();
 }
-void CskkEngine::reloadConfig() {
+void FcitxCskkEngine::reloadConfig() {
   CSKK_DEBUG() << "Cskkengine reload config";
+  readAsIni(config_, FcitxCskkEngine::config_file_path);
+
   loadDictionary();
   if (factory_.registered()) {
     instance_->inputContextManager().foreach ([this](InputContext *ic) {
@@ -82,7 +94,7 @@ void CskkEngine::reloadConfig() {
     });
   }
 }
-void CskkEngine::loadDictionary() {
+void FcitxCskkEngine::loadDictionary() {
   freeDictionaries();
 
   const std::filesystem::directory_options directoryOptions =
@@ -124,7 +136,7 @@ void CskkEngine::loadDictionary() {
     }
   }
 }
-std::string CskkEngine::getXDGDataHome() {
+std::string FcitxCskkEngine::getXDGDataHome() {
   const char *xdgDataHomeEnv = getenv("XDG_DATA_HOME");
   const char *homeEnv = getenv("$HOME");
   if (xdgDataHomeEnv) {
@@ -135,7 +147,7 @@ std::string CskkEngine::getXDGDataHome() {
   return "";
 }
 
-std::vector<std::string> CskkEngine::getXDGDataDirs() {
+std::vector<std::string> FcitxCskkEngine::getXDGDataDirs() {
   const char *xdgDataDirEnv = getenv("XDG_DATA_DIRS");
   string rawDirs;
 
@@ -160,7 +172,7 @@ std::vector<std::string> CskkEngine::getXDGDataDirs() {
   CSKK_DEBUG() << xdgDataDirs;
   return xdgDataDirs;
 }
-void CskkEngine::freeDictionaries() {
+void FcitxCskkEngine::freeDictionaries() {
   CSKK_DEBUG() << "Cskk free dict";
   for (auto dictionary : dictionaries_) {
     skk_free_dictionary(dictionary);
@@ -172,17 +184,30 @@ void CskkEngine::freeDictionaries() {
  * CskkContext
  ******************************************************************************/
 
-FcitxCskkContext::FcitxCskkContext(CskkEngine *engine, InputContext *ic)
+FcitxCskkContext::FcitxCskkContext(FcitxCskkEngine *engine, InputContext *ic)
     : context_(skk_context_new(nullptr, 0)), ic_(ic), engine_(engine) {
   CSKK_DEBUG() << "Cskk context new";
+  skk_context_set_input_mode(context_, *engine_->config().inputMode);
 }
 FcitxCskkContext::~FcitxCskkContext() = default;
 void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
-  // TODO: handleCandidate to utilize fcitx's paged candidate list
+  auto candidateList = std::dynamic_pointer_cast<FcitxCskkCandidateList>(
+      ic_->inputPanel().candidateList());
+  if (candidateList != nullptr && !candidateList->empty()) {
+    if (handleCandidateSelection(candidateList, keyEvent)) {
+      updateUI();
+      return;
+    }
+  }
+
+  if (skk_context_get_composition_mode(context_) !=
+      CompositionMode::CompositionSelection) {
+    CSKK_DEBUG() << "not composition selection. destroy candidate list.";
+    ic_->inputPanel().setCandidateList(nullptr);
+  }
 
   uint32_t modifiers =
       static_cast<uint32_t>(keyEvent.rawKey().states() & KeyState::SimpleMask);
-
   CskkKeyEvent *cskkKeyEvent = skk_key_event_new_from_fcitx_keyevent(
       keyEvent.rawKey().sym(), modifiers, keyEvent.isRelease());
 
@@ -190,22 +215,60 @@ void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
     CSKK_DEBUG() << "Key processed in context.";
     keyEvent.filterAndAccept();
   }
+
   if (keyEvent.filtered()) {
     updateUI();
   }
 }
-void FcitxCskkContext::commitPreedit() {
-  auto str = skk_context_get_preedit(context_);
-  ic_->commitString(str);
-  skk_free_string(str);
+bool FcitxCskkContext::handleCandidateSelection(
+    const std::shared_ptr<FcitxCskkCandidateList> &candidateList,
+    KeyEvent &keyEvent) {
+  if (keyEvent.isRelease()) {
+    return false;
+  }
+  CSKK_DEBUG() << "handleCandidateSelection";
+
+  if (keyEvent.key().checkKeyList(std::vector{Key(FcitxKey_Up)})) {
+    candidateList->prevCandidate();
+    keyEvent.filterAndAccept();
+  } else if (keyEvent.key().checkKeyList(
+                 std::vector{Key(FcitxKey_Down), Key(FcitxKey_space)})) {
+    CSKK_DEBUG() << "space key caught in handle candidate";
+
+    candidateList->nextCandidate();
+    keyEvent.filterAndAccept();
+  } else if (keyEvent.key().check(Key(FcitxKey_Page_Down))) {
+    keyEvent.filterAndAccept();
+  } else if (keyEvent.key().check(Key(FcitxKey_Page_Up))) {
+    keyEvent.filterAndAccept();
+  } else if (keyEvent.key().check(Key(FcitxKey_Return))) {
+    CSKK_DEBUG() << "return key caught in handle candidate";
+    candidateList->candidate(candidateList->cursorIndex()).select(ic_);
+    keyEvent.filterAndAccept();
+  } else {
+    KeyList selectionKeys =
+        std::vector<Key>{Key(FcitxKey_1), Key(FcitxKey_2), Key(FcitxKey_3),
+                         Key(FcitxKey_4), Key(FcitxKey_5)};
+    if (auto idx = keyEvent.key().keyListIndex(selectionKeys); idx >= 0) {
+      CSKK_DEBUG() << "Select from page. Idx: " << idx;
+      candidateList->candidate(idx).select(ic_);
+      keyEvent.filterAndAccept();
+    }
+  }
+
+  return keyEvent.filtered();
 }
-void FcitxCskkContext::reset() { skk_context_reset(context_); }
+
+void FcitxCskkContext::reset() {
+  skk_context_reset(context_);
+  updateUI();
+}
 void FcitxCskkContext::updateUI() {
   auto &inputPanel = ic_->inputPanel();
 
   // Output
   if (auto output = skk_context_poll_output(context_)) {
-    FCITX_DEBUG() << "**** CSKK output " << output;
+    CSKK_DEBUG() << "output: " << output;
     if (strlen(output) > 0) {
       ic_->commitString(output);
     }
@@ -213,14 +276,36 @@ void FcitxCskkContext::updateUI() {
   }
 
   // Preedit
-  // TODO: candidate in preedit?
-  inputPanel.reset();
   auto preedit = skk_context_get_preedit(context_);
   Text preeditText;
   // FIXME: Pretty text format someday.
   preeditText.append(std::string(preedit));
-  // FIXME: Narrowing conversion without check
   preeditText.setCursor(static_cast<int>(strlen(preedit)));
+
+  // CandidateList
+  int currentCursorPosition =
+      skk_context_get_current_candidate_cursor_position(context_);
+  if (currentCursorPosition > static_cast<int>(FcitxCskkEngine::pageStartIdx)) {
+    char *current_to_composite = skk_context_get_current_to_composite(context_);
+    auto currentCandidateList =
+        std::dynamic_pointer_cast<FcitxCskkCandidateList>(
+            ic_->inputPanel().candidateList());
+    if (currentCandidateList == nullptr || currentCandidateList->empty() ||
+        (strcmp(currentCandidateList->to_composite().c_str(),
+                current_to_composite) != 0)) {
+      // update whole currentCandidateList only if needed
+      CSKK_DEBUG() << "Set new candidate list on UI update";
+      inputPanel.setCandidateList(
+          std::make_unique<FcitxCskkCandidateList>(engine_, ic_));
+    } else {
+      // Sync UI with actual data
+      currentCandidateList->setCursorPosition(
+          static_cast<int>(currentCursorPosition));
+    }
+
+  } else {
+    inputPanel.setCandidateList(nullptr);
+  }
 
   if (ic_->capabilityFlags().test(CapabilityFlag::Preedit)) {
     inputPanel.setClientPreedit(preeditText);
@@ -235,19 +320,24 @@ void FcitxCskkContext::applyConfig() {
   skk_context_set_dictionaries(context_, engine_->dictionaries().data(),
                                engine_->dictionaries().size());
 }
+void FcitxCskkContext::copyTo(InputContextProperty *context) {
+  auto otherContext = dynamic_cast<FcitxCskkContext *>(context);
+  skk_context_set_input_mode(otherContext->context(),
+                             skk_context_get_input_mode(context_));
+}
 
 /*******************************************************************************
- * CskkFactory
+ * FcitxCskkFactory
  ******************************************************************************/
 
-AddonInstance *CskkFactory::create(AddonManager *manager) {
+AddonInstance *FcitxCskkFactory::create(AddonManager *manager) {
   {
-    CSKK_DEBUG() << "**** CSKK CskkFactory Create ****";
+    CSKK_DEBUG() << "**** CSKK FcitxCskkFactory Create ****";
     registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
-    auto engine = new CskkEngine(manager->instance());
+    auto engine = new FcitxCskkEngine(manager->instance());
     return engine;
   }
 }
 } // namespace fcitx
 
-FCITX_ADDON_FACTORY(fcitx::CskkFactory);
+FCITX_ADDON_FACTORY(fcitx::FcitxCskkFactory);

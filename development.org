@@ -11,6 +11,10 @@ On last resort, hook into imconfig's run im script /usr/share/im-config/data/??_
 As a desktop app following the standard, data should better be loaded from subdir for this component only under XDG_DATA_HOME for personal dictionary and XDG_DATA_DIRS for static common dictionary.
 Although, emacs + SKK users tend to share dictionary file among ddskk and IME so this might have to be fixed to be configurable in the future.
 
+** Some class name
+Putting Fcitx in class name may seem redundant, but it helps distinguish this fcitx5-cskk addon from cskk the library.
+Put 'FcitxCskk' as prefix for class names.
+
 * Q
 ** How config works?
 Create Option class.
