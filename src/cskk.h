@@ -88,7 +88,8 @@ public:
   static const uint pageSize;
   // TODO: move to config
   static const CandidateLayoutHint layoutHint;
-  // TODO: move to config, refer selectionKeys in imselector, a fcitx5 main module.
+  // TODO: move to config, refer selectionKeys in imselector, a fcitx5 main
+  // module.
   static const char labels[11];
 
 private:
