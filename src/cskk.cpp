@@ -35,7 +35,10 @@ namespace fcitx {
  ******************************************************************************/
 const string FcitxCskkEngine::config_file_path = string{"conf/fcitx5-cskk"};
 
+// TODO: move to config
 const uint FcitxCskkEngine::pageStartIdx = 3;
+const uint FcitxCskkEngine::pageSize = 5;
+const char FcitxCskkEngine::labels[11] = "1234567890";
 const CandidateLayoutHint FcitxCskkEngine::layoutHint =
     CandidateLayoutHint::Horizontal;
 
@@ -242,6 +245,15 @@ bool FcitxCskkContext::handleCandidateSelection(
     CSKK_DEBUG() << "return key caught in handle candidate";
     candidateList->candidate(candidateList->cursorIndex()).select(ic_);
     keyEvent.filterAndAccept();
+  } else {
+    KeyList selectionKeys =
+        std::vector<Key>{Key(FcitxKey_1), Key(FcitxKey_2), Key(FcitxKey_3),
+                         Key(FcitxKey_4), Key(FcitxKey_5)};
+    if (auto idx = keyEvent.key().keyListIndex(selectionKeys); idx >= 0) {
+      CSKK_DEBUG() << "Select from page. Idx: " << idx;
+      candidateList->candidate(idx).select(ic_);
+      keyEvent.filterAndAccept();
+    }
   }
 
   return keyEvent.filtered();
@@ -271,23 +283,24 @@ void FcitxCskkContext::updateUI() {
   preeditText.setCursor(static_cast<int>(strlen(preedit)));
 
   // CandidateList
-  int current_idx = skk_context_get_current_canddiate_selection_at(context_);
-  if (current_idx >= static_cast<int>(FcitxCskkEngine::pageStartIdx)) {
+  int currentCursorPosition =
+      skk_context_get_current_candidate_cursor_position(context_);
+  if (currentCursorPosition > static_cast<int>(FcitxCskkEngine::pageStartIdx)) {
     char *current_to_composite = skk_context_get_current_to_composite(context_);
-    auto candidateList = std::dynamic_pointer_cast<FcitxCskkCandidateList>(
-        ic_->inputPanel().candidateList());
-    if (candidateList == nullptr || candidateList->empty() ||
-        (strcmp(candidateList->to_composite().c_str(), current_to_composite) !=
-         0)) {
-      // update whole candidateList only if needed
+    auto currentCandidateList =
+        std::dynamic_pointer_cast<FcitxCskkCandidateList>(
+            ic_->inputPanel().candidateList());
+    if (currentCandidateList == nullptr || currentCandidateList->empty() ||
+        (strcmp(currentCandidateList->to_composite().c_str(),
+                current_to_composite) != 0)) {
+      // update whole currentCandidateList only if needed
       CSKK_DEBUG() << "Set new candidate list on UI update";
-
       inputPanel.setCandidateList(
           std::make_unique<FcitxCskkCandidateList>(engine_, ic_));
     } else {
-      // Sync in case idx has changed out of input panel
-      candidateList->setCursorIndex(
-          static_cast<int>(current_idx - FcitxCskkEngine::pageStartIdx));
+      // Sync UI with actual data
+      currentCandidateList->setCursorPosition(
+          static_cast<int>(currentCursorPosition));
     }
 
   } else {

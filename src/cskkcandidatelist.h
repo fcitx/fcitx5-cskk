@@ -24,16 +24,20 @@ namespace fcitx {
 class FcitxCskkCandidateWord;
 
 class FcitxCskkCandidateList : public CandidateList,
-                               public CursorMovableCandidateList {
-  //                               public PageableCandidateList,
+                               public CursorMovableCandidateList,
+                               public PageableCandidateList {
 public:
   FcitxCskkCandidateList(FcitxCskkEngine *engine, InputContext *ic);
   ~FcitxCskkCandidateList() override;
 
   // CandidateList
   // disabling [[nodiscard]] lint since it's not clear how this should be used
-  // from fcitx5. NOLINTNEXTLINE(modernize-use-nodiscard)
+  // from fcitx5.
+
+  /// idx seems like the 0-origin idx in the shown page.
+  // NOLINTNEXTLINE(modernize-use-nodiscard)
   const Text &label(int idx) const override;
+  /// idx seems like the 0-origin idx in the shown page.
   // NOLINTNEXTLINE(modernize-use-nodiscard)
   const CandidateWord &candidate(int idx) const override;
   // NOLINTNEXTLINE(modernize-use-nodiscard)
@@ -47,28 +51,61 @@ public:
   void prevCandidate() override;
   void nextCandidate() override;
 
-  const auto &to_composite() { return to_composite_; }
-  void setCursorIndex(int idx);
+  // PagableCandidateList
+  // Need for paging
+  // FIXME?: Assumed has previous 'page'. not candidate.
+  // NOLINTNEXTLINE(modernize-use-nodiscard)
+  bool hasPrev() const override;
+  // NOLINTNEXTLINE(modernize-use-nodiscard)
+  bool hasNext() const override;
+  void prev() override;
+  void next() override;
+  // NOLINTNEXTLINE(modernize-use-nodiscard)
+  bool usedNextBefore() const override;
+  // Following are optional.
+  // NOLINTNEXTLINE(modernize-use-nodiscard)
+  int totalPages() const override;
+  // NOLINTNEXTLINE(modernize-use-nodiscard)
+  int currentPage() const override;
+  void setPage(int) override;
+
+  const auto &to_composite() { return wordToComposite_; }
+  /// cursorPosition is the position of the original cskk candidate list.
+  void setCursorPosition(int cursorPosition);
 
 private:
   FcitxCskkEngine *engine_;
   InputContext *ic_;
-  std::string to_composite_;
+  std::string wordToComposite_;
   std::vector<Text> labels_;
   std::vector<std::unique_ptr<FcitxCskkCandidateWord>> words_;
 
-  int cursorIndex_ = -1;
-  int pageStartOffset_ = -1;
+  int cursorIndex_{};
+  unsigned int pageStartOffset_;
+  unsigned int pageSize_;
+  unsigned int totalSize_;
+  unsigned int totalPage_;
+  int currentPage_{};
+
+  // Not sure what this is.
+  bool usedNextBefore_ = false;
+
+  // the position of the first candidate in this list in whole candidate list
+  unsigned int pageFirst_{};
+  // the position of the last candidate + 1 in this list in whole candidate
+  // list. equals to pageFirst_ of next page if next page exists.
+  unsigned int pageLast_{};
 };
 
 class FcitxCskkCandidateWord : public CandidateWord {
 public:
-  FcitxCskkCandidateWord(FcitxCskkEngine *engine, Text text, int idx);
+  FcitxCskkCandidateWord(FcitxCskkEngine *engine, Text text,
+                         int cursorPosition);
   void select(InputContext *inputContext) const override;
 
 private:
   FcitxCskkEngine *engine_;
-  int idx_;
+  int cursorPosition_;
 };
 
 } // namespace fcitx

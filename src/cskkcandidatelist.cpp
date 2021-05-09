@@ -25,63 +25,111 @@ FcitxCskkCandidateList::FcitxCskkCandidateList(FcitxCskkEngine *engine,
                                                InputContext *ic)
     : engine_(engine), ic_(ic) {
   CSKK_DEBUG() << "Construct FcitxCskkCandidateList";
-  //  setPageable(this);
+  setPageable(this);
   setCursorMovable(this);
-  // FIXME: とりあえず100個越える候補は無視して実装進めている
-  uint bufsize = 100;
-  char **candidates = static_cast<char **>(malloc(sizeof(char *) * bufsize));
+
   FcitxCskkContext *fcitxCskkContext = engine_->context(ic_);
   CskkContext *cskkContext = fcitxCskkContext->context();
-  uint pageStartOffset = FcitxCskkEngine::pageStartIdx;
-  pageStartOffset_ = static_cast<int>(pageStartOffset);
-  uint actual_size = skk_context_get_current_candidates(
-      cskkContext, candidates, bufsize, pageStartOffset_);
 
-  cursorIndex_ =
-      static_cast<int>(
-          skk_context_get_current_canddiate_selection_at(cskkContext)) -
-      pageStartOffset_;
-
-  char *to_composite = skk_context_get_current_to_composite(cskkContext);
-
-  to_composite_ = std::string(to_composite);
-  skk_free_string(to_composite);
-
-  for (int i = 0; i < static_cast<int>(actual_size); i++) {
+  auto totalSize = skk_context_get_current_candidate_count(cskkContext);
+  // TODO?: 0 check here to skip some api calls
+  char **candidates = static_cast<char **>(malloc(sizeof(char *) * totalSize));
+  auto loadedSize =
+      skk_context_get_current_candidates(cskkContext, candidates, totalSize, 0);
+  totalSize_ = loadedSize;
+  for (auto i = 0; i < static_cast<int>(totalSize_); i++) {
     Text text;
     text.append(candidates[i]);
-    labels_.emplace_back(Text(""));
     words_.emplace_back(
         std::make_unique<FcitxCskkCandidateWord>(engine_, text, i));
   }
 
-  skk_free_candidate_list(candidates, actual_size);
+  skk_free_candidate_list(candidates, loadedSize);
   free(candidates);
+
+  for (char label : FcitxCskkEngine::labels) {
+    auto theLabel = {label, '\0'};
+    labels_.emplace_back(Text(theLabel));
+  }
+
+  char *to_composite = skk_context_get_current_to_composite(cskkContext);
+  wordToComposite_ = std::string(to_composite);
+  skk_free_string(to_composite);
+
+  pageSize_ = FcitxCskkEngine::pageSize;
+  pageStartOffset_ = static_cast<int>(FcitxCskkEngine::pageStartIdx);
+  totalPage_ = ((totalSize_ - pageStartOffset_ - 1) / pageSize_);
+
+  auto cursorPosition =
+      skk_context_get_current_candidate_cursor_position(cskkContext);
+  setCursorPosition(cursorPosition);
 }
 const Text &FcitxCskkCandidateList::label(int idx) const {
   return labels_[idx];
 }
 const CandidateWord &FcitxCskkCandidateList::candidate(int idx) const {
-  return *words_[idx];
+  return *words_[pageFirst_ + idx];
 }
 int FcitxCskkCandidateList::size() const {
-  return static_cast<int>(words_.size());
+  return static_cast<int>(pageLast_ - pageFirst_);
 }
 int FcitxCskkCandidateList::cursorIndex() const { return cursorIndex_; }
 CandidateLayoutHint FcitxCskkCandidateList::layoutHint() const {
   return FcitxCskkEngine::layoutHint;
 }
 void FcitxCskkCandidateList::prevCandidate() {
-  CskkContext *cskkContext = engine_->context(ic_)->context();
-  cursorIndex_ -= 1;
-  skk_context_select_candidate_at(cskkContext, cursorIndex_ + pageStartOffset_);
+  auto newCursorPos = static_cast<int>(cursorIndex_ + pageFirst_ - 1);
+  setCursorPosition(newCursorPos);
 }
 void FcitxCskkCandidateList::nextCandidate() {
-  CskkContext *cskkContext = engine_->context(ic_)->context();
-  cursorIndex_ += 1;
-  skk_context_select_candidate_at(cskkContext, cursorIndex_ + pageStartOffset_);
+  auto newCursorPos = static_cast<int>(cursorIndex_ + pageFirst_ + 1);
+  setCursorPosition(newCursorPos);
 }
-void FcitxCskkCandidateList::setCursorIndex(int idx) { cursorIndex_ = idx; }
+void FcitxCskkCandidateList::setCursorPosition(int cursorPosition) {
+  // This might be duplicating call to the same cursor position, but doesn't
+  // harm to sync the position.
+  FcitxCskkContext *fcitxCskkContext = engine_->context(ic_);
+  CskkContext *cskkContext = fcitxCskkContext->context();
+  skk_context_select_candidate_at(cskkContext, cursorPosition);
+
+  // Assume totalSize = 27, cursorPosition = 14, pageStartOffset = 3, page_size
+  // = 10.
+  //
+  // 0~3: not in page. 4~13: 0th page. 14~23: 1st page. 24~26: 2nd page.
+  currentPage_ =
+      static_cast<int>((cursorPosition - pageStartOffset_ - 1) / pageSize_);
+  pageFirst_ = currentPage_ * pageSize_ + pageStartOffset_ + 1;
+  pageLast_ = std::min(totalSize_, pageFirst_ + pageSize_);
+  cursorIndex_ = static_cast<int>(cursorPosition - pageFirst_);
+
+  // assert!(pageFirst_ <= cursorPosition)
+  // assert!(cursorPosition < pageLast_)
+  // assert!(pageFirst_ + cursorIndex_ < pageLast_)
+}
+bool FcitxCskkCandidateList::hasPrev() const { return currentPage_ > 1; }
+bool FcitxCskkCandidateList::hasNext() const {
+  return currentPage_ < static_cast<int>(totalPage_);
+}
+void FcitxCskkCandidateList::prev() {
+  auto newCursorPos = static_cast<int>(pageFirst_ - pageSize_);
+  setCursorPosition(newCursorPos);
+}
+void FcitxCskkCandidateList::next() {
+  auto newCursorPos = static_cast<int>(pageFirst_ + pageSize_);
+  usedNextBefore_ = true;
+  setCursorPosition(newCursorPos);
+}
+int FcitxCskkCandidateList::totalPages() const {
+  return static_cast<int>(totalPage_);
+}
+int FcitxCskkCandidateList::currentPage() const {
+  return static_cast<int>(currentPage_);
+}
+void FcitxCskkCandidateList::setPage(int page) {
+  auto newCursorPos = static_cast<int>(pageStartOffset_ + page * pageSize_ + 1);
+  setCursorPosition(newCursorPos);
+}
+bool FcitxCskkCandidateList::usedNextBefore() const { return usedNextBefore_; }
 
 FcitxCskkCandidateList::~FcitxCskkCandidateList() = default;
 
@@ -89,17 +137,16 @@ FcitxCskkCandidateList::~FcitxCskkCandidateList() = default;
  * FcitxCskkCandidateWord
  ******************************************************************************/
 FcitxCskkCandidateWord::FcitxCskkCandidateWord(FcitxCskkEngine *engine,
-                                               Text text, int idx)
-    : CandidateWord(), engine_(engine), idx_(idx) {
+                                               Text text, int cursorPosition)
+    : CandidateWord(), engine_(engine), cursorPosition_(cursorPosition) {
   CSKK_DEBUG() << "candidate word create: " << text.toString();
   setText(std::move(text));
 }
 void FcitxCskkCandidateWord::select(InputContext *inputContext) const {
   {
     auto fcitxCskkContext = engine_->context(inputContext);
-    skk_context_confirm_candidate_at(
-        fcitxCskkContext->context(),
-        static_cast<int>(idx_ + FcitxCskkEngine::pageStartIdx));
+    skk_context_confirm_candidate_at(fcitxCskkContext->context(),
+                                     static_cast<int>(cursorPosition_));
     fcitxCskkContext->updateUI();
   }
 }
