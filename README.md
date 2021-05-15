@@ -45,7 +45,9 @@ GOOGLETESTフラグはキャッシュされるのでライブラリ生成時に�
 
 
 ### じしょ
-いまのところとりあえず、レギュラーファイルの $XDG_DATA_HOME/fcitx5-cskk/dictionary/* をまずよみかきじしょとして、 $XDG_DATA_DIRS/fcitx5-cskk/dictionary/* をよみとりせんようじしょにする。このじゅんばんで、おのおのファイルめいじゅん。 utf-8
+現在のところ $XDG_DATA_HOME/fcitx5-cskk/dictionary/* (多くの環境では$HOME/.local/share/fctix5-cskk/dictionary/* )  を読み書き可能な辞書として優先して読む。 
+$XDG_DATA_DIRS/fcitx5-cskk/dictionary/* (/usr/local/share/fcitx5-cskk/dictionary/* 等) を読みとり専用辞書とする。
+文字コードはUTF-8のみに対応。ファイル名順。
 
 ## 著作権表示
 

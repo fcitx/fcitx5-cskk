@@ -138,8 +138,8 @@ void FcitxCskkEngine::loadDictionary() {
 }
 std::string FcitxCskkEngine::getXDGDataHome() {
   const char *xdgDataHomeEnv = getenv("XDG_DATA_HOME");
-  const char *homeEnv = getenv("$HOME");
-  if (xdgDataHomeEnv) {
+  const char *homeEnv = getenv("HOME");
+  if (xdgDataHomeEnv && strlen(xdgDataHomeEnv) > 0) {
     return string(xdgDataHomeEnv);
   } else if (homeEnv) {
     return string(homeEnv) + "/.local/share";
@@ -151,7 +151,7 @@ std::vector<std::string> FcitxCskkEngine::getXDGDataDirs() {
   const char *xdgDataDirEnv = getenv("XDG_DATA_DIRS");
   string rawDirs;
 
-  if (xdgDataDirEnv) {
+  if (xdgDataDirEnv && strlen(xdgDataDirEnv) > 0) {
     rawDirs = string(xdgDataDirEnv);
   } else {
     rawDirs = "/usr/local/share:/usr/share";
