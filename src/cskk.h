@@ -56,7 +56,8 @@ public:
 
   // TODO: move to config
   static const CandidateLayoutHint layoutHint;
-  static KeyList getSelectionKeys(CandidateSelectionKeys candidateSelectionKeys);
+  static KeyList
+  getSelectionKeys(CandidateSelectionKeys candidateSelectionKeys);
 
 private:
   Instance *instance_;
