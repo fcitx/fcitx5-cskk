@@ -47,7 +47,10 @@ FcitxCskkCandidateList::FcitxCskkCandidateList(FcitxCskkEngine *engine,
   skk_free_candidate_list(candidates, loadedSize);
   free(candidates);
 
-  for (char label : FcitxCskkEngine::labels) {
+  auto &config = engine_->config();
+  auto labels =
+      FcitxCskkCandidateList::getLabels(config.candidateSelectionKeys.value());
+  for (char label : labels) {
     auto theLabel = {label, '\0'};
     labels_.emplace_back(Text(theLabel));
   }
@@ -56,8 +59,8 @@ FcitxCskkCandidateList::FcitxCskkCandidateList(FcitxCskkEngine *engine,
   wordToComposite_ = std::string(to_composite);
   skk_free_string(to_composite);
 
-  pageSize_ = FcitxCskkEngine::pageSize;
-  pageStartOffset_ = static_cast<int>(FcitxCskkEngine::pageStartIdx);
+  pageSize_ = config.pageSize.value();
+  pageStartOffset_ = config.pageStartIdx.value() - 1;
   totalPage_ = ((totalSize_ - pageStartOffset_ - 1) / pageSize_);
 
   auto cursorPosition =
@@ -130,6 +133,18 @@ void FcitxCskkCandidateList::setPage(int page) {
   setCursorPosition(newCursorPos);
 }
 bool FcitxCskkCandidateList::usedNextBefore() const { return usedNextBefore_; }
+std::string FcitxCskkCandidateList::getLabels(
+    CandidateSelectionKeys candidateSelectionKeys) {
+  switch (candidateSelectionKeys) {
+  case CandidateSelectionKeys::ABCD:
+    return "abcdefghij";
+  case CandidateSelectionKeys::QwertyCenter:
+    return "asdfghjkl;";
+  case CandidateSelectionKeys::Number:
+  default:
+    return "1234567890";
+  }
+}
 
 FcitxCskkCandidateList::~FcitxCskkCandidateList() = default;
 

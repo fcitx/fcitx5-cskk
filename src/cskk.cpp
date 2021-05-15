@@ -35,10 +35,6 @@ namespace fcitx {
  ******************************************************************************/
 const string FcitxCskkEngine::config_file_path = string{"conf/fcitx5-cskk"};
 
-// TODO: move to config
-const uint FcitxCskkEngine::pageStartIdx = 3;
-const uint FcitxCskkEngine::pageSize = 5;
-const char FcitxCskkEngine::labels[11] = "1234567890";
 const CandidateLayoutHint FcitxCskkEngine::layoutHint =
     CandidateLayoutHint::Horizontal;
 
@@ -193,6 +189,28 @@ void FcitxCskkEngine::freeDictionaries() {
   }
   dictionaries_.clear();
 }
+KeyList FcitxCskkEngine::getSelectionKeys(
+    CandidateSelectionKeys candidateSelectionKeys) {
+  switch (candidateSelectionKeys) {
+  case CandidateSelectionKeys::ABCD:
+    return fcitx::KeyList{Key(FcitxKey_a), Key(FcitxKey_b), Key(FcitxKey_c),
+                          Key(FcitxKey_d), Key(FcitxKey_e), Key(FcitxKey_f),
+                          Key(FcitxKey_g), Key(FcitxKey_h), Key(FcitxKey_i),
+                          Key(FcitxKey_j)};
+  case CandidateSelectionKeys::QwertyCenter:
+    return fcitx::KeyList{Key(FcitxKey_a), Key(FcitxKey_s),
+                          Key(FcitxKey_d), Key(FcitxKey_f),
+                          Key(FcitxKey_g), Key(FcitxKey_h),
+                          Key(FcitxKey_j), Key(FcitxKey_k),
+                          Key(FcitxKey_l), Key(FcitxKey_semicolon)};
+  case CandidateSelectionKeys::Number:
+  default:
+    return fcitx::KeyList{Key(FcitxKey_1), Key(FcitxKey_2), Key(FcitxKey_3),
+                          Key(FcitxKey_4), Key(FcitxKey_5), Key(FcitxKey_6),
+                          Key(FcitxKey_7), Key(FcitxKey_8), Key(FcitxKey_9),
+                          Key(FcitxKey_0)};
+  }
+}
 
 /*******************************************************************************
  * CskkContext
@@ -260,10 +278,10 @@ bool FcitxCskkContext::handleCandidateSelection(
     candidateList->candidate(candidateList->cursorIndex()).select(ic_);
     keyEvent.filterAndAccept();
   } else {
-    KeyList selectionKeys =
-        std::vector<Key>{Key(FcitxKey_1), Key(FcitxKey_2), Key(FcitxKey_3),
-                         Key(FcitxKey_4), Key(FcitxKey_5)};
-    if (auto idx = keyEvent.key().keyListIndex(selectionKeys); idx >= 0) {
+    KeyList selectionKeys = FcitxCskkEngine::getSelectionKeys(
+        engine_->config().candidateSelectionKeys.value());
+    if (auto idx = keyEvent.key().keyListIndex(selectionKeys);
+        0 <= idx && idx < engine_->config().pageSize.value()) {
       CSKK_DEBUG() << "Select from page. Idx: " << idx;
       candidateList->candidate(idx).select(ic_);
       keyEvent.filterAndAccept();
@@ -299,7 +317,7 @@ void FcitxCskkContext::updateUI() {
   // CandidateList
   int currentCursorPosition =
       skk_context_get_current_candidate_cursor_position(context_);
-  if (currentCursorPosition > static_cast<int>(FcitxCskkEngine::pageStartIdx)) {
+  if (currentCursorPosition > engine_->config().pageStartIdx.value() - 1) {
     char *current_to_composite = skk_context_get_current_to_composite(context_);
     auto currentCandidateList =
         std::dynamic_pointer_cast<FcitxCskkCandidateList>(
@@ -331,8 +349,12 @@ void FcitxCskkContext::updateUI() {
 }
 void FcitxCskkContext::applyConfig() {
   CSKK_DEBUG() << "apply config";
+  auto &config = engine_->config();
+
   skk_context_set_dictionaries(context_, engine_->dictionaries().data(),
                                engine_->dictionaries().size());
+  skk_context_set_period_style(context_, *config.periodStyle);
+  skk_context_set_comma_style(context_, *config.commaStyle);
 }
 void FcitxCskkContext::copyTo(InputContextProperty *context) {
   auto otherContext = dynamic_cast<FcitxCskkContext *>(context);

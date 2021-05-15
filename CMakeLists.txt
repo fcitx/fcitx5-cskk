@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0063 NEW)
-project(fcitx5-cskk VERSION 0.2.1)
+project(fcitx5-cskk VERSION 0.3.0)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_STANDARD 17)
 
@@ -12,7 +12,7 @@ include(ECMUninstallTarget)
 
 find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core REQUIRED)
-pkg_check_modules(LIBCSKK REQUIRED "cskk>=0.2.0")
+pkg_check_modules(LIBCSKK REQUIRED "cskk>=0.3.0")
 
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
 
