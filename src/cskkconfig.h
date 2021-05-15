@@ -32,7 +32,8 @@ FCITX_CONFIG_ENUM_NAME_WITH_I18N(CommaStyle, "、", "，")
 
 FCITX_CONFIG_ENUM(CandidateSelectionKeys, Number, ABCD, QwertyCenter)
 static constexpr const char *CandidateSelectionKeys_Annotations[] = {
-    "Number (1,2,3,...)", "ABCD (a,b,c,d,...)", "Qwerty Center row (a,s,d,f,...)"};
+    "Number (1,2,3,...)", "ABCD (a,b,c,d,...)",
+    "Qwerty Center row (a,s,d,f,...)"};
 
 struct CandidateSelectionKeysAnnotation : public EnumAnnotation {
   void dumpDescription(RawConfig &config) const {
