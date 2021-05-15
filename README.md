@@ -31,7 +31,7 @@ GOOGLETESTフラグはキャッシュされるのでライブラリ生成時に�
 ### 実装予定(いつかは)
 - [x] ひらがな・カタカナ・漢字入力
 - [x] 変換候補リスト表示
-- [ ] 変換候補リスト ラベル選択
+- [x] 変換候補リスト ラベル選択
   
 - 設定項目
     - [x] 入力モード初期値設定
@@ -45,7 +45,7 @@ GOOGLETESTフラグはキャッシュされるのでライブラリ生成時に�
 
 
 ### じしょ
-現在のところ $XDG_DATA_HOME/fcitx5-cskk/dictionary/* (多くの環境では$HOME/.local/share/fctix5-cskk/dictionary/* )  を読み書き可能な辞書として優先して読む。 
+現在のところ $XDG_DATA_HOME/fcitx5-cskk/dictionary/*.dict (多くの環境では$HOME/.local/share/fctix5-cskk/dictionary/*.dict )  を読み書き可能な辞書として優先して読む。 
 $XDG_DATA_DIRS/fcitx5-cskk/dictionary/* (/usr/local/share/fcitx5-cskk/dictionary/* 等) を読みとり専用辞書とする。
 文字コードはUTF-8のみに対応。ファイル名順。
 

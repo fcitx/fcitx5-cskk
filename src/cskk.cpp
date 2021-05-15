@@ -60,7 +60,15 @@ void FcitxCskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
   context->keyEvent(keyEvent);
   CSKK_DEBUG() << "Engine keyEvent end";
 }
-void FcitxCskkEngine::save() {}
+void FcitxCskkEngine::save() {
+  if (factory_.registered()) {
+    instance_->inputContextManager().foreach ([this](InputContext *ic) {
+      auto context = ic->propertyFor(&factory_);
+      skk_context_save_dictionaries(context->context());
+      return true;
+    });
+  }
+}
 void FcitxCskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
 void FcitxCskkEngine::deactivate(const InputMethodEntry &entry,
                                  InputContextEvent &event) {
@@ -106,11 +114,17 @@ void FcitxCskkEngine::loadDictionary() {
     std::filesystem::path dataDir = getXDGDataHome();
     dataDir.append("fcitx5-cskk/dictionary");
     CSKK_DEBUG() << dataDir;
+    // TODO: Use string::ends_with when fcitx5 family uses C++20.
     for (const auto &file :
          std::filesystem::directory_iterator(dataDir, directoryOptions)) {
       if (file.is_regular_file()) {
-        dictionaries_.emplace_back(
-            skk_user_dict_new(file.path().c_str(), "UTF-8"));
+        auto path = file.path().string();
+        if (path.length() > 5) {
+          if (path.compare(path.length() - 5, 5, ".dict") == 0) {
+            dictionaries_.emplace_back(
+                skk_user_dict_new(file.path().c_str(), "UTF-8"));
+          }
+        }
       }
     }
   } catch (std::filesystem::filesystem_error &ignored) {

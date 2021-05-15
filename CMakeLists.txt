@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0063 NEW)
 project(fcitx5-cskk VERSION 0.2.1)
 set(CMAKE_CXX_FLAGS "-Wall")
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(ECM 1.0.0 REQUIRED)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
