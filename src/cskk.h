@@ -18,10 +18,7 @@
 extern "C" {
 #include <cskk/libcskk.h>
 }
-
-#include <fcitx-config/configuration.h>
-#include <fcitx-config/enum.h>
-#include <fcitx-utils/i18n.h>
+#include "cskkconfig.h"
 #include <fcitx/addonfactory.h>
 #include <fcitx/candidatelist.h>
 #include <fcitx/inputmethodengine.h>
@@ -32,29 +29,6 @@ namespace fcitx {
 
 class FcitxCskkContext;
 class FcitxCskkCandidateList;
-// TODO: Check how to use i18n annotation creation macro
-FCITX_CONFIG_ENUM_NAME(InputMode, "Hiragana", "Katakana", "HankakuKana",
-                       "Zenkaku", "Ascii");
-
-struct InputModeAnnotation : public EnumAnnotation {
-  void dumpDescription(RawConfig &config) const {
-    EnumAnnotation::dumpDescription(config);
-    int length = sizeof(_InputMode_Names) / sizeof(_InputMode_Names[0]);
-    for (int i = 0; i < length; i++) {
-      // FIXME: bit not sure if path is correct. Might need namespacing per each
-      // configuration?
-      config.setValueByPath("Enum/" + std::to_string(i), _InputMode_Names[i]);
-      config.setValueByPath("EnumI18n/" + std::to_string(i),
-                            _(_InputMode_Names[i]));
-    }
-  }
-};
-FCITX_CONFIGURATION(
-    FcitxCskkConfig,
-    OptionWithAnnotation<InputMode, InputModeAnnotation> inputMode{
-        this, "InitialInputMode", _("InitialInputMode"), Hiragana};
-    Option<bool> showAnnotation{this, "ShowAnnotation",
-                                _("Show Annotation. Fake yet."), true};);
 
 class FcitxCskkEngine final : public InputMethodEngine {
 public:
@@ -80,17 +54,10 @@ public:
     return ic->propertyFor(&factory_);
   }
 
-  // pageStartIdx needs to be > 0. Addon cannot hook when transitioning to
-  // composition selection for the first time.
-  // TODO: move to config
-  static const uint pageStartIdx;
-  // TODO: move to config
-  static const uint pageSize;
   // TODO: move to config
   static const CandidateLayoutHint layoutHint;
-  // TODO: move to config, refer selectionKeys in imselector, a fcitx5 main
-  // module.
-  static const char labels[11];
+  static KeyList
+  getSelectionKeys(CandidateSelectionKeys candidateSelectionKeys);
 
 private:
   Instance *instance_;

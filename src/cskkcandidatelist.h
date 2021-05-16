@@ -95,6 +95,8 @@ private:
   // the position of the last candidate + 1 in this list in whole candidate
   // list. equals to pageFirst_ of next page if next page exists.
   unsigned int pageLast_{};
+
+  static std::string getLabels(CandidateSelectionKeys candidateSelectionKeys);
 };
 
 class FcitxCskkCandidateWord : public CandidateWord {
