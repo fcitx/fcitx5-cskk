@@ -263,15 +263,16 @@ bool FcitxCskkContext::handleCandidateSelection(
   if (keyEvent.key().checkKeyList(std::vector{Key(FcitxKey_Up)})) {
     candidateList->prevCandidate();
     keyEvent.filterAndAccept();
-  } else if (keyEvent.key().checkKeyList(
-                 std::vector{Key(FcitxKey_Down), Key(FcitxKey_space)})) {
+  } else if (keyEvent.key().checkKeyList(std::vector{Key(FcitxKey_Down)})) {
     CSKK_DEBUG() << "space key caught in handle candidate";
-
     candidateList->nextCandidate();
     keyEvent.filterAndAccept();
-  } else if (keyEvent.key().check(Key(FcitxKey_Page_Down))) {
+  } else if (keyEvent.key().checkKeyList(
+                 std::vector{Key(FcitxKey_Page_Down), Key(FcitxKey_space)})) {
+    candidateList->next();
     keyEvent.filterAndAccept();
   } else if (keyEvent.key().check(Key(FcitxKey_Page_Up))) {
+    candidateList->prev();
     keyEvent.filterAndAccept();
   } else if (keyEvent.key().check(Key(FcitxKey_Return))) {
     CSKK_DEBUG() << "return key caught in handle candidate";
