@@ -35,9 +35,6 @@ namespace fcitx {
  ******************************************************************************/
 const string FcitxCskkEngine::config_file_path = string{"conf/fcitx5-cskk"};
 
-const CandidateLayoutHint FcitxCskkEngine::layoutHint =
-    CandidateLayoutHint::Horizontal;
-
 FcitxCskkEngine::FcitxCskkEngine(Instance *instance)
     : instance_{instance}, factory_([this](InputContext &ic) {
         auto newCskkContext = new FcitxCskkContext(this, &ic);
@@ -259,19 +256,18 @@ bool FcitxCskkContext::handleCandidateSelection(
     return false;
   }
   CSKK_DEBUG() << "handleCandidateSelection";
+  const auto config = engine_->config();
 
-  if (keyEvent.key().checkKeyList(std::vector{Key(FcitxKey_Up)})) {
+  if (keyEvent.key().checkKeyList(*config.prevCursorKey)) {
     candidateList->prevCandidate();
     keyEvent.filterAndAccept();
-  } else if (keyEvent.key().checkKeyList(std::vector{Key(FcitxKey_Down)})) {
-    CSKK_DEBUG() << "space key caught in handle candidate";
+  } else if (keyEvent.key().checkKeyList(*config.nextCursorKey)) {
     candidateList->nextCandidate();
     keyEvent.filterAndAccept();
-  } else if (keyEvent.key().checkKeyList(
-                 std::vector{Key(FcitxKey_Page_Down), Key(FcitxKey_space)})) {
+  } else if (keyEvent.key().checkKeyList(*config.nextPageKey)) {
     candidateList->next();
     keyEvent.filterAndAccept();
-  } else if (keyEvent.key().check(Key(FcitxKey_Page_Up))) {
+  } else if (keyEvent.key().checkKeyList(*config.prevPageKey)) {
     candidateList->prev();
     keyEvent.filterAndAccept();
   } else if (keyEvent.key().check(Key(FcitxKey_Return))) {

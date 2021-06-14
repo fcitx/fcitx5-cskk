@@ -54,8 +54,6 @@ public:
     return ic->propertyFor(&factory_);
   }
 
-  // TODO: move to config
-  static const CandidateLayoutHint layoutHint;
   static KeyList
   getSelectionKeys(CandidateSelectionKeys candidateSelectionKeys);
 

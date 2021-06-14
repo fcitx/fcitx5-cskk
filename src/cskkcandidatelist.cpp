@@ -78,7 +78,7 @@ int FcitxCskkCandidateList::size() const {
 }
 int FcitxCskkCandidateList::cursorIndex() const { return cursorIndex_; }
 CandidateLayoutHint FcitxCskkCandidateList::layoutHint() const {
-  return FcitxCskkEngine::layoutHint;
+  return *engine_->config().candidateLayout;
 }
 void FcitxCskkCandidateList::prevCandidate() {
   auto newCursorPos = static_cast<int>(cursorIndex_ + pageFirst_ - 1);
