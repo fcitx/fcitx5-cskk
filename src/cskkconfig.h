@@ -21,6 +21,7 @@ extern "C" {
 #include <fcitx-config/configuration.h>
 #include <fcitx-config/enum.h>
 #include <fcitx-utils/i18n.h>
+#include <fcitx/candidatelist.h>
 
 namespace fcitx {
 
@@ -29,6 +30,9 @@ FCITX_CONFIG_ENUM_NAME(InputMode, "Hiragana", "Katakana", "HankakuKana",
                        "Zenkaku", "Ascii")
 FCITX_CONFIG_ENUM_NAME_WITH_I18N(PeriodStyle, "。", "．")
 FCITX_CONFIG_ENUM_NAME_WITH_I18N(CommaStyle, "、", "，")
+
+FCITX_CONFIG_ENUM_NAME_WITH_I18N(CandidateLayoutHint, N_("Not set"),
+                                 N_("Vertical"), N_("Horizontal"));
 
 FCITX_CONFIG_ENUM(CandidateSelectionKeys, Number, ABCD, QwertyCenter)
 static constexpr const char *CandidateSelectionKeys_Annotations[] = {
@@ -79,6 +83,34 @@ FCITX_CONFIGURATION(
     Option<int, IntConstrain> pageSize{this, "Candidate list page size",
                                        _("Candidate list page size"), 5,
                                        IntConstrain(1, 10)};
+    OptionWithAnnotation<CandidateLayoutHint, CandidateLayoutHintI18NAnnotation>
+        candidateLayout{this, "Candidate Layout", _("Candidate Layout"),
+                        CandidateLayoutHint::Vertical};
+    KeyListOption prevCursorKey{
+        this,
+        "CursorUp",
+        _("Cursor Up"),
+        {Key(FcitxKey_Up)},
+        KeyListConstrain({KeyConstrainFlag::AllowModifierLess})};
+    KeyListOption nextCursorKey{
+        this,
+        "CursorDown",
+        _("Cursor Down"),
+        {Key(FcitxKey_Down)},
+        KeyListConstrain({KeyConstrainFlag::AllowModifierLess})};
+    KeyListOption prevPageKey{
+        this,
+        "CandidatesPageUpKey",
+        _("Candidates Page Previous Page"),
+        {Key(FcitxKey_Page_Up), Key(FcitxKey_x)},
+        KeyListConstrain({KeyConstrainFlag::AllowModifierLess})};
+    KeyListOption nextPageKey{
+        this,
+        "CandidatesPageDownKey",
+        _("Candidates Page Next Page"),
+        {Key(FcitxKey_Page_Down), Key(FcitxKey_space)},
+        KeyListConstrain({KeyConstrainFlag::AllowModifierLess})};
+
     OptionWithAnnotation<CandidateSelectionKeys,
                          CandidateSelectionKeysAnnotation>
         candidateSelectionKeys{this, "Candidate selection keys",
