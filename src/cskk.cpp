@@ -105,11 +105,10 @@ void FcitxCskkEngine::loadDictionary() {
 
   const auto &standardPath = StandardPath::global();
   std::string path;
-  std::vector<CskkDictionaryFfi *> dicts = dictionaries_;
   auto templatePath = "fcitx5-cskk/dictionary";
   standardPath.scanDirectories(
       StandardPath::Type::Data,
-      [&dicts, &templatePath](const std::string &dirPath, bool isUser) {
+      [this, &templatePath](const std::string &dirPath, bool isUser) {
         auto dataDir = stringutils::joinPath(dirPath, templatePath);
         CSKK_DEBUG() << "Search " << dataDir << " for dicts";
         try {
@@ -120,13 +119,13 @@ void FcitxCskkEngine::loadDictionary() {
                 auto path = file.path().string();
                 if (path.length() > 5) {
                   if (path.compare(path.length() - 5, 5, ".dict") == 0) {
-                    dicts.emplace_back(
+                    dictionaries_.emplace_back(
                         skk_user_dict_new(file.path().c_str(), "UTF-8"));
                     CSKK_DEBUG() << "Register " << file << " as r/w dict";
                   }
                 }
               } else {
-                dicts.emplace_back(
+                dictionaries_.emplace_back(
                     skk_file_dict_new(file.path().c_str(), "UTF-8"));
                 CSKK_DEBUG() << "Register " << file << " as static dict";
               }
