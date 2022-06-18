@@ -1,4 +1,4 @@
-## fcitx5-cskk
+## ![cskk logo](https://raw.githubusercontent.com/naokiri/fcitx5-cskk/master/data/icon/48x48/apps/cskk.png) fcitx5-cskk 
 [Fcitx5](https://github.com/fcitx/fcitx5) でskk入力方式で入力するためのインプットメソッドプラグイン。
 
 [libcskk](https://github.com/naokiri/cskk) を用いる。
