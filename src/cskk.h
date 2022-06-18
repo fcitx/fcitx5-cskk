@@ -30,7 +30,7 @@ namespace fcitx {
 class FcitxCskkContext;
 class FcitxCskkCandidateList;
 
-class FcitxCskkEngine final : public InputMethodEngine {
+class FcitxCskkEngine final : public InputMethodEngineV2 {
 public:
   explicit FcitxCskkEngine(Instance *instance);
   ~FcitxCskkEngine() override;
@@ -41,6 +41,8 @@ public:
                   InputContextEvent &event) override;
   void reset(const InputMethodEntry &entry, InputContextEvent &event) override;
   void save() override;
+  std::string subModeIconImpl(const InputMethodEntry &,
+                              InputContext &) override;
 
   // Configuration methods are called from fctix5-configtool via DBus message
   // to fcitx5 server.
@@ -84,7 +86,6 @@ public:
   void reset();
   void updateUI();
   void applyConfig();
-
   auto &context() { return context_; }
 
 private:

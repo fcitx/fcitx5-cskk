@@ -208,6 +208,24 @@ KeyList FcitxCskkEngine::getSelectionKeys(
                           Key(FcitxKey_0)};
   }
 }
+std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
+                                             InputContext &ic) {
+  auto context = ic.propertyFor(&factory_);
+  auto current_input_mode = skk_context_get_input_mode(context->context());
+  switch (current_input_mode) {
+  case InputMode::Ascii:
+    return "cskk-ascii";
+  case InputMode::HankakuKatakana:
+    return "cskk-hankakukana";
+  case InputMode::Hiragana:
+    return "cskk-hiragana";
+  case InputMode::Katakana:
+    return "cskk-katakana";
+  case InputMode::Zenkaku:
+    return "cskk-zenei";
+  }
+  return "";
+}
 
 /*******************************************************************************
  * CskkContext
@@ -342,6 +360,9 @@ void FcitxCskkContext::updateUI() {
   } else {
     inputPanel.setPreedit(preeditText);
   }
+
+  // StatusArea for status icon
+  ic_->updateUserInterface(UserInterfaceComponent::StatusArea);
   ic_->updateUserInterface(UserInterfaceComponent::InputPanel);
 }
 void FcitxCskkContext::applyConfig() {

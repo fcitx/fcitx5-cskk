@@ -1,6 +1,6 @@
 [InputMethod]
 Name=Cskk
-Icon=fcitx-cskk
+Icon=cskk
 LangCode=ja
 Addon=cskk
 Label=CSKK
