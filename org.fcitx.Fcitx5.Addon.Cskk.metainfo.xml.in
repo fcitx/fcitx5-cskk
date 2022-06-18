@@ -5,6 +5,8 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>fcitx5-cskk</name>
+  <icon type="stock">cskk</icon>
+  <icon type="cached">cskk.png</icon>
   <summary>libCSKK Japanese input method</summary>
   <url type="homepage">https://github.com/naokiri/fcitx5-cskk</url>
   <url type="bugtracker">https://github.com/naokiri/fcitx5-cskk/issues</url>
@@ -14,5 +16,6 @@
     <release version="0.1.0" date="2021-05-05"/>
     <release version="0.2.0" date="2021-05-09"/>
     <release version="0.3.0" date="2021-05-16"/>
+    <release version="0.4.0" date="2022-06-17"/>
   </releases>
 </component>

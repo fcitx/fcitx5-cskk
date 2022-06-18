@@ -15,6 +15,22 @@ Although, emacs + SKK users tend to share dictionary file among ddskk and IME so
 Putting Fcitx in class name may seem redundant, but it helps distinguish this fcitx5-cskk addon from cskk the library.
 Put 'FcitxCskk' as prefix for class names.
 
+** Icon
+See src/lib/fcitx/icontheme.h and related.
+Fcitx5 supports svg, png, xpm.
+Supports XDG icon specification. https://www.freedesktop.org/wiki/Specifications/icon-theme-spec/ but theme fallback in original way.
+Fcitx5 converts icon filename fcitx-foo to org.fcitx.Fcitx5.fcitx-foo automatically when built for flatpak and search the converted filename only as of fcitx v5.0.17
+Although, flatpak since v0.8.8 can use system icons, so this addon will workaround by ignoring that naming prefix.
+
+TODO for this project is to prepare a svg icon to accept scalable icons.
+
+** Versioning
+Should update these files and then create a deploy on github
+- org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in
+- CMakeLists.txt
+Following semver rule but with tweak same as rust lang's cargo.
+Initial development releases starting with "0.y.z" can treat changes in "y" as a major release, and "z" as a minor release.
+
 * Q
 ** How config works?
 Create Option class.
