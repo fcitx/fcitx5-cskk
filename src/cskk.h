@@ -97,7 +97,6 @@ private:
   bool handleCandidateSelection(
       const std::shared_ptr<FcitxCskkCandidateList> &candidateList,
       KeyEvent &keyEvent);
-
 };
 
 class FcitxCskkFactory final : public AddonFactory {

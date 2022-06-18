@@ -209,10 +209,10 @@ KeyList FcitxCskkEngine::getSelectionKeys(
   }
 }
 std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
-                            InputContext &ic) {
+                                             InputContext &ic) {
   auto context = ic.propertyFor(&factory_);
   auto current_input_mode = skk_context_get_input_mode(context->context());
-  switch(current_input_mode) {
+  switch (current_input_mode) {
   case InputMode::Ascii:
     return "cskk-ascii";
   case InputMode::HankakuKatakana:
