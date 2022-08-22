@@ -18,6 +18,7 @@
 extern "C" {
 #include <cskk/libcskk.h>
 }
+#include "log.h"
 #include <fcitx-config/configuration.h>
 #include <fcitx-config/enum.h>
 #include <fcitx-utils/i18n.h>
@@ -64,6 +65,19 @@ struct InputModeAnnotation : public EnumAnnotation {
       config.setValueByPath("EnumI18n/" + std::to_string(i),
                             _(_InputMode_Names[i]));
     }
+  }
+};
+
+struct FcitxCskkRuleAnnotation : public EnumAnnotation {
+  void dumpDescription(RawConfig &config) const {
+    EnumAnnotation::dumpDescription(config);
+    uint length;
+    auto rules = skk_get_rules(&length);
+    for (uint i = 0; i < length; i++) {
+      config.setValueByPath("Enum/" + std::to_string(i), rules[i].id);
+      config.setValueByPath("EnumI18n/" + std::to_string(i), rules[i].name);
+    }
+    skk_free_rules(rules, length);
   }
 };
 
@@ -118,7 +132,9 @@ FCITX_CONFIGURATION(
                                CandidateSelectionKeys::Number};
     //    Option<bool> showAnnotation{this, "ShowAnnotation",
     //                                _("Show Annotation. Fake yet."), true};);
-);
+
+    OptionWithAnnotation<std::string, FcitxCskkRuleAnnotation> cskkRule{
+        this, "Rule", _("Rule"), "default"};) // FCITX_CONFIGURATION
 } // namespace fcitx
 
 #endif // FCITX5_CSKK_CSKKCONFIG_H

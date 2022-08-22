@@ -1,0 +1,62 @@
+name: Build passes check
+on: [ pull_request, workflow_dispatch ]
+jobs:
+  build-check:
+    name: Build check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - 'src'
+    steps:
+      - name: Install cargo
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target
+          key: ${{ runner.os }}-cargo-libtest-v6-${{ hashFiles('**/Cargo.lock') }}-cargo-c-v0.9.6
+      - name: Install cbindgen
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cbindgen
+      - name: cargo-c-exists
+        id: cargoCCheck
+        run: test -e ~/.cargo/bin/cargo-cbuild
+        continue-on-error: true
+      - name: Install cargo-c
+        if: ${{ always() && steps.cargoCCheck.outcome == 'failure' }}
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-c --version 0.9.6
+      - name: Install required libs
+        run: sudo apt-get install libxkbcommon-dev
+
+      - name: checkout cskk
+        uses: actions/checkout@v3
+        with:
+          repository: 'naokiri/cskk'
+          path: cskk
+      - name: Build CSKK library
+        run: cargo cinstall
+        working-directory: cskk
+      - uses: actions/checkout@v3
+      - name: Build
+        uses: ashutoshvarma/action-cmake-build@master
+        with:
+          build-dir: ${{ runner.workspace }}/build
+          cc: gcc
+          cxx: g++
+          build-type: Release
+          run-test: false
+
