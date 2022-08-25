@@ -134,7 +134,7 @@ FCITX_CONFIGURATION(
                                CandidateSelectionKeys::Number};
     //    Option<bool> showAnnotation{this, "ShowAnnotation",
     //                                _("Show Annotation. Fake yet."), true};);
-) // FCITX_CONFIGURATION
+    ) // FCITX_CONFIGURATION
 } // namespace fcitx
 
 #endif // FCITX5_CSKK_CSKKCONFIG_H
