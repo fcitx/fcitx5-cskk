@@ -83,6 +83,8 @@ struct FcitxCskkRuleAnnotation : public EnumAnnotation {
 
 FCITX_CONFIGURATION(
     FcitxCskkConfig,
+    OptionWithAnnotation<std::string, FcitxCskkRuleAnnotation> cskkRule{
+        this, "Rule", _("Rule"), "default"};
     OptionWithAnnotation<InputMode, InputModeAnnotation> inputMode{
         this, "InitialInputMode", _("InitialInputMode"), Hiragana};
     OptionWithAnnotation<PeriodStyle, PeriodStyleI18NAnnotation> periodStyle{
@@ -132,9 +134,7 @@ FCITX_CONFIGURATION(
                                CandidateSelectionKeys::Number};
     //    Option<bool> showAnnotation{this, "ShowAnnotation",
     //                                _("Show Annotation. Fake yet."), true};);
-
-    OptionWithAnnotation<std::string, FcitxCskkRuleAnnotation> cskkRule{
-        this, "Rule", _("Rule"), "default"};) // FCITX_CONFIGURATION
+) // FCITX_CONFIGURATION
 } // namespace fcitx
 
 #endif // FCITX5_CSKK_CSKKCONFIG_H

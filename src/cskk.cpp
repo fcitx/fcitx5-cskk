@@ -20,7 +20,6 @@
 #include <fcitx/addonmanager.h>
 #include <fcitx/inputpanel.h>
 #include <filesystem>
-#include <iostream>
 #include <string>
 #include <vector>
 using std::getenv;
@@ -369,6 +368,7 @@ void FcitxCskkContext::applyConfig() {
   CSKK_DEBUG() << "apply config";
   auto &config = engine_->config();
 
+  skk_context_set_rule(context_, config.cskkRule->c_str());
   skk_context_set_dictionaries(context_, engine_->dictionaries().data(),
                                engine_->dictionaries().size());
   skk_context_set_period_style(context_, *config.periodStyle);
