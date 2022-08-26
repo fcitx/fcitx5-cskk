@@ -11,7 +11,7 @@ include(GNUInstallDirs)
 include(ECMUninstallTarget)
 
 find_package(PkgConfig REQUIRED)
-find_package(Fcitx5Core REQUIRED)
+find_package(Fcitx5Core 5.0.18 REQUIRED)
 pkg_check_modules(LIBCSKK REQUIRED "cskk>=0.3.0")
 
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
