@@ -14,8 +14,24 @@ find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core 5.0.6 REQUIRED)
 pkg_check_modules(LIBCSKK REQUIRED "cskk>=0.6.0")
 
+option(ENABLE_QT "Enable Qt for GUI configuration" On)
+
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
 
+# GUI related libs
+if (ENABLE_QT)
+    find_package(Qt5 5.7 REQUIRED COMPONENTS Core Gui Widgets)
+    find_package(Fcitx5Qt5WidgetsAddons REQUIRED)
+endif ()
+
+set(SKK_DICT_DEFAULT_PATH "/usr/share/skk/SKK-JISYO.L" CACHE STRING "Default path of SKK Dictionary file")
+set(SKK_DICT_DEFAULT_ENCODING "euc-jp" CACHE STRING "Default encoding of SKK Dictionary file")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/skk_dict_config.h.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/skk_dict_config.h"
+        IMMEDIATE @ONLY)
+
+# Googletest submodule setup
 find_package(Git QUIET)
 if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     enable_testing()
@@ -46,6 +62,8 @@ add_subdirectory(src)
 add_subdirectory(data)
 add_subdirectory(po)
 add_subdirectory(test)
+add_subdirectory(gui)
+
 
 fcitx5_translate_desktop_file(
         org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in

@@ -1,6 +1,7 @@
 set(CSKK_SOURCES
         cskk.cpp
-        cskkcandidatelist.cpp)
+        cskkcandidatelist.cpp
+        cskkconfig.cpp)
 add_library(fcitx5-cskk MODULE ${CSKK_SOURCES})
 target_link_libraries(fcitx5-cskk
         Fcitx5::Core

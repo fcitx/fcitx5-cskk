@@ -22,6 +22,9 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+extern "C" {
+#include <fcntl.h>
+}
 using std::getenv;
 using std::string;
 
@@ -94,90 +97,99 @@ void FcitxCskkEngine::reloadConfig() {
     });
   }
 }
+
+typedef enum _FcitxSkkDictType { FSDT_Invalid, FSDT_File } FcitxSkkDictType;
 void FcitxCskkEngine::loadDictionary() {
   freeDictionaries();
 
-  const std::filesystem::directory_options directoryOptions =
-      (std::filesystem::directory_options::skip_permission_denied |
-       std::filesystem::directory_options::follow_directory_symlink);
+  auto dict_config_file = StandardPath::global().open(
+      StandardPath::Type::PkgData, "cskk/dictionary_list", O_RDONLY);
 
-  // For time being, just load files from XDG_DATA_{HOME,DIRS} only.
-  try {
-    std::filesystem::path dataDir = getXDGDataHome();
-    dataDir.append("fcitx5-cskk/dictionary");
-    CSKK_DEBUG() << dataDir;
-    // TODO: Use string::ends_with when fcitx5 family uses C++20.
-    for (const auto &file :
-         std::filesystem::directory_iterator(dataDir, directoryOptions)) {
-      if (file.is_regular_file()) {
-        auto path = file.path().string();
-        if (path.length() > 5) {
-          if (path.compare(path.length() - 5, 5, ".dict") == 0) {
-            dictionaries_.emplace_back(
-                skk_user_dict_new(file.path().c_str(), "UTF-8"));
-          }
+  UniqueFilePtr fp(fdopen(dict_config_file.fd(), "rb"));
+  if (!fp) {
+    return;
+  }
+
+  UniqueCPtr<char> buf;
+  size_t len = 0;
+
+  while (getline(buf, &len, fp.get()) != -1) {
+    const auto trimmed = stringutils::trim(buf.get());
+    const auto tokens = stringutils::split(trimmed, ",");
+
+    if (tokens.size() < 3) {
+      continue;
+    }
+
+    CSKK_DEBUG() << "Load dictionary: " << trimmed;
+
+    FcitxSkkDictType type = FSDT_Invalid;
+    int mode = 0;
+    std::string path;
+    std::string encoding;
+    for (auto &token : tokens) {
+      auto equal = token.find('=');
+      if (equal == std::string::npos) {
+        continue;
+      }
+
+      auto key = token.substr(0, equal);
+      auto value = token.substr(equal + 1);
+
+      // These keys from gui/dictmodel.cpp
+      // Couldn't find a good way to make parser common for Qt classes and here.
+      if (key == "type") {
+        if (value == "file") {
+          type = FSDT_File;
+        }
+      } else if (key == "file") {
+        path = value;
+      } else if (key == "mode") {
+        if (value == "readonly") {
+          mode = 1;
+        } else if (value == "readwrite") {
+          mode = 2;
+        }
+      } else if (key == "encoding") {
+        encoding = value;
+      }
+    }
+
+    encoding = !encoding.empty() ? encoding : "euc-jp";
+
+    if (type == FSDT_Invalid) {
+      continue;
+    } else if (type == FSDT_File) {
+      if (path.empty() || mode == 0) {
+        continue;
+      }
+      if (mode == 1) {
+        // readonly mode
+        auto *dict = skk_file_dict_new(path.c_str(), encoding.c_str());
+        if (dict) {
+          CSKK_DEBUG() << "Adding file dict: " << path;
+          dictionaries_.emplace_back(dict);
+        }
+      } else {
+        // read/write mode
+        constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
+        constexpr auto len = sizeof(configDir) - 1;
+        std::string realpath = path;
+        if (stringutils::startsWith(path, configDir)) {
+          realpath = stringutils::joinPath(
+              StandardPath::global().userDirectory(StandardPath::Type::PkgData),
+              path.substr(len));
+        }
+        auto *userdict = skk_user_dict_new(realpath.c_str(), encoding.c_str());
+        if (userdict) {
+          CSKK_DEBUG() << "Adding user dict: " << realpath;
+          dictionaries_.emplace_back(userdict);
         }
       }
     }
-  } catch (std::filesystem::filesystem_error &ignored) {
-    CSKK_WARN() << "Read userdictionary failed. Skipping.";
-  }
-
-  std::vector<string> xdgDataDirs = getXDGDataDirs();
-
-  for (const auto &xdgDataDir : xdgDataDirs) {
-    std::filesystem::path dataDir = xdgDataDir;
-    dataDir.append("fcitx5-cskk/dictionary");
-    CSKK_DEBUG() << dataDir;
-    try {
-      for (const auto &file :
-           std::filesystem::directory_iterator(dataDir, directoryOptions)) {
-        if (file.is_regular_file()) {
-          dictionaries_.emplace_back(
-              skk_file_dict_new(file.path().c_str(), "UTF-8"));
-        }
-      }
-    } catch (std::filesystem::filesystem_error &ignored) {
-      CSKK_WARN() << "Read static dictionary failed. Skipping.";
-    }
   }
 }
-std::string FcitxCskkEngine::getXDGDataHome() {
-  const char *xdgDataHomeEnv = getenv("XDG_DATA_HOME");
-  const char *homeEnv = getenv("HOME");
-  if (xdgDataHomeEnv && strlen(xdgDataHomeEnv) > 0) {
-    return string(xdgDataHomeEnv);
-  } else if (homeEnv) {
-    return string(homeEnv) + "/.local/share";
-  }
-  return "";
-}
 
-std::vector<std::string> FcitxCskkEngine::getXDGDataDirs() {
-  const char *xdgDataDirEnv = getenv("XDG_DATA_DIRS");
-  string rawDirs;
-
-  if (xdgDataDirEnv && strlen(xdgDataDirEnv) > 0) {
-    rawDirs = string(xdgDataDirEnv);
-  } else {
-    rawDirs = "/usr/local/share:/usr/share";
-  }
-
-  std::vector<string> xdgDataDirs;
-  auto offset = 0;
-  while (true) {
-    auto pos = rawDirs.find(':', offset);
-
-    if (pos == std::string::npos) {
-      xdgDataDirs.emplace_back(rawDirs.substr(offset));
-      break;
-    }
-    xdgDataDirs.emplace_back(rawDirs.substr(offset, pos - offset));
-    offset = pos + 1;
-  }
-  CSKK_DEBUG() << xdgDataDirs;
-  return xdgDataDirs;
-}
 void FcitxCskkEngine::freeDictionaries() {
   CSKK_DEBUG() << "Cskk free dict";
   for (auto dictionary : dictionaries_) {
