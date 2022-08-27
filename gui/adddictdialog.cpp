@@ -23,6 +23,7 @@ AddDictDialog::AddDictDialog(QWidget *parent)
   m_ui->setupUi(this);
   m_ui->typeComboBox->addItem(_("System"));
   m_ui->typeComboBox->addItem(_("User"));
+  m_ui->typeComboBox->setCurrentIndex(1);
 
   indexChanged(0);
 
@@ -89,7 +90,7 @@ void AddDictDialog::browseClicked() {
 
     if (path.isEmpty()) {
       auto baseDataPath = stringutils::joinPath(
-          StandardPath::global().userDirectory(StandardPath::Type::Data), "cskk");
+          StandardPath::global().userDirectory(StandardPath::Type::Data), "fcitx5-cskk");
       fs::makePath(baseDataPath);
       QString basePath = QDir::cleanPath(QString::fromStdString(baseDataPath));
       path = basePath;
