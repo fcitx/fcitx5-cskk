@@ -23,7 +23,7 @@ public:
 
 public Q_SLOTS:
     void browseClicked();
-    void indexChanged(int);
+    void indexChanged([[maybe_unused]] int);
     void validate();
 
 private:

@@ -12,6 +12,7 @@
 #include <QTemporaryFile>
 #include <QtGlobal>
 #include <fcitx-utils/standardpath.h>
+#include <iostream>
 
 #include <fcntl.h>
 #include "dictmodel.h"
@@ -22,13 +23,14 @@ const std::string config_path = "cskk/dictionary_list";
 
 SkkDictModel::SkkDictModel(QObject *parent) : QAbstractListModel(parent) {
     m_knownKeys << "file"
+                << "type"
                 << "mode"
                 << "encoding";
 }
 
 void SkkDictModel::defaults() {
     auto path =
-        StandardPath::global().fcitxPath("pkgdatadir", config_path);
+        StandardPath::fcitxPath("pkgdatadir", config_path.c_str());
     QFile f(path.data());
     if (f.open(QIODevice::ReadOnly)) {
         load(f);

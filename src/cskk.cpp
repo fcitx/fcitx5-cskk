@@ -155,12 +155,15 @@ void FcitxCskkEngine::loadDictionary() {
       }
     }
 
+    // encoding is not optional now, but for compatibility from fcitx5-skk.
     encoding = !encoding.empty() ? encoding : "euc-jp";
 
     if (type == FSDT_Invalid) {
+      CSKK_WARN() << "Dictionary entry has invalid type. Ignored.";
       continue;
-    } else if (type == FSDT_File) {
+    } else {
       if (path.empty() || mode == 0) {
+        CSKK_WARN() << "Invalid dictionary path or mode. Ignored";
         continue;
       }
       if (mode == 1) {
@@ -169,21 +172,25 @@ void FcitxCskkEngine::loadDictionary() {
         if (dict) {
           CSKK_DEBUG() << "Adding file dict: " << path;
           dictionaries_.emplace_back(dict);
+        } else {
+          CSKK_WARN() << "Static dictionary load error. Ignored: " << path;
         }
       } else {
         // read/write mode
         constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
-        constexpr auto len = sizeof(configDir) - 1;
+        constexpr auto var_len = sizeof(configDir) - 1;
         std::string realpath = path;
         if (stringutils::startsWith(path, configDir)) {
           realpath = stringutils::joinPath(
               StandardPath::global().userDirectory(StandardPath::Type::PkgData),
-              path.substr(len));
+              path.substr(var_len));
         }
         auto *userdict = skk_user_dict_new(realpath.c_str(), encoding.c_str());
         if (userdict) {
           CSKK_DEBUG() << "Adding user dict: " << realpath;
           dictionaries_.emplace_back(userdict);
+        } else {
+          CSKK_WARN() << "User dictionary load error. Ignored: " << realpath;
         }
       }
     }

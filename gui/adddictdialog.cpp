@@ -33,8 +33,6 @@ AddDictDialog::AddDictDialog(QWidget *parent)
           &AddDictDialog::indexChanged);
   connect(m_ui->urlLineEdit, &QLineEdit::textChanged, this,
           &AddDictDialog::validate);
-  connect(m_ui->hostLineEdit, &QLineEdit::textChanged, this,
-          &AddDictDialog::validate);
 }
 
 QMap<QString, QString> AddDictDialog::dictionary() {
@@ -48,18 +46,12 @@ QMap<QString, QString> AddDictDialog::dictionary() {
   dict["type"] = "file";
   dict["file"] = m_ui->urlLineEdit->text();
   dict["mode"] = type[idx];
-
-  if (!m_ui->encodingEdit->text().isEmpty()) {
-    dict["encoding"] = m_ui->encodingEdit->text();
-  }
+  dict["encoding"] = m_ui->encodingEdit->text();
 
   return dict;
 }
 
-void AddDictDialog::indexChanged(int idx) {
-//  m_ui->pathLabel->setVisible(true);
-//  m_ui->urlLineEdit->setVisible(true);
-//  m_ui->browseButton->setVisible(true);
+void AddDictDialog::indexChanged([[maybe_unused]] int _idx) {
   validate();
 }
 
@@ -69,7 +61,7 @@ void AddDictDialog::validate() {
   switch (index) {
   case DictType_Static:
   case DictType_User:
-    if (m_ui->urlLineEdit->text().isEmpty()) {
+    if (m_ui->urlLineEdit->text().isEmpty() || m_ui->encodingEdit->text().isEmpty()) {
       valid = false;
     }
     break;
@@ -91,8 +83,9 @@ void AddDictDialog::browseClicked() {
     auto fcitxBasePath = stringutils::joinPath(
         StandardPath::global().userDirectory(StandardPath::Type::PkgData),
         "cskk");
+    fs::makePath(fcitxBasePath);
     QString fcitxConfigBasePath =
-        QDir::cleanPath(QString::fromStdString(fs::makePath(fcitxBasePath)));
+        QDir::cleanPath(QString::fromStdString(fcitxBasePath));
 
     if (path.isEmpty()) {
       auto baseDataPath = stringutils::joinPath(

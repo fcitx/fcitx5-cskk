@@ -16,13 +16,13 @@ extern "C" {
 
 namespace fcitx {
 
-CSkkConfigPlugin::CSkkConfigPlugin(QObject *parent)
+CskkConfigPlugin::CskkConfigPlugin(QObject *parent)
     : FcitxQtConfigUIPlugin(parent) {
 
     registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
 }
 
-FcitxQtConfigUIWidget *CSkkConfigPlugin::create(const QString &key) {
+FcitxQtConfigUIWidget *CskkConfigPlugin::create(const QString &key) {
     if (key == "dictionary_list") {
         return new SkkDictWidget;
     }

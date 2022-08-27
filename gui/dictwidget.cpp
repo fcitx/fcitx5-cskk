@@ -22,7 +22,7 @@ SkkDictWidget::SkkDictWidget(QWidget *parent)
     m_dictModel = new SkkDictModel(this);
     auto fcitxBasePath = stringutils::joinPath(
         StandardPath::global().userDirectory(StandardPath::Type::PkgData),
-        "skk");
+        "cskk");
     fs::makePath(fcitxBasePath);
 
     m_ui->dictionaryView->setModel(m_dictModel);

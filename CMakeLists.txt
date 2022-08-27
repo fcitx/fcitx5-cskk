@@ -24,12 +24,13 @@ if (ENABLE_QT)
     find_package(Fcitx5Qt5WidgetsAddons REQUIRED)
 endif ()
 
+# make default value header searchable
 set(SKK_DICT_DEFAULT_PATH "/usr/share/skk/SKK-JISYO.L" CACHE STRING "Default path of SKK Dictionary file")
 set(SKK_DICT_DEFAULT_ENCODING "euc-jp" CACHE STRING "Default encoding of SKK Dictionary file")
-
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/skk_dict_config.h.in"
         "${CMAKE_CURRENT_BINARY_DIR}/skk_dict_config.h"
         IMMEDIATE @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # Googletest submodule setup
 find_package(Git QUIET)
