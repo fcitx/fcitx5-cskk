@@ -45,9 +45,6 @@ private:
   QList<QMap<QString, QString>> m_dicts;
 };
 
-QSet<QString> SkkDictModel::m_knownKeys =
-    QSet<QString>({"file", "type", "mode", "encoding"});
-
 } // namespace fcitx
 
 #endif // DICTMODEL_H

@@ -20,6 +20,9 @@ namespace fcitx {
 
 const std::string config_path = "cskk/dictionary_list";
 
+QSet<QString> SkkDictModel::m_knownKeys =
+    QSet<QString>({"file", "type", "mode", "encoding"});
+
 SkkDictModel::SkkDictModel(QObject *parent) : QAbstractListModel(parent) {}
 
 void SkkDictModel::defaults() {
@@ -182,7 +185,7 @@ QMap<QString, QString> SkkDictModel::parseLine(const QString &line) {
     QString key = item.section('=', 0, 0);
     QString value = item.section('=', 1, -1);
 
-    if (!m_knownKeys.contains(key)) {
+    if (!SkkDictModel::m_knownKeys.contains(key)) {
       continue;
     }
 
