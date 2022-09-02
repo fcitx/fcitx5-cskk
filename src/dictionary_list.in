@@ -1,0 +1,1 @@
+type=file,file=@SKK_DICT_DEFAULT_PATH@,mode=readonly,encoding=@SKK_DICT_DEFAULT_ENCODING@

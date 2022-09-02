@@ -132,9 +132,10 @@ FCITX_CONFIGURATION(
         candidateSelectionKeys{this, "Candidate selection keys",
                                _("Candidate selection keys"),
                                CandidateSelectionKeys::Number};
+    ExternalOption dictionary{this, "Dictionary", _("Dictionary"),
+                              "fcitx://config/addon/cskk/dictionary_list"};
     //    Option<bool> showAnnotation{this, "ShowAnnotation",
     //                                _("Show Annotation. Fake yet."), true};);
     ) // FCITX_CONFIGURATION
 } // namespace fcitx
-
 #endif // FCITX5_CSKK_CSKKCONFIG_H

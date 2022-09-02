@@ -43,13 +43,33 @@ GOOGLETESTフラグはキャッシュされるのでライブラリ生成時に�
     - [x] 変換候補リストのサイズ
      
 ### 実装内容・予定不明
-- [ ] 優先度、読み書き可不可の辞書リスト設定
+- [x] 優先度、読み書き可不可の辞書リスト設定
 
 
-### じしょ
-現在のところ $XDG_DATA_HOME/fcitx5-cskk/dictionary/\*.dict (多くの環境では$HOME/.local/share/fctix5-cskk/dictionary/\*.dict )  を読み書き可能な辞書として優先して読む。 
-$XDG_DATA_DIRS/fcitx5-cskk/dictionary/\* (/usr/local/share/fcitx5-cskk/dictionary/\* 等) を読みとり専用辞書とする。
-文字コードはUTF-8のみに対応。ファイル名順。
+### 辞書
+辞書の形式は [skk-dev](https://skk-dev.github.io/dict/) で配布されているものを想定している。
+
+デフォルトでは/usr/share/skk/SKK-JISYO.L が euc-jp の読み取り専用辞書として使われる。
+
+辞書はfcitx5のconfigtoolから設定可能。
+
+
+直接編集する場合は `~/.local/share/fcitx5/cskk/dictionary_list` に保存されている。
+','区切りのkey=valueリストで、type,file,mode,encodingを指定する。
+例として、
+
+    type=file,file=/usr/share/skk/SKK-JISYO.L,mode=readonly,encoding=euc-jp
+    type=file,file=$FCITX_CONFIG_DIR/cskk/user.dict,mode=readwrite
+
+typeはfileのみ。必須。
+
+fileはファイルへのパスを指定する。必須。唯一文頭でのみ$FCITX_CONFIG_DIRのみ変数として使え、fcitx5の設定ディレクトリ(通常は~/.local/share/fcitx5)を指す。
+
+modeはreadonlyまたはreadwrite。必須。
+
+encodingに指定できる内容はlibcskkに準じる。必須。少なくとも"euc-jp"や"utf-8"が使える。
+
+
 
 ## 著作権表示
 
