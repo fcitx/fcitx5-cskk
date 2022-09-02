@@ -32,6 +32,7 @@ private Q_SLOTS:
     void removeDictClicked();
     void moveUpDictClicked();
     void moveDownClicked();
+    void editDictClicked();
 
 private:
     std::unique_ptr<Ui::SkkDictWidget> m_ui;

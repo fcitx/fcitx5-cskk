@@ -6,6 +6,7 @@
  */
 
 #include "adddictdialog.h"
+#include "dictmodel.h"
 #include "skk_dict_config.h"
 #include <QDebug>
 #include <QFileDialog>
@@ -15,6 +16,8 @@
 #define FCITX_CONFIG_DIR "$FCITX_CONFIG_DIR"
 
 namespace fcitx {
+
+const char *mode_type[] = {"readonly", "readwrite"};
 
 enum DictType { DictType_Static, DictType_User };
 
@@ -42,19 +45,16 @@ QMap<QString, QString> AddDictDialog::dictionary() {
   idx = idx > 1 ? 0 : idx;
 
   QMap<QString, QString> dict;
-  const char *type[] = {"readonly", "readwrite"};
 
   dict["type"] = "file";
   dict["file"] = m_ui->urlLineEdit->text();
-  dict["mode"] = type[idx];
+  dict["mode"] = mode_type[idx];
   dict["encoding"] = m_ui->encodingEdit->text();
 
   return dict;
 }
 
-void AddDictDialog::indexChanged([[maybe_unused]] int _idx) {
-  validate();
-}
+void AddDictDialog::indexChanged([[maybe_unused]] int _idx) { validate(); }
 
 void AddDictDialog::validate() {
   const auto index = m_ui->typeComboBox->currentIndex();
@@ -62,7 +62,8 @@ void AddDictDialog::validate() {
   switch (index) {
   case DictType_Static:
   case DictType_User:
-    if (m_ui->urlLineEdit->text().isEmpty() || m_ui->encodingEdit->text().isEmpty()) {
+    if (m_ui->urlLineEdit->text().isEmpty() ||
+        m_ui->encodingEdit->text().isEmpty()) {
       valid = false;
     }
     break;
@@ -90,7 +91,8 @@ void AddDictDialog::browseClicked() {
 
     if (path.isEmpty()) {
       auto baseDataPath = stringutils::joinPath(
-          StandardPath::global().userDirectory(StandardPath::Type::Data), "fcitx5-cskk");
+          StandardPath::global().userDirectory(StandardPath::Type::Data),
+          "fcitx5-cskk");
       fs::makePath(baseDataPath);
       QString basePath = QDir::cleanPath(QString::fromStdString(baseDataPath));
       path = basePath;
@@ -109,6 +111,17 @@ void AddDictDialog::browseClicked() {
   if (!path.isEmpty()) {
     m_ui->urlLineEdit->setText(path);
   }
+}
+void AddDictDialog::setDictionary(QMap<QString, QString> &dict) {
+  m_ui->urlLineEdit->setText(dict["file"]);
+
+  for (int i = 0; i < (sizeof(mode_type) / sizeof(char *)); i++) {
+    // It's OK to use stdstirng here. We only use latin-1.
+    if (dict["mode"].toStdString() == mode_type[i]) {
+      m_ui->typeComboBox->setCurrentIndex(i);
+    }
+  }
+  m_ui->encodingEdit->setText(dict["encoding"]);
 }
 
 } // namespace fcitx

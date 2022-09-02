@@ -54,6 +54,22 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="editDictButton">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="edit"/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="moveUpDictButton">
        <property name="minimumSize">
         <size>

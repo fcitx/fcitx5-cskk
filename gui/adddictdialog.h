@@ -20,6 +20,7 @@ class AddDictDialog : public QDialog {
 public:
     explicit AddDictDialog(QWidget *parent = 0);
     QMap<QString, QString> dictionary();
+    void setDictionary(QMap<QString, QString> &dict);
 
 public Q_SLOTS:
     void browseClicked();

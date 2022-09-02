@@ -37,6 +37,7 @@ SkkDictWidget::SkkDictWidget(QWidget *parent)
             &SkkDictWidget::moveUpDictClicked);
     connect(m_ui->moveDownDictButton, &QPushButton::clicked, this,
             &SkkDictWidget::moveDownClicked);
+    connect(m_ui->editDictButton, &QPushButton::clicked, this, &SkkDictWidget::editDictClicked);
 
     load();
 }
@@ -92,6 +93,20 @@ void SkkDictWidget::moveDownClicked() {
             m_dictModel->index(row + 1), QItemSelectionModel::ClearAndSelect);
         emit changed(true);
     }
+}
+
+void SkkDictWidget::editDictClicked() {
+  QModelIndex index = m_ui->dictionaryView->currentIndex();
+  QVariant dictValue = m_dictModel->data(index,Qt::EditRole);
+  QMap<QString, QString> dictionary = SkkDictModel::parseLine(dictValue.toString());
+  AddDictDialog dialog;
+  dialog.setDictionary(dictionary);
+  int result = dialog.exec();
+  if (result == QDialog::Accepted) {
+    QString val = SkkDictModel::serialize(dialog.dictionary());
+    m_dictModel->setData(index, val);
+    emit changed(true);
+  }
 }
 
 } // namespace fcitx
