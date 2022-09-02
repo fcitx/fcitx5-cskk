@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: 2013~2022 CSSlayer <wengxt@gmail.com>, Naoaki Iwakiri
- * <naokiri@gmail.com>
+ * SPDX-FileCopyrightText: <text>2013~2022 CSSlayer <wengxt@gmail.com>, Naoaki Iwakiri
+ * <naokiri@gmail.com></text>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
