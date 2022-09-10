@@ -8,10 +8,13 @@ jobs:
         cskk_ver: [0.8.1]
     steps:
     # TODO: Fix to get latest release automatically?
-    - name: Download libcskk
+    - name: Download & install libcskk
       run: |
         wget https://github.com/naokiri/cskk/releases/download/v${{ matrix.cskk_ver }}/libcskk_${{ matrix.cskk_ver }}_amd64.deb
-        sudo apt install ./libcskk_${{ matrix.cskk_ver }}_amd64.deb
+        sudo apt-get install ./libcskk_${{ matrix.cskk_ver }}_amd64.deb
+    - name: Install required libs
+      run: |
+        sudo apt-get install extra-cmake-modules
     - name: checkout
       uses: actions/checkout@v3
     - name: Build
