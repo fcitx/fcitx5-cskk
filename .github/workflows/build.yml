@@ -32,7 +32,7 @@ jobs:
       if: ${{ always() }}
       run: |
         ls &&
-        cat CMakeCache.txt
+        cat /home/runner/work/fcitx5-cskk/build/CMakeCache.txt
 
       
 
