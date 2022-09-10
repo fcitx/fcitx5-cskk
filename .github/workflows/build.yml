@@ -27,5 +27,5 @@ jobs:
         cxx: g++
         build-type: Release
         run-test: false
-        build-options: --trace
+        build-options: --verbose
 
