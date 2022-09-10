@@ -31,7 +31,8 @@ jobs:
     - name: Output cmakecache
       if: ${{ always() }}
       run: |
-        cat build/CMakeCache.txt
+        ls &&
+        cat fcitx5-cskk/build/CMakeCache.txt
 
       
 
