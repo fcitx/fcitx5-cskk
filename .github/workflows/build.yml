@@ -1,0 +1,25 @@
+name: Build
+on: [ workflow_dispatch ]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cskk_ver: [0.8.1]
+    steps:
+    # TODO: Fix to get latest release automatically?
+    - name: Download libcskk
+      run: |
+        wget https://github.com/naokiri/cskk/releases/download/v${{ matrix.cskk_ver }}/libcskk_${{ matrix.cskk_ver }}_amd64.deb
+        sudo apt install ./libcskk_${{ matrix.cskk_ver }}_amd64.deb
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{ runner.workspace }}/build
+        cc: gcc
+        cxx: g++
+        build-type: Release
+        run-test: false
+
