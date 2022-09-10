@@ -14,7 +14,7 @@ jobs:
         sudo apt-get install ./libcskk_${{ matrix.cskk_ver }}_amd64.deb
     - name: Install required libs
       run: |
-        sudo apt-get install extra-cmake-modules libfcitx5core-dev qtbase5-dev libfcitx5-qt-dev
+        sudo apt-get install extra-cmake-modules libfcitx5core-dev qtbase5-dev libfcitx5-qt-dev gettext
     - name: checkout
       uses: actions/checkout@v3
       with:
