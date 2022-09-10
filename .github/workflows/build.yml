@@ -17,6 +17,8 @@ jobs:
         sudo apt-get install extra-cmake-modules libfcitx5core-dev qtbase5-dev libfcitx5-qt-dev
     - name: checkout
       uses: actions/checkout@v3
+      with:
+        submodules: recursive
     - name: Build
       uses: ashutoshvarma/action-cmake-build@master
       with:
