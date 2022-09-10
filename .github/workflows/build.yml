@@ -1,0 +1,17 @@
+name: Build
+on: [ workflow_dispatch ]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{ runner.workspace }}/build
+        cc: gcc
+        cxx: g++
+        build-type: Release
+        run-test: false
+
