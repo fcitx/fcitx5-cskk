@@ -19,23 +19,23 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
-    - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.12
-#    - name: Build
-#      uses: ashutoshvarma/action-cmake-build@master
-#      with:
-#        build-dir: ${{ runner.workspace }}/build
-#        cc: gcc
-#        cxx: g++
-#        build-type: Release
-#        run-test: false
-#        build-options: --verbose
-    - name: build
-      run: |
-        mkdir build &&
-        cd build &&
-        cmake .. &&
-        make
+#    - name: Setup cmake
+#      uses: jwlawson/actions-setup-cmake@v1.12
+#    - name: build
+#      run: |
+#        mkdir build &&
+#        cd build &&
+#        cmake .. &&
+#        make
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{ runner.workspace }}/build
+        cc: gcc
+        cxx: c++
+        build-type: Release
+        run-test: false
+        build-options: --verbose
     - name: Output cmakecache
       if: ${{ always() }}
       run: |
