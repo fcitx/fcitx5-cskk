@@ -21,8 +21,14 @@ jobs:
         submodules: recursive
     - name: output some debug info
       run: |
+        echo usr/local/lib:
         ls /usr/local/lib/
+        echo lib/cskk:
         ls /usr/local/lib/cskk
+        echo LD_LIBRARY_PATH
+        echo $LD_LIBRARY_PATH
+        echo SEARCH_DIR
+        echo $SEARCH_DIR
 #    - name: Setup cmake
 #      uses: jwlawson/actions-setup-cmake@v1.12
 #    - name: build
