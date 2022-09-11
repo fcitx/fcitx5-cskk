@@ -12,7 +12,8 @@ include(ECMUninstallTarget)
 
 find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core 5.0.6 REQUIRED)
-pkg_check_modules(LIBCSKK REQUIRED "cskk>=0.7.0")
+
+pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=0.7.0")
 
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 
@@ -52,7 +53,7 @@ if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 endif ()
 
 if (NOT EXISTS "${PROJECT_SOURCE_DIR}/third_party/googletest/CMakeLists.txt")
-    message(FATAL_ERROR "The submodules were not downloaded! GOOGLETEST was turned off or failed. Please update submodules and try again.")
+    message(FATAL_ERROR "The submodules were not downloaded! GOOGLETEST was turned off or failed. Please update submodules (git submodules update --init --recurseive) and try again.")
 endif ()
 
 

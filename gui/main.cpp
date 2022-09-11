@@ -7,7 +7,7 @@
 
 #include "main.h"
 extern "C" {
-#include <cskk/libcskk.h>
+#include <libcskk.h>
 }
 #include <QApplication>
 #include <fcitx-utils/i18n.h>
