@@ -19,6 +19,10 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
+    - name: output some debug info
+      run: |
+        ls /usr/local/lib/
+        ls /usr/local/lib/cskk
 #    - name: Setup cmake
 #      uses: jwlawson/actions-setup-cmake@v1.12
 #    - name: build
