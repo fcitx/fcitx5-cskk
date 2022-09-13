@@ -46,8 +46,12 @@ jobs:
         build-type: Release
         run-test: false
         build-options: --verbose
-    - name: Output cmakecache
-      if: ${{ always() }}
+#    - name: Output cmakecache
+#      if: ${{ always() }}
+#      run: |
+#        ls &&
+#        cat /home/runner/work/fcitx5-cskk/build/CMakeCache.txt
+    - name: Pack deb
       run: |
-        ls &&
-        cat /home/runner/work/fcitx5-cskk/build/CMakeCache.txt
+        cd build
+        cpack -G DEB
