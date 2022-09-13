@@ -51,6 +51,3 @@ jobs:
       run: |
         ls &&
         cat /home/runner/work/fcitx5-cskk/build/CMakeCache.txt
-
-      
-
