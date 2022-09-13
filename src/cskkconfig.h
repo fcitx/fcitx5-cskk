@@ -16,7 +16,7 @@
 #define FCITX5_CSKK_CSKKCONFIG_H
 
 extern "C" {
-#include <cskk/libcskk.h>
+#include <libcskk.h>
 }
 #include "log.h"
 #include <fcitx-config/configuration.h>

@@ -16,7 +16,7 @@
 #define FCITX5_CSKK_CSKK_H
 
 extern "C" {
-#include <cskk/libcskk.h>
+#include <libcskk.h>
 }
 #include "cskkconfig.h"
 #include <fcitx/addonfactory.h>
