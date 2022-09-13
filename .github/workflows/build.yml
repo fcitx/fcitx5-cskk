@@ -1,4 +1,4 @@
-name: Build
+name: Build and pack .deb
 on: [ workflow_dispatch ]
 jobs:
   Build:
@@ -53,5 +53,5 @@ jobs:
 #        cat /home/runner/work/fcitx5-cskk/build/CMakeCache.txt
     - name: Pack deb
       run: |
-        cd build
+        cd ${{ runner.workspace }}/build
         cpack -G DEB
