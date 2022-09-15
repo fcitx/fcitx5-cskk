@@ -31,6 +31,7 @@
 *.out
 *.app
 
-# Common cmake build dirs
+# cmake build dirs
 cmake-build-*/
 build/
+_packages/

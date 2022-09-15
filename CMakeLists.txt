@@ -9,11 +9,13 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 include(FeatureSummary)
 include(GNUInstallDirs)
 include(ECMUninstallTarget)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 
 find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core 5.0.6 REQUIRED)
 
-pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=0.7.0")
+pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=0.8.1")
 
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 
@@ -52,9 +54,10 @@ if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif ()
 endif ()
 
-if (NOT EXISTS "${PROJECT_SOURCE_DIR}/third_party/googletest/CMakeLists.txt")
-    message(FATAL_ERROR "The submodules were not downloaded! GOOGLETEST was turned off or failed. Please update submodules (git submodules update --init --recurseive) and try again.")
-endif ()
+# Currently test doesn't exist, so turning off.
+#if (NOT EXISTS "${PROJECT_SOURCE_DIR}/third_party/googletest/CMakeLists.txt")
+#    message(FATAL_ERROR "The submodules were not downloaded! GOOGLETEST was turned off or failed. Please update submodules (git submodules update --init --recurseive) and try again.")
+#endif ()
 
 
 # Not sure what this does. Need translation?
@@ -75,3 +78,5 @@ fcitx5_translate_desktop_file(
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml" DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+include(DebPack)
