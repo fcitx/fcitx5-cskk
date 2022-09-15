@@ -14,10 +14,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core 5.0.6 REQUIRED)
+find_package(Fcitx5Utils 5.0.6 REQUIRED)
 
 pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=0.8.1")
-
-option(ENABLE_QT "Enable Qt for GUI configuration" On)
 
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 
@@ -71,7 +70,7 @@ add_subdirectory(po)
 add_subdirectory(test)
 add_subdirectory(gui)
 
-
+# This is a system file so it's OK to install in CMAKE_INSTALL_DATADIR
 fcitx5_translate_desktop_file(
         org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in
         org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml XML)
