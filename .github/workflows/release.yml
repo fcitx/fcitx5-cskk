@@ -22,6 +22,9 @@ jobs:
       id: cskk_version
       run: |
         echo ::set-output name=cskk_version::`bin/cskk_version.sh`
+    - name: check cskk version exists in metainfo
+      run: |
+        bin/metainfo_version.sh
     - name: Download & install libcskk
       run: |
         wget https://github.com/naokiri/cskk/releases/download/v${{ steps.versions.outputs.cskk_version }}/libcskk_${{ steps.versions.outputs.cskk_version }}_amd64.deb
