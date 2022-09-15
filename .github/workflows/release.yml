@@ -49,4 +49,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ runner.workspace }}/_packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+          ${{ runner.workspace }}/fcitx5-cskk/_packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
