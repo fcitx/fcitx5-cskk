@@ -40,7 +40,8 @@ jobs:
         cxx: c++
         build-type: Release
         run-test: false
-        build-options: --verbose -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=On
+        configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
+        build-options: --verbose
     - name: Pack deb
       run: |
         cd ${{ runner.workspace }}/build
