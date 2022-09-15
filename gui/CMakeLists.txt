@@ -25,4 +25,5 @@ target_link_libraries(fcitx5-cskk-config
         PkgConfig::LIBCSKK
         )
 
-install(TARGETS fcitx5-cskk-config DESTINATION ${CMAKE_INSTALL_LIBDIR}/fcitx5/qt5)
+# Must install to same lib dir that Fcitx5Utils specify using FCITX_*DIR so that fcitx5 can find.
+install(TARGETS fcitx5-cskk-config DESTINATION ${FCITX_INSTALL_LIBDIR}/fcitx5/qt5)
