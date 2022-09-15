@@ -40,11 +40,11 @@ jobs:
         cxx: c++
         build-type: Release
         run-test: false
-        build-options: --verbose
+        build-options: --verbose -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=On
     - name: Pack deb
       run: |
         cd ${{ runner.workspace }}/build
-        cpack -G DEB
+        cpack -G DEB -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=On
     - name: Attatch artifact to Release
       uses: softprops/action-gh-release@v1
       with:
