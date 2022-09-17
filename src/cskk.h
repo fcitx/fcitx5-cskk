@@ -59,6 +59,8 @@ public:
   static KeyList
   getSelectionKeys(CandidateSelectionKeys candidateSelectionKeys);
 
+  bool isEngineReady();
+
 private:
   Instance *instance_;
   FactoryFor<FcitxCskkContext> factory_;
@@ -69,9 +71,6 @@ private:
   static const std::string config_file_path;
 
   void loadDictionary();
-  static std::string getXDGDataHome();
-  static std::vector<std::string> getXDGDataDirs();
-
   void freeDictionaries();
 };
 
@@ -86,6 +85,13 @@ public:
   void reset();
   void updateUI();
   void applyConfig();
+
+  bool saveDictionary();
+  // value castable to InputMode
+  int getInputMode();
+
+  // FIXME: Ideally, don't use this context() and prepare public function for
+  // each usage to separate the responsibility.
   auto &context() { return context_; }
 
 private:
