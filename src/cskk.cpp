@@ -63,18 +63,13 @@ void FcitxCskkEngine::save() {
     });
   }
 }
-void FcitxCskkEngine::activate(const InputMethodEntry &,
-                               InputContextEvent &event) {
-  auto ic = event.inputContext();
-  auto context = ic->propertyFor(&factory_);
-}
+void FcitxCskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
 void FcitxCskkEngine::deactivate(const InputMethodEntry &entry,
                                  InputContextEvent &event) {
   reset(entry, event);
 }
-void FcitxCskkEngine::reset(const InputMethodEntry &entry,
+void FcitxCskkEngine::reset(const InputMethodEntry &,
                             InputContextEvent &event) {
-  FCITX_UNUSED(entry);
   CSKK_DEBUG() << "Reset";
   auto ic = event.inputContext();
   auto context = ic->propertyFor(&factory_);
@@ -427,11 +422,11 @@ bool FcitxCskkContext::saveDictionary() {
   return true;
 }
 int FcitxCskkContext::getInputMode() {
-    if(!context_) {
-      CSKK_WARN() << "No cskk context setup. No inputmode.";
-      return -1;
-    }
-    return skk_context_get_input_mode(context_);
+  if (!context_) {
+    CSKK_WARN() << "No cskk context setup. No inputmode.";
+    return -1;
+  }
+  return skk_context_get_input_mode(context_);
 }
 
 /*******************************************************************************

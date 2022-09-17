@@ -90,7 +90,8 @@ public:
   // value castable to InputMode
   int getInputMode();
 
-  // FIXME: Ideally, don't use this context() and prepare public function for each usage to separate the responsibility.
+  // FIXME: Ideally, don't use this context() and prepare public function for
+  // each usage to separate the responsibility.
   auto &context() { return context_; }
 
 private:
