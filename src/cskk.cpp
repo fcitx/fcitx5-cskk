@@ -59,15 +59,17 @@ void FcitxCskkEngine::save() {
   if (factory_.registered()) {
     instance_->inputContextManager().foreach ([this](InputContext *ic) {
       auto context = ic->propertyFor(&factory_);
-      skk_context_save_dictionaries(context->context());
-      return true;
+      return context->saveDictionary();
     });
   }
 }
-void FcitxCskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
+void FcitxCskkEngine::activate(const InputMethodEntry &,
+                               InputContextEvent &event) {
+  auto ic = event.inputContext();
+  auto context = ic->propertyFor(&factory_);
+}
 void FcitxCskkEngine::deactivate(const InputMethodEntry &entry,
                                  InputContextEvent &event) {
-  FCITX_UNUSED(entry);
   reset(entry, event);
 }
 void FcitxCskkEngine::reset(const InputMethodEntry &entry,
@@ -229,7 +231,7 @@ KeyList FcitxCskkEngine::getSelectionKeys(
 std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
                                              InputContext &ic) {
   auto context = ic.propertyFor(&factory_);
-  auto current_input_mode = skk_context_get_input_mode(context->context());
+  auto current_input_mode = context->getInputMode();
   switch (current_input_mode) {
   case InputMode::Ascii:
     return "cskk-ascii";
@@ -241,9 +243,11 @@ std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
     return "cskk-katakana";
   case InputMode::Zenkaku:
     return "cskk-zenei";
+  default:
+    return "";
   }
-  return "";
 }
+bool FcitxCskkEngine::isEngineReady() { return factory_.registered(); }
 
 /*******************************************************************************
  * CskkContext
@@ -252,10 +256,17 @@ std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
 FcitxCskkContext::FcitxCskkContext(FcitxCskkEngine *engine, InputContext *ic)
     : context_(skk_context_new(nullptr, 0)), ic_(ic), engine_(engine) {
   CSKK_DEBUG() << "Cskk context new";
-  skk_context_set_input_mode(context_, *engine_->config().inputMode);
+  if (!context_) {
+    // new context wasn't created
+    CSKK_ERROR() << "Failed to create new cskk context";
+  }
 }
-FcitxCskkContext::~FcitxCskkContext() = default;
+FcitxCskkContext::~FcitxCskkContext() { skk_free_context(context_); }
 void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
+  if (!context_) {
+    CSKK_ERROR() << "CSKK Context is not setup. Ignored key.";
+    return;
+  }
   auto candidateList = std::dynamic_pointer_cast<FcitxCskkCandidateList>(
       ic_->inputPanel().candidateList());
   if (candidateList != nullptr && !candidateList->empty()) {
@@ -329,6 +340,10 @@ void FcitxCskkContext::reset() {
   updateUI();
 }
 void FcitxCskkContext::updateUI() {
+  if (!context_) {
+    CSKK_WARN() << "No context setup";
+    return;
+  }
   auto &inputPanel = ic_->inputPanel();
 
   // Output
@@ -385,6 +400,10 @@ void FcitxCskkContext::updateUI() {
 }
 void FcitxCskkContext::applyConfig() {
   CSKK_DEBUG() << "apply config";
+  if (!context_) {
+    CSKK_WARN() << "No context setup. Ignoring config.";
+    return;
+  }
   auto &config = engine_->config();
 
   skk_context_set_rule(context_, config.cskkRule->c_str());
@@ -398,6 +417,22 @@ void FcitxCskkContext::copyTo(InputContextProperty *context) {
   skk_context_set_input_mode(otherContext->context(),
                              skk_context_get_input_mode(context_));
 }
+bool FcitxCskkContext::saveDictionary() {
+  if (!context_) {
+    CSKK_WARN() << "No cskk context setup. Ignored dictionary save.";
+    return false;
+  }
+  skk_context_save_dictionaries(context_);
+  // cskk v0.8 doesn't return value on save dict, return true for now.
+  return true;
+}
+int FcitxCskkContext::getInputMode() {
+    if(!context_) {
+      CSKK_WARN() << "No cskk context setup. No inputmode.";
+      return -1;
+    }
+    return skk_context_get_input_mode(context_);
+}
 
 /*******************************************************************************
  * FcitxCskkFactory
@@ -408,7 +443,11 @@ AddonInstance *FcitxCskkFactory::create(AddonManager *manager) {
     CSKK_DEBUG() << "**** CSKK FcitxCskkFactory Create ****";
     registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
     auto engine = new FcitxCskkEngine(manager->instance());
-    return engine;
+    if (engine->isEngineReady()) {
+      return engine;
+    } else {
+      return nullptr;
+    }
   }
 }
 } // namespace fcitx

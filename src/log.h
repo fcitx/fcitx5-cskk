@@ -19,5 +19,6 @@
 FCITX_DECLARE_LOG_CATEGORY(cskk_log);
 #define CSKK_DEBUG() FCITX_LOGC(cskk_log, Debug) << "\t**CSKK** "
 #define CSKK_WARN() FCITX_LOGC(cskk_log, Warn) << "\t**CSKK** "
+#define CSKK_ERROR() FCITX_LOGC(cskk_log, Error) << "\t**CSKK** "
 
 #endif // FCITX5_CSKK_LOG_H
