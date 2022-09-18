@@ -3,4 +3,4 @@
 # Helper for release automation
 set -e
 version=`bin/version.sh`
-grep $version org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in
+grep "release version=\"$version\"" org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in
