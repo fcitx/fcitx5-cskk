@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 cmake_policy(SET CMP0063 NEW)
-project(fcitx5-cskk VERSION 0.7.0)
+project(fcitx5-cskk VERSION 0.7.1)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_STANDARD 17)
 
