@@ -407,10 +407,13 @@ void FcitxCskkContext::applyConfig() {
   skk_context_set_period_style(context_, *config.periodStyle);
   skk_context_set_comma_style(context_, *config.commaStyle);
 }
-void FcitxCskkContext::copyTo(InputContextProperty *context) {
-  auto otherContext = dynamic_cast<FcitxCskkContext *>(context);
-  skk_context_set_input_mode(otherContext->context(),
-                             skk_context_get_input_mode(context_));
+void FcitxCskkContext::copyTo(InputContextProperty *) {
+  // auto otherContext = dynamic_cast<FcitxCskkContext *>(context);
+  // Ignored.
+  // Even if fcitx5 global option is set to share input state、it only shares
+  // the selection of the addon for this input method.
+  // fcitx5-cskk will just hold each cskkcontext in each input context's
+  // property and shares nothing.
 }
 bool FcitxCskkContext::saveDictionary() {
   if (!context_) {
