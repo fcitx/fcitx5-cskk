@@ -3,6 +3,8 @@
 
 [libcskk](https://github.com/naokiri/cskk) を用いる。
 
+説明書は[CSKK Docs](https://naokiri.github.io/cskk-docs/)に公開。
+
 ## インストール方法
 
     $ rm -rf ./build
