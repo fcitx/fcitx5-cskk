@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.13)
 cmake_policy(SET CMP0063 NEW)
-project(fcitx5-cskk VERSION 0.7.1)
+project(fcitx5-cskk VERSION 0.8.0)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_STANDARD 17)
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -15,7 +15,8 @@ include(GNUInstallDirs)
 include(ECMUninstallTarget)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set(FCITX_INSTALL_USE_FCITX_SYS_PATHS ON)
+# See Fcitx5UtilsConfig.cmake
+add_definitions(-DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON)
 find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core 5.0.6 REQUIRED)
 find_package(Fcitx5Utils 5.0.6 REQUIRED)
@@ -67,6 +68,9 @@ endif ()
 find_package(Gettext REQUIRED)
 add_definitions(-DFCITX_GETTEXT_DOMAIN=\"fcitx5-cskk\" -D_GNU_SOURCE)
 fcitx5_add_i18n_definition()
+
+# Don't remove RPATH on installing/packing so that fcitx can find cskk library
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_subdirectory(src)
 add_subdirectory(data)
