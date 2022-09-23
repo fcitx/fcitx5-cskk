@@ -10,6 +10,8 @@ jobs:
 #      matrix:
 #        cskk_ver: [0.8.1]
     steps:
+    - name: Check release tag matches version
+      run: test "refs/tags/v${{ steps.versions.outputs.version }}" = ${{ github.ref }}
     - name: checkout
       uses: actions/checkout@v3
       with:
