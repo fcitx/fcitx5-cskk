@@ -25,6 +25,8 @@ jobs:
     - name: check fcitx5-cskk version exists in metainfo
       run: |
         bin/metainfo_version.sh
+    - name: Check release tag matches version
+      run: test "refs/tags/v${{ steps.versions.outputs.version }}" = ${{ github.ref }}
     - name: Download & install libcskk
       run: |
         wget https://github.com/naokiri/cskk/releases/download/v${{ steps.cskk_version.outputs.cskk_version }}/libcskk_${{ steps.cskk_version.outputs.cskk_version }}_amd64.deb
