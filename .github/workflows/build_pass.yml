@@ -1,5 +1,10 @@
 name: Build passes check
 on: [ push ]
+
+concurrency:
+  group: "continuous_test"
+  cancel-in-progress: true
+
 jobs:
   build-check:
     name: Build check
