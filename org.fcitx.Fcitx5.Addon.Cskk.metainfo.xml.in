@@ -12,15 +12,16 @@
   <url type="bugtracker">https://github.com/naokiri/fcitx5-cskk/issues</url>
   <project_group>Fcitx</project_group>
   <releases>
-    <release version="0.0.1" date="2021-04-30"/>
-    <release version="0.1.0" date="2021-05-05"/>
-    <release version="0.2.0" date="2021-05-09"/>
-    <release version="0.3.0" date="2021-05-16"/>
-    <release version="0.4.0" date="2022-06-17"/>
-    <release version="0.5.0" date="2022-08-26"/>
-    <release version="0.6.0" date="2022-09-02"/>
-    <release version="0.6.1" date="2022-09-03"/>
-    <release version="0.7.0" date="2022-09-16"/>
+    <release version="0.8.0" date="2022-09-24"/>
     <release version="0.7.1" date="2022-09-19"/>
+    <release version="0.7.0" date="2022-09-16"/>
+    <release version="0.6.1" date="2022-09-03"/>
+    <release version="0.6.0" date="2022-09-02"/>
+    <release version="0.5.0" date="2022-08-26"/>
+    <release version="0.4.0" date="2022-06-17"/>
+    <release version="0.3.0" date="2021-05-16"/>
+    <release version="0.2.0" date="2021-05-09"/>
+    <release version="0.1.0" date="2021-05-05"/>
+    <release version="0.0.1" date="2021-04-30"/>
   </releases>
 </component>
