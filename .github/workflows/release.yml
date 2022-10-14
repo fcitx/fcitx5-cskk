@@ -17,11 +17,11 @@ jobs:
     - name: check fcitx5-cskk version
       id: version
       run: |
-        echo ::set-output name=version::`bin/version.sh`
+        echo version=`bin/version.sh` >> ${GITHUB_OUTPUT}
     - name: check cskk version
       id: cskk_version
       run: |
-        echo ::set-output name=cskk_version::`bin/cskk_version.sh`
+        echo cskk_version=`bin/cskk_version.sh` >> ${GITHUB_OUTPUT}
     - name: check fcitx5-cskk version exists in metainfo
       run: |
         bin/metainfo_version.sh

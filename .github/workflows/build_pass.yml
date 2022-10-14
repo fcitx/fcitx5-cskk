@@ -17,11 +17,11 @@ jobs:
       - name: check fcitx5-cskk version
         id: version
         run: |
-          echo ::set-output name=version::`bin/version.sh`
+          echo version=`bin/version.sh` >> ${GITHUB_OUTPUT}
       - name: check cskk version
         id: cskk_version
         run: |
-          echo ::set-output name=cskk_version::`bin/cskk_version.sh`
+          echo cskk_version=`bin/cskk_version.sh` >> ${GITHUB_OUTPUT}
       - name: Download & install libcskk
         run: |
           wget https://github.com/naokiri/cskk/releases/download/v${{ steps.cskk_version.outputs.cskk_version }}/libcskk_${{ steps.cskk_version.outputs.cskk_version }}_amd64.deb
