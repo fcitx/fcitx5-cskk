@@ -12,6 +12,7 @@
   <url type="bugtracker">https://github.com/naokiri/fcitx5-cskk/issues</url>
   <project_group>Fcitx</project_group>
   <releases>
+    <release version="0.8.1" date="2022-10-15"/>
     <release version="0.8.0" date="2022-09-24"/>
     <release version="0.7.1" date="2022-09-19"/>
     <release version="0.7.0" date="2022-09-16"/>
