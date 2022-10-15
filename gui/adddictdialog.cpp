@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: <text>2013~2022 CSSlayer <wengxt@gmail.com>, Naoaki Iwakiri
- * <naokiri@gmail.com></text>
+ * SPDX-FileCopyrightText: <text>2013~2022 CSSlayer <wengxt@gmail.com>, Naoaki
+ * Iwakiri <naokiri@gmail.com></text>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -9,8 +9,12 @@
 #include "adddictdialog.h"
 #include "dictmodel.h"
 #include "skk_dict_config.h"
+#include <QComboBox>
 #include <QDebug>
+#include <QDialogButtonBox>
 #include <QFileDialog>
+#include <QLineEdit>
+#include <QPushButton>
 #include <fcitx-utils/standardpath.h>
 #include <fcitxqti18nhelper.h>
 
@@ -37,6 +41,8 @@ AddDictDialog::AddDictDialog(QWidget *parent)
           QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           &AddDictDialog::indexChanged);
   connect(m_ui->urlLineEdit, &QLineEdit::textChanged, this,
+          &AddDictDialog::validate);
+  connect(m_ui->encodingEdit, &QLineEdit::textChanged, this,
           &AddDictDialog::validate);
 }
 
@@ -112,6 +118,7 @@ void AddDictDialog::browseClicked() {
   if (!path.isEmpty()) {
     m_ui->urlLineEdit->setText(path);
   }
+  validate();
 }
 void AddDictDialog::setDictionary(QMap<QString, QString> &dict) {
   m_ui->urlLineEdit->setText(dict["file"]);
