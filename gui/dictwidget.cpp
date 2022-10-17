@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: <text>2013~2022 CSSlayer <wengxt@gmail.com>, Naoaki Iwakiri
- * <naokiri@gmail.com></text>
+ * SPDX-FileCopyrightText: <text>2013~2022 CSSlayer <wengxt@gmail.com>, Naoaki
+ * Iwakiri <naokiri@gmail.com></text>
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -8,11 +8,11 @@
 #include "dictwidget.h"
 #include "adddictdialog.h"
 #include "dictmodel.h"
+#include <QItemSelectionModel>
 #include <fcitx-utils/fs.h>
 #include <fcitx-utils/standardpath.h>
 #include <fcitx-utils/stringutils.h>
 #include <fcitxqti18nhelper.h>
-#include <fcntl.h>
 
 namespace fcitx {
 
@@ -26,6 +26,7 @@ SkkDictWidget::SkkDictWidget(QWidget *parent)
       "cskk");
   fs::makePath(fcitxBasePath);
 
+  m_dictModel->load();
   m_ui->dictionaryView->setModel(m_dictModel);
 
   connect(m_ui->addDictButton, &QPushButton::clicked, this,
@@ -40,8 +41,6 @@ SkkDictWidget::SkkDictWidget(QWidget *parent)
           &SkkDictWidget::moveDownClicked);
   connect(m_ui->editDictButton, &QPushButton::clicked, this,
           &SkkDictWidget::editDictClicked);
-
-  load();
 }
 
 QString SkkDictWidget::title() { return _("Dictionary Manager"); }

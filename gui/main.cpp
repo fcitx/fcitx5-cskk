@@ -9,24 +9,23 @@
 extern "C" {
 #include <libcskk.h>
 }
-#include <QApplication>
+#include "dictwidget.h"
 #include <fcitx-utils/i18n.h>
 #include <qplugin.h>
-#include "dictwidget.h"
 
 namespace fcitx {
 
 CskkConfigPlugin::CskkConfigPlugin(QObject *parent)
     : FcitxQtConfigUIPlugin(parent) {
 
-    registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
+  registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
 }
 
 FcitxQtConfigUIWidget *CskkConfigPlugin::create(const QString &key) {
-    if (key == "dictionary_list") {
-        return new SkkDictWidget;
-    }
-    return nullptr;
+  if (key == "dictionary_list") {
+    return new SkkDictWidget;
+  }
+  return nullptr;
 }
 
 } // namespace fcitx

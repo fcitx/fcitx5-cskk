@@ -14,8 +14,6 @@
 
 namespace fcitx {
 
-class DictModel {};
-
 class SkkDictModel : public QAbstractListModel {
   Q_OBJECT
 public:

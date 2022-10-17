@@ -213,9 +213,9 @@ QString SkkDictModel::serialize(const QMap<QString, QString> &dict) {
     } else {
       result.append(",");
     }
-    result.append(key);
+    result.append(key.toUtf8());
     result.append("=");
-    result.append(dict[key]);
+    result.append(dict[key].toUtf8());
   }
 
   return result;
