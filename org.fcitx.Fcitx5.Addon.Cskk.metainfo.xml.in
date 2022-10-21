@@ -5,7 +5,6 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>fcitx5-cskk</name>
-  <icon type="stock">cskk</icon>
   <icon type="cached">cskk.png</icon>
   <summary>libCSKK Japanese input method</summary>
   <url type="homepage">https://github.com/naokiri/fcitx5-cskk</url>
