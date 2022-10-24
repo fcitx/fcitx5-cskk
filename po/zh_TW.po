@@ -3,8 +3,7 @@
 # This file is distributed under the same license as the fcitx5-cskk package.
 #
 # Translators:
-# UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2022
-# Akira KANASHIRO, 2022
+# 黃柏諺 <s8321414@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
@@ -12,9 +11,10 @@ msgstr ""
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
 "POT-Creation-Date: 2022-10-24 20:24+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: Akira KANASHIRO, 2022\n"
-"Language-Team: Japanese (https://www.transifex.com/fcitx/teams/12005/ja/)\n"
-"Language: ja\n"
+"Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2022\n"
+"Language-Team: Chinese (Taiwan) (https://www.transifex.com/fcitx/teams/12005/"
+"zh_TW/)\n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,99 +25,99 @@ msgstr ""
 #: rc.cpp:12
 #, kde-format
 msgid "&Path:"
-msgstr "パス(&P):"
+msgstr "路徑(&P)："
 
 #. i18n: file: gui/adddictdialog.ui:25
 #. i18n: ectx: property (text), widget (QLabel, typeLabel)
 #: rc.cpp:9
 #, kde-format
 msgid "&Type:"
-msgstr "形式(&T):"
+msgstr "類型(&T)："
 
 #: src/cskkconfig.h:103
 msgid "Candidate Layout"
-msgstr "候補のレイアウト"
+msgstr "候選字詞佈局"
 
 #: src/cskkconfig.h:100
 msgid "Candidate list page size"
-msgstr "候補リストページサイズ"
+msgstr "候選字詞清單頁面大小"
 
 #: src/cskkconfig.h:133
 msgid "Candidate selection keys"
-msgstr "候補の選択に使用するキー"
+msgstr "候選字詞選取按鍵"
 
 #: src/cskkconfig.h:126
 msgid "Candidates Page Next Page"
-msgstr "次の候補リストへの移動"
+msgstr "候選字詞下一頁"
 
 #: src/cskkconfig.h:120
 msgid "Candidates Page Previous Page"
-msgstr "前の候補リストへの移動"
+msgstr "候選字詞上一頁"
 
 #: src/cskkconfig.h:98
 msgid "Candidates to show before showing in list"
-msgstr ""
+msgstr "顯示候選字詞清單前的候選字詞個數"
 
 #: src/cskkconfig.h:93
 msgid "Comma style"
-msgstr "読点スタイル"
+msgstr "逗號樣式"
 
 #: src/cskk.conf.in:3
 msgid "Cskk"
-msgstr "CSKK"
+msgstr "Cskk"
 
 #: src/cskk-addon.conf.in.in:3
 msgid "Cskk input method for Fcitx5"
-msgstr "Fcitx5 用の CSKK 入力メソッド"
+msgstr "Fcitx5 的 Cskk 輸入法"
 
 #: src/cskkconfig.h:114
 msgid "Cursor Down"
-msgstr "カーソルダウン"
+msgstr "游標向下"
 
 #: src/cskkconfig.h:108
 msgid "Cursor Up"
-msgstr "カーソルアップ"
+msgstr "游標向上"
 
 #. i18n: file: gui/adddictdialog.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, AddDictDialog)
 #: rc.cpp:6
 #, kde-format
 msgid "Dialog"
-msgstr "ダイアログ"
+msgstr "對話方塊"
 
 #: src/cskkconfig.h:135
 msgid "Dictionary"
-msgstr "辞書"
+msgstr "字典"
 
 #: gui/dictwidget.cpp:46
 msgid "Dictionary Manager"
-msgstr "辞書マネージャー"
+msgstr "字典管理程式"
 
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
 #: rc.cpp:15
 #, kde-format
 msgid "Encoding:"
-msgstr "エンコーディング:"
+msgstr "編碼："
 
 #. i18n: file: gui/dictwidget.ui:14
 #. i18n: ectx: property (windowTitle), widget (QWidget, SkkDictWidget)
 #: rc.cpp:3
 #, kde-format
 msgid "Form"
-msgstr "フォーム"
+msgstr "表單"
 
 #: src/cskkconfig.h:36
 msgid "Horizontal"
-msgstr "横"
+msgstr "水平"
 
 #: src/cskk-addon.conf.in.in:4
 msgid "IM using libcskk"
-msgstr "libcskk を使用した IM"
+msgstr "使用 libcskk 的輸入法"
 
 #: src/cskkconfig.h:89
 msgid "InitialInputMode"
-msgstr "初期入力モード"
+msgstr "初始輸入模式"
 
 #: src/cskkconfig.h:35
 msgid "Not set"
@@ -125,27 +125,27 @@ msgstr "未設定"
 
 #: src/cskkconfig.h:91
 msgid "Period style"
-msgstr "句点スタイル"
+msgstr "句號樣式"
 
 #: src/cskkconfig.h:87
 msgid "Rule"
-msgstr "入力方式"
+msgstr "規則"
 
 #: gui/adddictdialog.cpp:89 gui/adddictdialog.cpp:112
 msgid "Select Dictionary File"
-msgstr "辞書ファイルを選択"
+msgstr "選取字典檔案"
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
-msgstr "システム"
+msgstr "系統"
 
 #: gui/adddictdialog.cpp:33
 msgid "User"
-msgstr "ユーザー"
+msgstr "使用者"
 
 #: src/cskkconfig.h:36
 msgid "Vertical"
-msgstr "縦"
+msgstr "垂直"
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:7
 msgid "fcitx5-cskk"
@@ -153,4 +153,4 @@ msgstr "fcitx5-cskk"
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:9
 msgid "libCSKK Japanese input method"
-msgstr "libCSKK 日本語入力メソッド"
+msgstr "libCSKK 日文輸入法"
