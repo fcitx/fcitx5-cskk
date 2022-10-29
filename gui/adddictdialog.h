@@ -25,7 +25,7 @@ public:
 
 public Q_SLOTS:
   void browseClicked();
-  void indexChanged([[maybe_unused]] int);
+  void indexChanged();
   void validate();
 
 private:

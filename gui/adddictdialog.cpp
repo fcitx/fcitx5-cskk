@@ -33,7 +33,7 @@ AddDictDialog::AddDictDialog(QWidget *parent)
   m_ui->typeComboBox->addItem(_("User"));
   m_ui->typeComboBox->setCurrentIndex(1);
 
-  indexChanged(0);
+  indexChanged();
 
   connect(m_ui->browseButton, &QPushButton::clicked, this,
           &AddDictDialog::browseClicked);
@@ -61,7 +61,7 @@ QMap<QString, QString> AddDictDialog::dictionary() {
   return dict;
 }
 
-void AddDictDialog::indexChanged([[maybe_unused]] int _idx) { validate(); }
+void AddDictDialog::indexChanged() { validate(); }
 
 void AddDictDialog::validate() {
   const auto index = m_ui->typeComboBox->currentIndex();
@@ -123,7 +123,7 @@ void AddDictDialog::browseClicked() {
 void AddDictDialog::setDictionary(QMap<QString, QString> &dict) {
   m_ui->urlLineEdit->setText(dict["file"]);
 
-  for (int i = 0; i < (sizeof(mode_type) / sizeof(char *)); i++) {
+  for (size_t i = 0; i < FCITX_ARRAY_SIZE(mode_type); i++) {
     // It's OK to use stdstirng here. We only use latin-1.
     if (dict["mode"].toStdString() == mode_type[i]) {
       m_ui->typeComboBox->setCurrentIndex(i);
