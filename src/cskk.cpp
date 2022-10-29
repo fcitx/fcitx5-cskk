@@ -320,7 +320,7 @@ bool FcitxCskkContext::handleCandidateSelection(
     KeyList selectionKeys = FcitxCskkEngine::getSelectionKeys(
         engine_->config().candidateSelectionKeys.value());
     if (auto idx = keyEvent.key().keyListIndex(selectionKeys);
-        0 <= idx && idx < engine_->config().pageSize.value()) {
+        0 <= idx && idx < candidateList->size()) {
       CSKK_DEBUG() << "Select from page. Idx: " << idx;
       candidateList->candidate(idx).select(ic_);
       keyEvent.filterAndAccept();

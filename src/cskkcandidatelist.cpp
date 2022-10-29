@@ -73,6 +73,7 @@ const Text &FcitxCskkCandidateList::label(int idx) const {
 const CandidateWord &FcitxCskkCandidateList::candidate(int idx) const {
   return *words_[pageFirst_ + idx];
 }
+// number of candidates on the current page.
 int FcitxCskkCandidateList::size() const {
   return static_cast<int>(pageLast_ - pageFirst_);
 }
