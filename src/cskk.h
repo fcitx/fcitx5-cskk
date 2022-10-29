@@ -72,7 +72,6 @@ private:
 
   void loadDictionary();
   void freeDictionaries();
-  char *formatPreedit(CskkStateInfoFfi* cskkStateInfo, uint32_t state_len);
 };
 
 class FcitxCskkContext final : public InputContextProperty {
