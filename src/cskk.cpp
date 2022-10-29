@@ -351,11 +351,10 @@ void FcitxCskkContext::updateUI() {
   }
 
   // Preedit
-  auto preedit = skk_context_get_preedit(context_);
-  Text preeditText;
-  // FIXME: Pretty text format someday.
-  preeditText.append(std::string(preedit));
-  preeditText.setCursor(static_cast<int>(strlen(preedit)));
+  uint32_t stateStackLen;
+  auto preeditDetail = skk_context_get_preedit_detail(context_, &stateStackLen);
+  auto [mainPreedit, supplementPreedit] =
+      FcitxCskkContext::formatPreedit(preeditDetail, stateStackLen);
 
   // CandidateList
   int currentCursorPosition =
@@ -383,10 +382,11 @@ void FcitxCskkContext::updateUI() {
   }
 
   if (ic_->capabilityFlags().test(CapabilityFlag::Preedit)) {
-    inputPanel.setClientPreedit(preeditText);
+    inputPanel.setClientPreedit(mainPreedit);
+    inputPanel.setPreedit(supplementPreedit);
     ic_->updatePreedit();
   } else {
-    inputPanel.setPreedit(preeditText);
+    inputPanel.setPreedit(mainPreedit);
   }
 
   // StatusArea for status icon
@@ -431,6 +431,132 @@ int FcitxCskkContext::getInputMode() {
     return -1;
   }
   return skk_context_get_input_mode(context_);
+}
+/**
+ * format preedit state into Text.
+ * Returns tuple of <Main content Text, Supplement content Text>
+ * Main content is something you always want to show, supplement content is
+ * something you may show when you have space.
+ */
+std::tuple<Text, Text>
+FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
+                                uint32_t stateLen) {
+  std::string precomposition_marker = "▽";
+  std::string selection_marker = "▼";
+  Text mainContent = Text(""), supplementContent = Text("");
+  size_t mainCursorIdx = 0;
+  for (uint32_t i = 0; i < stateLen; i++) {
+    auto cskkStateInfo = cskkStateInfoArray[i];
+    switch (cskkStateInfo.tag) {
+    case DirectStateInfo: {
+      auto directStateInfo = cskkStateInfo.direct_state_info;
+      if (directStateInfo.confirmed) {
+        mainCursorIdx += strlen(directStateInfo.confirmed);
+        mainContent.append(directStateInfo.confirmed, TextFormatFlag::NoFlag);
+      }
+      if (directStateInfo.unconverted) {
+        mainCursorIdx += strlen(directStateInfo.unconverted);
+        mainContent.append(directStateInfo.unconverted,
+                           TextFormatFlag::Underline);
+      }
+    } break;
+    case PreCompositionStateInfo: {
+      auto precompositionStateInfo = cskkStateInfo.pre_composition_state_info;
+      mainCursorIdx += precomposition_marker.length();
+      mainContent.append(precomposition_marker, TextFormatFlag::DontCommit);
+      if (precompositionStateInfo.confirmed) {
+        mainCursorIdx += strlen(precompositionStateInfo.confirmed);
+        mainContent.append(precompositionStateInfo.confirmed,
+                           TextFormatFlag::NoFlag);
+      }
+      if (precompositionStateInfo.kana_to_composite) {
+        mainCursorIdx += strlen(precompositionStateInfo.kana_to_composite);
+        mainContent.append(precompositionStateInfo.kana_to_composite,
+                           TextFormatFlag::Underline);
+      }
+      if (precompositionStateInfo.unconverted) {
+        mainCursorIdx += strlen(precompositionStateInfo.unconverted);
+        mainContent.append(precompositionStateInfo.unconverted,
+                           TextFormatFlag::Underline);
+      }
+    } break;
+    case PreCompositionOkuriganaStateInfo: {
+      auto precompositionOkuriganaStateInfo =
+          cskkStateInfo.pre_composition_okurigana_state_info;
+      mainContent.append(precomposition_marker, TextFormatFlag::DontCommit);
+      mainCursorIdx += precomposition_marker.length();
+      if (precompositionOkuriganaStateInfo.confirmed) {
+        mainCursorIdx += strlen(precompositionOkuriganaStateInfo.confirmed);
+        mainContent.append(precompositionOkuriganaStateInfo.confirmed,
+                           TextFormatFlag::NoFlag);
+      }
+      if (precompositionOkuriganaStateInfo.kana_to_composite) {
+        mainCursorIdx +=
+            strlen(precompositionOkuriganaStateInfo.kana_to_composite);
+        mainContent.append(precompositionOkuriganaStateInfo.kana_to_composite,
+                           TextFormatFlag::Underline);
+      }
+      if (precompositionOkuriganaStateInfo.unconverted) {
+        mainContent.append("*", TextFormatFlags{TextFormatFlag::Underline,
+                                                TextFormatFlag::DontCommit});
+        mainCursorIdx +=
+            strlen(precompositionOkuriganaStateInfo.unconverted) + 1;
+        mainContent.append(precompositionOkuriganaStateInfo.unconverted,
+                           TextFormatFlag::Underline);
+      }
+    } break;
+    case CompositionSelectionStateInfo: {
+      auto compositionSelectionStateInfo =
+          cskkStateInfo.composition_selection_state_info;
+      mainContent.append(selection_marker, TextFormatFlag::DontCommit);
+      mainCursorIdx += selection_marker.length();
+      if (compositionSelectionStateInfo.composited) {
+        mainCursorIdx += strlen(compositionSelectionStateInfo.composited);
+        mainContent.append(compositionSelectionStateInfo.composited,
+                           TextFormatFlag::Underline);
+      }
+      if (compositionSelectionStateInfo.okuri) {
+        mainCursorIdx += strlen(compositionSelectionStateInfo.okuri);
+        mainContent.append(compositionSelectionStateInfo.okuri,
+                           TextFormatFlag::Underline);
+      }
+      if (compositionSelectionStateInfo.annotation) {
+        supplementContent.clear();
+        supplementContent.append(compositionSelectionStateInfo.annotation,
+                                 TextFormatFlag::DontCommit);
+      }
+    } break;
+    case RegisterStateInfo: {
+      auto registerStateInfo = cskkStateInfo.register_state_info;
+      mainContent.append(selection_marker, TextFormatFlag::DontCommit);
+      mainCursorIdx += selection_marker.length();
+      if (registerStateInfo.confirmed) {
+        mainCursorIdx += strlen(registerStateInfo.confirmed);
+        mainContent.append(registerStateInfo.confirmed,
+                           TextFormatFlag::DontCommit);
+      }
+      if (registerStateInfo.kana_to_composite) {
+        mainCursorIdx += strlen(registerStateInfo.kana_to_composite);
+        mainContent.append(registerStateInfo.kana_to_composite,
+                           TextFormatFlag::DontCommit);
+      }
+      if (registerStateInfo.okuri) {
+        mainCursorIdx += strlen(registerStateInfo.okuri);
+        mainContent.append(registerStateInfo.okuri, TextFormatFlag::DontCommit);
+      }
+      mainCursorIdx += strlen("【");
+      mainContent.append("【", TextFormatFlag::DontCommit);
+    } break;
+    }
+  }
+  // FIXME: Silently assuming length is less than int_max here. May fail when
+  // length is over UINT_MAX. very unlikely, not high priority.
+  mainContent.setCursor((int)mainCursorIdx);
+  for (uint32_t i = 1; i < stateLen; i++) {
+    mainContent.append("】", TextFormatFlag::DontCommit);
+  }
+
+  return {mainContent, supplementContent};
 }
 
 /*******************************************************************************
