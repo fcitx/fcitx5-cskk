@@ -510,16 +510,17 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
           cskkStateInfo.composition_selection_state_info;
       mainContent.append(selection_marker, TextFormatFlag::DontCommit);
       mainCursorIdx += selection_marker.length();
+      std::string tmpContentString;
       if (compositionSelectionStateInfo.composited) {
         mainCursorIdx += strlen(compositionSelectionStateInfo.composited);
-        mainContent.append(compositionSelectionStateInfo.composited,
-                           TextFormatFlag::Underline);
+        tmpContentString.append(compositionSelectionStateInfo.composited);
       }
       if (compositionSelectionStateInfo.okuri) {
         mainCursorIdx += strlen(compositionSelectionStateInfo.okuri);
-        mainContent.append(compositionSelectionStateInfo.okuri,
-                           TextFormatFlag::Underline);
+        tmpContentString.append(compositionSelectionStateInfo.okuri);
       }
+      mainContent.append(tmpContentString, TextFormatFlag::Underline);
+
       if (compositionSelectionStateInfo.annotation) {
         supplementContent.clear();
         supplementContent.append(compositionSelectionStateInfo.annotation,
