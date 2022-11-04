@@ -103,6 +103,8 @@ private:
   bool handleCandidateSelection(
       const std::shared_ptr<FcitxCskkCandidateList> &candidateList,
       KeyEvent &keyEvent);
+  static std::tuple<Text, Text> formatPreedit(CskkStateInfoFfi *cskkStateInfo,
+                                              uint32_t stateLen);
 };
 
 class FcitxCskkFactory final : public AddonFactory {

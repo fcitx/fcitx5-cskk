@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 cmake_policy(SET CMP0063 NEW)
-project(fcitx5-cskk VERSION 0.8.2)
+project(fcitx5-cskk VERSION 1.0.0)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_STANDARD 17)
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -21,7 +21,8 @@ find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core 5.0.6 REQUIRED)
 find_package(Fcitx5Utils 5.0.6 REQUIRED)
 
-pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=0.10.0")
+# GITHUB_ACTION_BUILD_CSKK_VERSION=1.0.1
+pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=1.0")
 
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 
