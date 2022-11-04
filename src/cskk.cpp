@@ -355,7 +355,7 @@ void FcitxCskkContext::updateUI() {
   auto preeditDetail = skk_context_get_preedit_detail(context_, &stateStackLen);
   auto [mainPreedit, supplementPreedit] =
       FcitxCskkContext::formatPreedit(preeditDetail, stateStackLen);
-
+  skk_free_preedit_detail(preeditDetail, stateStackLen);
   // CandidateList
   int currentCursorPosition =
       skk_context_get_current_candidate_cursor_position(context_);
