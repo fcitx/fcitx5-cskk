@@ -341,6 +341,7 @@ void FcitxCskkContext::updateUI() {
   }
   auto &config = engine_->config();
   auto &inputPanel = ic_->inputPanel();
+  inputPanel.reset();
 
   // Output
   if (auto output = skk_context_poll_output(context_)) {
@@ -449,6 +450,8 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
   std::string precomposition_marker = "▽";
   std::string selection_marker = "▼";
   Text mainContent = Text(""), supplementContent = Text("");
+  mainContent.clear();
+  supplementContent.clear();
   size_t mainCursorIdx = 0;
   for (uint32_t i = 0; i < stateLen; i++) {
     auto cskkStateInfo = cskkStateInfoArray[i];
@@ -527,7 +530,6 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
       mainContent.append(tmpContentString, TextFormatFlag::Underline);
 
       if (compositionSelectionStateInfo.annotation) {
-        supplementContent.clear();
         supplementContent.append(compositionSelectionStateInfo.annotation,
                                  TextFormatFlag::DontCommit);
       }
