@@ -36,10 +36,16 @@ FCITX_CONFIG_ENUM_NAME_WITH_I18N(CandidateLayoutHint, N_("Not set"),
                                  N_("Vertical"), N_("Horizontal"));
 
 FCITX_CONFIG_ENUM(CandidateSelectionKeys, Number, ABCD, QwertyCenter)
+
+enum class ShowAnnotationCondition {
+  Always, SingleCandidate, Never
+};
+FCITX_CONFIG_ENUM_NAME_WITH_I18N(ShowAnnotationCondition, N_("Always"),
+                                  N_("SingleCandidate"), N_("Never"));
+
 static constexpr const char *CandidateSelectionKeys_Annotations[] = {
     "Number (1,2,3,...)", "ABCD (a,b,c,d,...)",
     "Qwerty Center row (a,s,d,f,...)"};
-
 struct CandidateSelectionKeysAnnotation : public EnumAnnotation {
   void dumpDescription(RawConfig &config) const {
     EnumAnnotation::dumpDescription(config);
@@ -132,10 +138,13 @@ FCITX_CONFIGURATION(
         candidateSelectionKeys{this, "Candidate selection keys",
                                _("Candidate selection keys"),
                                CandidateSelectionKeys::Number};
+    OptionWithAnnotation<ShowAnnotationCondition,
+                         ShowAnnotationConditionI18NAnnotation>
+        showAnnotationCondition{this, "Show Annotation when",
+                                _("Show Annotation when"),
+                                ShowAnnotationCondition::Always};
     ExternalOption dictionary{this, "Dictionary", _("Dictionary"),
                               "fcitx://config/addon/cskk/dictionary_list"};
-    //    Option<bool> showAnnotation{this, "ShowAnnotation",
-    //                                _("Show Annotation. Fake yet."), true};);
     ) // FCITX_CONFIGURATION
 } // namespace fcitx
 #endif // FCITX5_CSKK_CSKKCONFIG_H
