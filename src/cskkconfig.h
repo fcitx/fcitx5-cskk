@@ -37,11 +37,9 @@ FCITX_CONFIG_ENUM_NAME_WITH_I18N(CandidateLayoutHint, N_("Not set"),
 
 FCITX_CONFIG_ENUM(CandidateSelectionKeys, Number, ABCD, QwertyCenter)
 
-enum class ShowAnnotationCondition {
-  Always, SingleCandidate, Never
-};
+enum class ShowAnnotationCondition { Always, SingleCandidate, Never };
 FCITX_CONFIG_ENUM_NAME_WITH_I18N(ShowAnnotationCondition, N_("Always"),
-                                  N_("SingleCandidate"), N_("Never"));
+                                 N_("SingleCandidate"), N_("Never"));
 
 static constexpr const char *CandidateSelectionKeys_Annotations[] = {
     "Number (1,2,3,...)", "ABCD (a,b,c,d,...)",
@@ -143,8 +141,8 @@ FCITX_CONFIGURATION(
         showAnnotationCondition{this, "Show Annotation when",
                                 _("Show Annotation when"),
                                 ShowAnnotationCondition::Always};
-    ExternalOption dictionary{this, "Dictionary", _("Dictionary"),
-                              "fcitx://config/addon/cskk/dictionary_list"};
-    ) // FCITX_CONFIGURATION
+    ExternalOption dictionary{
+        this, "Dictionary", _("Dictionary"),
+        "fcitx://config/addon/cskk/dictionary_list"};) // FCITX_CONFIGURATION
 } // namespace fcitx
 #endif // FCITX5_CSKK_CSKKCONFIG_H

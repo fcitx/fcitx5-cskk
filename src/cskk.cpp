@@ -361,7 +361,8 @@ void FcitxCskkContext::updateUI() {
   // CandidateList
   int currentCursorPosition =
       skk_context_get_current_candidate_cursor_position(context_);
-  bool showCandidateList = currentCursorPosition > engine_->config().pageStartIdx.value() - 1;
+  bool showCandidateList =
+      currentCursorPosition > engine_->config().pageStartIdx.value() - 1;
   if (showCandidateList) {
     char *current_to_composite = skk_context_get_current_to_composite(context_);
     auto currentCandidateList =
@@ -386,8 +387,11 @@ void FcitxCskkContext::updateUI() {
 
   if (ic_->capabilityFlags().test(CapabilityFlag::Preedit)) {
     inputPanel.setClientPreedit(mainPreedit);
-    if ((config.showAnnotationCondition.value() == ShowAnnotationCondition::Always) ||
-        (config.showAnnotationCondition.value() == ShowAnnotationCondition::SingleCandidate && !showCandidateList)) {
+    if ((config.showAnnotationCondition.value() ==
+         ShowAnnotationCondition::Always) ||
+        (config.showAnnotationCondition.value() ==
+             ShowAnnotationCondition::SingleCandidate &&
+         !showCandidateList)) {
       inputPanel.setPreedit(supplementPreedit);
     }
     ic_->updatePreedit();
