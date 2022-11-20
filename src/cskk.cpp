@@ -339,7 +339,9 @@ void FcitxCskkContext::updateUI() {
     CSKK_WARN() << "No context setup";
     return;
   }
+  auto &config = engine_->config();
   auto &inputPanel = ic_->inputPanel();
+  inputPanel.reset();
 
   // Output
   if (auto output = skk_context_poll_output(context_)) {
@@ -359,7 +361,9 @@ void FcitxCskkContext::updateUI() {
   // CandidateList
   int currentCursorPosition =
       skk_context_get_current_candidate_cursor_position(context_);
-  if (currentCursorPosition > engine_->config().pageStartIdx.value() - 1) {
+  bool showCandidateList =
+      currentCursorPosition > engine_->config().pageStartIdx.value() - 1;
+  if (showCandidateList) {
     char *current_to_composite = skk_context_get_current_to_composite(context_);
     auto currentCandidateList =
         std::dynamic_pointer_cast<FcitxCskkCandidateList>(
@@ -383,7 +387,13 @@ void FcitxCskkContext::updateUI() {
 
   if (ic_->capabilityFlags().test(CapabilityFlag::Preedit)) {
     inputPanel.setClientPreedit(mainPreedit);
-    inputPanel.setPreedit(supplementPreedit);
+    if ((config.showAnnotationCondition.value() ==
+         ShowAnnotationCondition::Always) ||
+        (config.showAnnotationCondition.value() ==
+             ShowAnnotationCondition::SingleCandidate &&
+         !showCandidateList)) {
+      inputPanel.setPreedit(supplementPreedit);
+    }
     ic_->updatePreedit();
   } else {
     inputPanel.setPreedit(mainPreedit);
@@ -444,6 +454,8 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
   std::string precomposition_marker = "▽";
   std::string selection_marker = "▼";
   Text mainContent = Text(""), supplementContent = Text("");
+  mainContent.clear();
+  supplementContent.clear();
   size_t mainCursorIdx = 0;
   for (uint32_t i = 0; i < stateLen; i++) {
     auto cskkStateInfo = cskkStateInfoArray[i];
@@ -522,7 +534,6 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
       mainContent.append(tmpContentString, TextFormatFlag::Underline);
 
       if (compositionSelectionStateInfo.annotation) {
-        supplementContent.clear();
         supplementContent.append(compositionSelectionStateInfo.annotation,
                                  TextFormatFlag::DontCommit);
       }
