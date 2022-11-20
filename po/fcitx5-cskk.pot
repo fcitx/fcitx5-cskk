@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-10-21 08:11+0000\n"
+"POT-Creation-Date: 2022-11-20 06:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,31 +29,35 @@ msgstr ""
 msgid "&Type:"
 msgstr ""
 
-#: src/cskkconfig.h:103
+#: src/cskkconfig.h:41
+msgid "Always"
+msgstr ""
+
+#: src/cskkconfig.h:107
 msgid "Candidate Layout"
 msgstr ""
 
-#: src/cskkconfig.h:100
+#: src/cskkconfig.h:104
 msgid "Candidate list page size"
 msgstr ""
 
-#: src/cskkconfig.h:133
+#: src/cskkconfig.h:137
 msgid "Candidate selection keys"
 msgstr ""
 
-#: src/cskkconfig.h:126
+#: src/cskkconfig.h:130
 msgid "Candidates Page Next Page"
 msgstr ""
 
-#: src/cskkconfig.h:120
+#: src/cskkconfig.h:124
 msgid "Candidates Page Previous Page"
 msgstr ""
 
-#: src/cskkconfig.h:98
+#: src/cskkconfig.h:102
 msgid "Candidates to show before showing in list"
 msgstr ""
 
-#: src/cskkconfig.h:93
+#: src/cskkconfig.h:97
 msgid "Comma style"
 msgstr ""
 
@@ -65,11 +69,11 @@ msgstr ""
 msgid "Cskk input method for Fcitx5"
 msgstr ""
 
-#: src/cskkconfig.h:114
+#: src/cskkconfig.h:118
 msgid "Cursor Down"
 msgstr ""
 
-#: src/cskkconfig.h:108
+#: src/cskkconfig.h:112
 msgid "Cursor Up"
 msgstr ""
 
@@ -80,7 +84,7 @@ msgstr ""
 msgid "Dialog"
 msgstr ""
 
-#: src/cskkconfig.h:135
+#: src/cskkconfig.h:145
 msgid "Dictionary"
 msgstr ""
 
@@ -110,24 +114,36 @@ msgstr ""
 msgid "IM using libcskk"
 msgstr ""
 
-#: src/cskkconfig.h:89
+#: src/cskkconfig.h:93
 msgid "InitialInputMode"
+msgstr ""
+
+#: src/cskkconfig.h:42
+msgid "Never"
 msgstr ""
 
 #: src/cskkconfig.h:35
 msgid "Not set"
 msgstr ""
 
-#: src/cskkconfig.h:91
+#: src/cskkconfig.h:95
 msgid "Period style"
 msgstr ""
 
-#: src/cskkconfig.h:87
+#: src/cskkconfig.h:91
 msgid "Rule"
 msgstr ""
 
 #: gui/adddictdialog.cpp:89 gui/adddictdialog.cpp:112
 msgid "Select Dictionary File"
+msgstr ""
+
+#: src/cskkconfig.h:142
+msgid "Show Annotation when"
+msgstr ""
+
+#: src/cskkconfig.h:42
+msgid "SingleCandidate"
 msgstr ""
 
 #: gui/adddictdialog.cpp:32
@@ -146,6 +162,6 @@ msgstr ""
 msgid "fcitx5-cskk"
 msgstr ""
 
-#: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:10
+#: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:9
 msgid "libCSKK Japanese input method"
 msgstr ""

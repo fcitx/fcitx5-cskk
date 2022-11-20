@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the fcitx5-cskk package.
 #
 # Translators:
-# 黃柏諺 <s8321414@gmail.com>, 2022
+# JungHee Lee <daemul72@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
@@ -11,10 +11,9 @@ msgstr ""
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
 "POT-Creation-Date: 2022-11-20 06:33+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2022\n"
-"Language-Team: Chinese (Taiwan) (https://www.transifex.com/fcitx/teams/12005/"
-"zh_TW/)\n"
-"Language: zh_TW\n"
+"Last-Translator: JungHee Lee <daemul72@gmail.com>, 2022\n"
+"Language-Team: Korean (https://www.transifex.com/fcitx/teams/12005/ko/)\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,14 +24,14 @@ msgstr ""
 #: rc.cpp:12
 #, kde-format
 msgid "&Path:"
-msgstr "路徑(&P)："
+msgstr "경로(&P):"
 
 #. i18n: file: gui/adddictdialog.ui:25
 #. i18n: ectx: property (text), widget (QLabel, typeLabel)
 #: rc.cpp:9
 #, kde-format
 msgid "&Type:"
-msgstr "類型(&T)："
+msgstr "유형(&T):"
 
 #: src/cskkconfig.h:41
 msgid "Always"
@@ -40,31 +39,31 @@ msgstr ""
 
 #: src/cskkconfig.h:107
 msgid "Candidate Layout"
-msgstr "候選字詞佈局"
+msgstr "후보 자판"
 
 #: src/cskkconfig.h:104
 msgid "Candidate list page size"
-msgstr "候選字詞清單頁面大小"
+msgstr "후보 목록 페이지 크기"
 
 #: src/cskkconfig.h:137
 msgid "Candidate selection keys"
-msgstr "候選字詞選取按鍵"
+msgstr "후보 선택 키"
 
 #: src/cskkconfig.h:130
 msgid "Candidates Page Next Page"
-msgstr "候選字詞下一頁"
+msgstr "후보 페이지 다음 페이지"
 
 #: src/cskkconfig.h:124
 msgid "Candidates Page Previous Page"
-msgstr "候選字詞上一頁"
+msgstr "후보 페이지 이전 페이지"
 
 #: src/cskkconfig.h:102
 msgid "Candidates to show before showing in list"
-msgstr "顯示候選字詞清單前的候選字詞個數"
+msgstr ""
 
 #: src/cskkconfig.h:97
 msgid "Comma style"
-msgstr "逗號樣式"
+msgstr "쉼표 방식"
 
 #: src/cskk.conf.in:3
 msgid "Cskk"
@@ -72,56 +71,56 @@ msgstr "Cskk"
 
 #: src/cskk-addon.conf.in.in:3
 msgid "Cskk input method for Fcitx5"
-msgstr "Fcitx5 的 Cskk 輸入法"
+msgstr "Fcitx용 Cskk 입력기"
 
 #: src/cskkconfig.h:118
 msgid "Cursor Down"
-msgstr "游標向下"
+msgstr "커서 아래로"
 
 #: src/cskkconfig.h:112
 msgid "Cursor Up"
-msgstr "游標向上"
+msgstr "커서 위로"
 
 #. i18n: file: gui/adddictdialog.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, AddDictDialog)
 #: rc.cpp:6
 #, kde-format
 msgid "Dialog"
-msgstr "對話方塊"
+msgstr "대화창"
 
 #: src/cskkconfig.h:145
 msgid "Dictionary"
-msgstr "字典"
+msgstr "사전"
 
 #: gui/dictwidget.cpp:46
 msgid "Dictionary Manager"
-msgstr "字典管理程式"
+msgstr "사전 관리자"
 
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
 #: rc.cpp:15
 #, kde-format
 msgid "Encoding:"
-msgstr "編碼："
+msgstr "인코딩:"
 
 #. i18n: file: gui/dictwidget.ui:14
 #. i18n: ectx: property (windowTitle), widget (QWidget, SkkDictWidget)
 #: rc.cpp:3
 #, kde-format
 msgid "Form"
-msgstr "表單"
+msgstr "형태"
 
 #: src/cskkconfig.h:36
 msgid "Horizontal"
-msgstr "水平"
+msgstr "가로 방향"
 
 #: src/cskk-addon.conf.in.in:4
 msgid "IM using libcskk"
-msgstr "使用 libcskk 的輸入法"
+msgstr "libcskk를 사용하는 입력기"
 
 #: src/cskkconfig.h:93
 msgid "InitialInputMode"
-msgstr "初始輸入模式"
+msgstr ""
 
 #: src/cskkconfig.h:42
 msgid "Never"
@@ -129,19 +128,19 @@ msgstr ""
 
 #: src/cskkconfig.h:35
 msgid "Not set"
-msgstr "未設定"
+msgstr "설정되지 않음"
 
 #: src/cskkconfig.h:95
 msgid "Period style"
-msgstr "句號樣式"
+msgstr ""
 
 #: src/cskkconfig.h:91
 msgid "Rule"
-msgstr "規則"
+msgstr ""
 
 #: gui/adddictdialog.cpp:89 gui/adddictdialog.cpp:112
 msgid "Select Dictionary File"
-msgstr "選取字典檔案"
+msgstr ""
 
 #: src/cskkconfig.h:142
 msgid "Show Annotation when"
@@ -153,20 +152,20 @@ msgstr ""
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
-msgstr "系統"
+msgstr ""
 
 #: gui/adddictdialog.cpp:33
 msgid "User"
-msgstr "使用者"
+msgstr ""
 
 #: src/cskkconfig.h:36
 msgid "Vertical"
-msgstr "垂直"
+msgstr ""
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:7
 msgid "fcitx5-cskk"
-msgstr "fcitx5-cskk"
+msgstr ""
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:9
 msgid "libCSKK Japanese input method"
-msgstr "libCSKK 日文輸入法"
+msgstr ""

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-10-21 08:11+0000\n"
+"POT-Creation-Date: 2022-11-20 06:33+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
 "Last-Translator: csslayer <wengxt@gmail.com>, 2022\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/fcitx/teams/12005/"
@@ -34,31 +34,35 @@ msgstr "路径(&P)："
 msgid "&Type:"
 msgstr "类型(&T)："
 
-#: src/cskkconfig.h:103
+#: src/cskkconfig.h:41
+msgid "Always"
+msgstr ""
+
+#: src/cskkconfig.h:107
 msgid "Candidate Layout"
 msgstr "候选词布局"
 
-#: src/cskkconfig.h:100
+#: src/cskkconfig.h:104
 msgid "Candidate list page size"
 msgstr "候选词列表数量"
 
-#: src/cskkconfig.h:133
+#: src/cskkconfig.h:137
 msgid "Candidate selection keys"
 msgstr "候选词选择键"
 
-#: src/cskkconfig.h:126
+#: src/cskkconfig.h:130
 msgid "Candidates Page Next Page"
 msgstr "候选词下一页"
 
-#: src/cskkconfig.h:120
+#: src/cskkconfig.h:124
 msgid "Candidates Page Previous Page"
 msgstr "候选词上一页"
 
-#: src/cskkconfig.h:98
+#: src/cskkconfig.h:102
 msgid "Candidates to show before showing in list"
 msgstr "显示候选词列表前的候选词个数"
 
-#: src/cskkconfig.h:93
+#: src/cskkconfig.h:97
 msgid "Comma style"
 msgstr "逗号风格"
 
@@ -70,11 +74,11 @@ msgstr "Cskk"
 msgid "Cskk input method for Fcitx5"
 msgstr "Fcitx5 的 Cskk 输入法"
 
-#: src/cskkconfig.h:114
+#: src/cskkconfig.h:118
 msgid "Cursor Down"
 msgstr "光标后移"
 
-#: src/cskkconfig.h:108
+#: src/cskkconfig.h:112
 msgid "Cursor Up"
 msgstr "光标前移"
 
@@ -85,7 +89,7 @@ msgstr "光标前移"
 msgid "Dialog"
 msgstr "对话框"
 
-#: src/cskkconfig.h:135
+#: src/cskkconfig.h:145
 msgid "Dictionary"
 msgstr "词典"
 
@@ -115,25 +119,37 @@ msgstr "横排"
 msgid "IM using libcskk"
 msgstr "使用 libcskk 的输入法"
 
-#: src/cskkconfig.h:89
+#: src/cskkconfig.h:93
 msgid "InitialInputMode"
 msgstr "初始输入模式"
+
+#: src/cskkconfig.h:42
+msgid "Never"
+msgstr ""
 
 #: src/cskkconfig.h:35
 msgid "Not set"
 msgstr "未设置"
 
-#: src/cskkconfig.h:91
+#: src/cskkconfig.h:95
 msgid "Period style"
 msgstr "句号风格"
 
-#: src/cskkconfig.h:87
+#: src/cskkconfig.h:91
 msgid "Rule"
 msgstr "规则"
 
 #: gui/adddictdialog.cpp:89 gui/adddictdialog.cpp:112
 msgid "Select Dictionary File"
 msgstr "选择词典文件"
+
+#: src/cskkconfig.h:142
+msgid "Show Annotation when"
+msgstr ""
+
+#: src/cskkconfig.h:42
+msgid "SingleCandidate"
+msgstr ""
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
@@ -149,8 +165,8 @@ msgstr "竖排"
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:7
 msgid "fcitx5-cskk"
-msgstr ""
+msgstr "fcitx5-cskk"
 
-#: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:10
+#: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:9
 msgid "libCSKK Japanese input method"
-msgstr ""
+msgstr "libCSKK 日语输入法"
