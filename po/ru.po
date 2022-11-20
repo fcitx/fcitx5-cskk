@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-11-20 06:33+0000\n"
+"POT-Creation-Date: 2022-11-20 20:25+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
 "Last-Translator: Dmitry <dmitrydmitry761@gmail.com>, 2022\n"
 "Language-Team: Russian (https://www.transifex.com/fcitx/teams/12005/ru/)\n"
@@ -37,7 +37,7 @@ msgstr "&Тип:"
 
 #: src/cskkconfig.h:41
 msgid "Always"
-msgstr ""
+msgstr "Всегда"
 
 #: src/cskkconfig.h:107
 msgid "Candidate Layout"
@@ -126,7 +126,7 @@ msgstr "Начальный метод ввода"
 
 #: src/cskkconfig.h:42
 msgid "Never"
-msgstr ""
+msgstr "Никогда"
 
 #: src/cskkconfig.h:35
 msgid "Not set"
@@ -146,11 +146,11 @@ msgstr "Выбрать файл словаря"
 
 #: src/cskkconfig.h:142
 msgid "Show Annotation when"
-msgstr ""
+msgstr "Показывать аннотацию, когда"
 
 #: src/cskkconfig.h:42
 msgid "SingleCandidate"
-msgstr ""
+msgstr "Единственный кандидат"
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
