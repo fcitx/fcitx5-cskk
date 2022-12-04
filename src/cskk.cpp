@@ -556,6 +556,11 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
         mainCursorIdx += strlen(registerStateInfo.okuri);
         mainContent.append(registerStateInfo.okuri, TextFormatFlag::DontCommit);
       }
+      if (registerStateInfo.postfix) {
+        mainCursorIdx += strlen(registerStateInfo.postfix);
+        mainContent.append(registerStateInfo.postfix,
+                           TextFormatFlag::DontCommit);
+      }
       mainCursorIdx += strlen("【");
       mainContent.append("【", TextFormatFlag::DontCommit);
     } break;
