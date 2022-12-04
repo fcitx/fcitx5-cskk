@@ -558,7 +558,8 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
       }
       if (registerStateInfo.postfix) {
         mainCursorIdx += strlen(registerStateInfo.postfix);
-        mainContent.append(registerStateInfo.postfix, TextFormatFlag::DontCommit);
+        mainContent.append(registerStateInfo.postfix,
+                           TextFormatFlag::DontCommit);
       }
       mainCursorIdx += strlen("【");
       mainContent.append("【", TextFormatFlag::DontCommit);
