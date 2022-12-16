@@ -4,14 +4,15 @@
 #
 # Translators:
 # 黃柏諺 <s8321414@gmail.com>, 2022
+# Neko ◣ 0xFF, 2022
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-11-20 06:33+0000\n"
+"POT-Creation-Date: 2022-12-16 20:25+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: 黃柏諺 <s8321414@gmail.com>, 2022\n"
+"Last-Translator: Neko ◣ 0xFF, 2022\n"
 "Language-Team: Chinese (Taiwan) (https://www.transifex.com/fcitx/teams/12005/"
 "zh_TW/)\n"
 "Language: zh_TW\n"
@@ -36,7 +37,7 @@ msgstr "類型(&T)："
 
 #: src/cskkconfig.h:41
 msgid "Always"
-msgstr ""
+msgstr "總是"
 
 #: src/cskkconfig.h:107
 msgid "Candidate Layout"
@@ -125,7 +126,7 @@ msgstr "初始輸入模式"
 
 #: src/cskkconfig.h:42
 msgid "Never"
-msgstr ""
+msgstr "從不"
 
 #: src/cskkconfig.h:35
 msgid "Not set"
@@ -145,11 +146,11 @@ msgstr "選取字典檔案"
 
 #: src/cskkconfig.h:142
 msgid "Show Annotation when"
-msgstr ""
+msgstr "顯示注釋"
 
 #: src/cskkconfig.h:42
 msgid "SingleCandidate"
-msgstr ""
+msgstr "單個候選詞"
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
