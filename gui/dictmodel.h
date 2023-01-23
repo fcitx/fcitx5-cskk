@@ -38,7 +38,7 @@ public:
   static QMap<QString, QString> parseLine(const QString &line);
   static QString serialize(const QMap<QString, QString> &dict);
   inline static QSet<QString> m_knownKeys =
-      QSet<QString>({"file", "type", "mode", "encoding"});
+      QSet<QString>({"file", "type", "mode", "encoding", "complete"});
 
 private:
   QList<QMap<QString, QString>> m_dicts;

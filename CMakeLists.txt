@@ -22,7 +22,7 @@ find_package(Fcitx5Core 5.0.6 REQUIRED)
 find_package(Fcitx5Utils 5.0.6 REQUIRED)
 
 # GITHUB_ACTION_BUILD_CSKK_VERSION=2.0.0
-pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=2.0")
+pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=3.0")
 
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 

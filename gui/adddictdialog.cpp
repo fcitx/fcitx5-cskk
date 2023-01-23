@@ -32,6 +32,7 @@ AddDictDialog::AddDictDialog(QWidget *parent)
   m_ui->typeComboBox->addItem(_("System"));
   m_ui->typeComboBox->addItem(_("User"));
   m_ui->typeComboBox->setCurrentIndex(1);
+  // m_ui->completeNoRadio
 
   indexChanged();
 
@@ -57,6 +58,11 @@ QMap<QString, QString> AddDictDialog::dictionary() {
   dict["file"] = m_ui->urlLineEdit->text();
   dict["mode"] = mode_type[idx];
   dict["encoding"] = m_ui->encodingEdit->text();
+  if (m_ui->completeYesRadio->isChecked()) {
+    dict["complete"] = "true";
+  } else {
+    dict["complete"] = "false";
+  }
 
   return dict;
 }
@@ -120,6 +126,7 @@ void AddDictDialog::browseClicked() {
   }
   validate();
 }
+
 void AddDictDialog::setDictionary(QMap<QString, QString> &dict) {
   m_ui->urlLineEdit->setText(dict["file"]);
 
@@ -130,6 +137,9 @@ void AddDictDialog::setDictionary(QMap<QString, QString> &dict) {
     }
   }
   m_ui->encodingEdit->setText(dict["encoding"]);
+  if (dict["complete"] == "complete") {
+    m_ui->completeYesRadio->setChecked(true);
+  }
 }
 
 } // namespace fcitx
