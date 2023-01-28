@@ -295,8 +295,9 @@ void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
     }
   }
 
-  if (skk_context_get_composition_mode(context_) !=
-      CompositionMode::CompositionSelection) {
+  auto composition_mode = skk_context_get_composition_mode(context_);
+  if (composition_mode != CompositionMode::CompositionSelection &&
+      composition_mode != CompositionMode::Completion) {
     CSKK_DEBUG() << "not composition selection. destroy candidate list.";
     ic_->inputPanel().setCandidateList(nullptr);
   }
