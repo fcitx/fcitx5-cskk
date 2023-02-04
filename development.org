@@ -31,6 +31,10 @@ Should update these files and then create a deploy on github
 Following semver rule but with tweak same as rust lang's cargo.
 Initial development releases starting with "0.y.z" can treat changes in "y" as a major release, and "z" as a minor release.
 
+** Shared lib places
+Fcitx5 finds addon from FCITX_ADDON_DIRS env var, a colon (':') separated dir list. fallbacks to FCITX_INSTALL_ADDONDIR configured on build.
+e.g. FCITX_ADDON_DIRS=build/src:/usr/lib/x86_64-linux-gnu/fcitx5 fcitx5 --verbose=*=5
+
 * Q
 ** How config works?
 Create Option class.

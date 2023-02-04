@@ -22,6 +22,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+
 extern "C" {
 #include <fcntl.h>
 }
@@ -46,7 +47,9 @@ FcitxCskkEngine::FcitxCskkEngine(Instance *instance)
   reloadConfig();
   instance_->inputContextManager().registerProperty("cskkcontext", &factory_);
 }
+
 FcitxCskkEngine::~FcitxCskkEngine() = default;
+
 void FcitxCskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
   CSKK_DEBUG() << "Engine keyEvent start: " << keyEvent.rawKey();
   // delegate to context
@@ -55,6 +58,7 @@ void FcitxCskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
   context->keyEvent(keyEvent);
   CSKK_DEBUG() << "Engine keyEvent end";
 }
+
 void FcitxCskkEngine::save() {
   if (factory_.registered()) {
     instance_->inputContextManager().foreach ([this](InputContext *ic) {
@@ -63,11 +67,14 @@ void FcitxCskkEngine::save() {
     });
   }
 }
+
 void FcitxCskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
+
 void FcitxCskkEngine::deactivate(const InputMethodEntry &entry,
                                  InputContextEvent &event) {
   reset(entry, event);
 }
+
 void FcitxCskkEngine::reset(const InputMethodEntry &,
                             InputContextEvent &event) {
   CSKK_DEBUG() << "Reset";
@@ -75,12 +82,14 @@ void FcitxCskkEngine::reset(const InputMethodEntry &,
   auto context = ic->propertyFor(&factory_);
   context->reset();
 }
+
 void FcitxCskkEngine::setConfig(const RawConfig &config) {
   CSKK_DEBUG() << "Cskk setconfig";
   config_.load(config, true);
   safeSaveAsIni(config_, FcitxCskkEngine::config_file_path);
   reloadConfig();
 }
+
 void FcitxCskkEngine::reloadConfig() {
   CSKK_DEBUG() << "Cskkengine reload config";
   readAsIni(config_, FcitxCskkEngine::config_file_path);
@@ -96,6 +105,7 @@ void FcitxCskkEngine::reloadConfig() {
 }
 
 typedef enum _FcitxSkkDictType { FSDT_Invalid, FSDT_File } FcitxSkkDictType;
+
 void FcitxCskkEngine::loadDictionary() {
   freeDictionaries();
 
@@ -124,6 +134,8 @@ void FcitxCskkEngine::loadDictionary() {
     int mode = 0;
     std::string path;
     std::string encoding;
+    bool complete = false;
+
     for (auto &token : tokens) {
       auto equal = token.find('=');
       if (equal == std::string::npos) {
@@ -149,6 +161,10 @@ void FcitxCskkEngine::loadDictionary() {
         }
       } else if (key == "encoding") {
         encoding = value;
+      } else if (key == "complete") {
+        if (value == "true") {
+          complete = true;
+        }
       }
     }
 
@@ -165,9 +181,11 @@ void FcitxCskkEngine::loadDictionary() {
       }
       if (mode == 1) {
         // readonly mode
-        auto *dict = skk_file_dict_new(path.c_str(), encoding.c_str());
+        auto *dict =
+            skk_file_dict_new(path.c_str(), encoding.c_str(), complete);
         if (dict) {
-          CSKK_DEBUG() << "Adding file dict: " << path;
+          CSKK_DEBUG() << "Adding file dict: " << path
+                       << " complete:" << complete;
           dictionaries_.emplace_back(dict);
         } else {
           CSKK_WARN() << "Static dictionary load error. Ignored: " << path;
@@ -182,7 +200,8 @@ void FcitxCskkEngine::loadDictionary() {
               StandardPath::global().userDirectory(StandardPath::Type::PkgData),
               path.substr(var_len));
         }
-        auto *userdict = skk_user_dict_new(realpath.c_str(), encoding.c_str());
+        auto *userdict =
+            skk_user_dict_new(realpath.c_str(), encoding.c_str(), complete);
         if (userdict) {
           CSKK_DEBUG() << "Adding user dict: " << realpath;
           dictionaries_.emplace_back(userdict);
@@ -201,6 +220,7 @@ void FcitxCskkEngine::freeDictionaries() {
   }
   dictionaries_.clear();
 }
+
 KeyList FcitxCskkEngine::getSelectionKeys(
     CandidateSelectionKeys candidateSelectionKeys) {
   switch (candidateSelectionKeys) {
@@ -223,6 +243,7 @@ KeyList FcitxCskkEngine::getSelectionKeys(
                           Key(FcitxKey_0)};
   }
 }
+
 std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
                                              InputContext &ic) {
   auto context = ic.propertyFor(&factory_);
@@ -242,6 +263,7 @@ std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
     return "";
   }
 }
+
 bool FcitxCskkEngine::isEngineReady() { return factory_.registered(); }
 
 /*******************************************************************************
@@ -256,7 +278,9 @@ FcitxCskkContext::FcitxCskkContext(FcitxCskkEngine *engine, InputContext *ic)
     CSKK_ERROR() << "Failed to create new cskk context";
   }
 }
+
 FcitxCskkContext::~FcitxCskkContext() { skk_free_context(context_); }
+
 void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
   if (!context_) {
     CSKK_ERROR() << "CSKK Context is not setup. Ignored key.";
@@ -271,8 +295,9 @@ void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
     }
   }
 
-  if (skk_context_get_composition_mode(context_) !=
-      CompositionMode::CompositionSelection) {
+  auto composition_mode = skk_context_get_composition_mode(context_);
+  if (composition_mode != CompositionMode::CompositionSelection &&
+      composition_mode != CompositionMode::Completion) {
     CSKK_DEBUG() << "not composition selection. destroy candidate list.";
     ic_->inputPanel().setCandidateList(nullptr);
   }
@@ -291,6 +316,7 @@ void FcitxCskkContext::keyEvent(KeyEvent &keyEvent) {
     updateUI();
   }
 }
+
 bool FcitxCskkContext::handleCandidateSelection(
     const std::shared_ptr<FcitxCskkCandidateList> &candidateList,
     KeyEvent &keyEvent) {
@@ -331,9 +357,12 @@ bool FcitxCskkContext::handleCandidateSelection(
 }
 
 void FcitxCskkContext::reset() {
-  skk_context_reset(context_);
+  if (context_) {
+    skk_context_reset(context_);
+  }
   updateUI();
 }
+
 void FcitxCskkContext::updateUI() {
   if (!context_) {
     CSKK_WARN() << "No context setup";
@@ -403,6 +432,7 @@ void FcitxCskkContext::updateUI() {
   ic_->updateUserInterface(UserInterfaceComponent::StatusArea);
   ic_->updateUserInterface(UserInterfaceComponent::InputPanel);
 }
+
 void FcitxCskkContext::applyConfig() {
   CSKK_DEBUG() << "apply config";
   if (!context_) {
@@ -418,6 +448,7 @@ void FcitxCskkContext::applyConfig() {
   skk_context_set_period_style(context_, *config.periodStyle);
   skk_context_set_comma_style(context_, *config.commaStyle);
 }
+
 void FcitxCskkContext::copyTo(InputContextProperty *) {
   // auto otherContext = dynamic_cast<FcitxCskkContext *>(context);
   // Ignored.
@@ -426,6 +457,7 @@ void FcitxCskkContext::copyTo(InputContextProperty *) {
   // fcitx5-cskk will just hold each cskkcontext in each input context's
   // property and shares nothing.
 }
+
 bool FcitxCskkContext::saveDictionary() {
   if (!context_) {
     CSKK_WARN() << "No cskk context setup. Ignored dictionary save.";
@@ -435,6 +467,7 @@ bool FcitxCskkContext::saveDictionary() {
   // cskk v0.8 doesn't return value on save dict, return true for now.
   return true;
 }
+
 int FcitxCskkContext::getInputMode() {
   if (!context_) {
     CSKK_WARN() << "No cskk context setup. No inputmode.";
@@ -442,6 +475,7 @@ int FcitxCskkContext::getInputMode() {
   }
   return skk_context_get_input_mode(context_);
 }
+
 /**
  * format preedit state into Text.
  * Returns tuple of <Main content Text, Supplement content Text>
@@ -453,6 +487,7 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
                                 uint32_t stateLen) {
   std::string precomposition_marker = "▽";
   std::string selection_marker = "▼";
+  std::string completion_marker = "■";
   Text mainContent = Text(""), supplementContent = Text("");
   mainContent.clear();
   supplementContent.clear();
@@ -520,8 +555,14 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
     case CompositionSelectionStateInfo: {
       auto compositionSelectionStateInfo =
           cskkStateInfo.composition_selection_state_info;
+
+      if (compositionSelectionStateInfo.confirmed) {
+        mainContent.append(compositionSelectionStateInfo.confirmed);
+        mainCursorIdx += strlen(compositionSelectionStateInfo.confirmed);
+      }
       mainContent.append(selection_marker, TextFormatFlag::DontCommit);
       mainCursorIdx += selection_marker.length();
+
       std::string tmpContentString;
       if (compositionSelectionStateInfo.composited) {
         mainCursorIdx += strlen(compositionSelectionStateInfo.composited);
@@ -564,11 +605,32 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
       mainCursorIdx += strlen("【");
       mainContent.append("【", TextFormatFlag::DontCommit);
     } break;
+    case CompleteStateInfo: {
+      auto completeStateInfo = cskkStateInfo.complete_state_info;
+
+      if (completeStateInfo.confirmed) {
+        mainContent.append(completeStateInfo.confirmed);
+        mainCursorIdx += strlen(completeStateInfo.confirmed);
+      }
+      mainContent.append(completion_marker, TextFormatFlag::DontCommit);
+      mainCursorIdx += completion_marker.length();
+
+      if (completeStateInfo.completed) {
+        mainCursorIdx += strlen(completeStateInfo.completed);
+        mainContent.append(completeStateInfo.completed,
+                           TextFormatFlag::Underline);
+      }
+      if (completeStateInfo.completed_midashi) {
+        supplementContent.append(completeStateInfo.completed_midashi,
+                                 TextFormatFlag::DontCommit);
+      }
+    } break;
     }
   }
   // FIXME: Silently assuming length is less than int_max here. May fail when
   // length is over UINT_MAX. very unlikely, not high priority.
   mainContent.setCursor((int)mainCursorIdx);
+  // Starting from 1 on purpose. No paren for submodes on top of the stack.
   for (uint32_t i = 1; i < stateLen; i++) {
     mainContent.append("】", TextFormatFlag::DontCommit);
   }

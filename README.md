@@ -7,6 +7,18 @@
 
 ## インストール方法
 
+### Required libraries
+
+Same as other fcitx5 plugin project.
+
+For example in Debian,
+
+    $ sudo apt install gettext cmake extra-cmake-modules fcitx5-modules-dev qtbase5-dev qtdeclarative5-dev libfcitx5-qt-dev
+
+For full features.
+
+### Install
+
     $ rm -rf ./build
     $ mkdir build
     $ cd build  
@@ -57,11 +69,11 @@ GOOGLETESTフラグはキャッシュされるのでライブラリ生成時に�
 
 
 直接編集する場合は `~/.local/share/fcitx5/cskk/dictionary_list` に保存されている。
-','区切りのkey=valueリストで、type,file,mode,encodingを指定する。
+','区切りのkey=valueリストで、type,file,mode,encoding,completeを指定する。
 例として、
 
-    type=file,file=/usr/share/skk/SKK-JISYO.L,mode=readonly,encoding=euc-jp
-    type=file,file=$FCITX_CONFIG_DIR/cskk/user.dict,mode=readwrite
+    type=file,file=/usr/share/skk/SKK-JISYO.L,mode=readonly,encoding=euc-jp,complete=false
+    type=file,file=$FCITX_CONFIG_DIR/cskk/user.dict,mode=readwrite,complete=true
 
 typeはfileのみ。必須。
 
@@ -70,6 +82,8 @@ fileはファイルへのパスを指定する。必須。唯一文頭でのみ$
 modeはreadonlyまたはreadwrite。必須。
 
 encodingに指定できる内容はlibcskkに準じる。必須。少なくとも"euc-jp"や"utf-8"が使える。
+
+completeは補完機能に用いるかどうか。trueかfalse。デフォルトはfalse。
 
 
 
