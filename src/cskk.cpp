@@ -555,8 +555,14 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
     case CompositionSelectionStateInfo: {
       auto compositionSelectionStateInfo =
           cskkStateInfo.composition_selection_state_info;
+
+      if (compositionSelectionStateInfo.confirmed) {
+        mainContent.append(compositionSelectionStateInfo.confirmed);
+        mainCursorIdx += strlen(compositionSelectionStateInfo.confirmed);
+      }
       mainContent.append(selection_marker, TextFormatFlag::DontCommit);
       mainCursorIdx += selection_marker.length();
+
       std::string tmpContentString;
       if (compositionSelectionStateInfo.composited) {
         mainCursorIdx += strlen(compositionSelectionStateInfo.composited);
@@ -601,7 +607,14 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
     } break;
     case CompleteStateInfo: {
       auto completeStateInfo = cskkStateInfo.complete_state_info;
+
+      if (completeStateInfo.confirmed) {
+        mainContent.append(completeStateInfo.confirmed);
+        mainCursorIdx += strlen(completeStateInfo.confirmed);
+      }
       mainContent.append(completion_marker, TextFormatFlag::DontCommit);
+      mainCursorIdx += completion_marker.length();
+
       if (completeStateInfo.completed) {
         mainCursorIdx += strlen(completeStateInfo.completed);
         mainContent.append(completeStateInfo.completed,
