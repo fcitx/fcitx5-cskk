@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-11-20 20:25+0000\n"
+"POT-Creation-Date: 2023-02-13 22:18+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
 "Last-Translator: csslayer <wengxt@gmail.com>, 2022\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/fcitx/teams/12005/"
@@ -97,6 +97,13 @@ msgstr "词典"
 msgid "Dictionary Manager"
 msgstr "词典管理器"
 
+#. i18n: file: gui/adddictdialog.ui:99
+#. i18n: ectx: property (text), widget (QRadioButton, completeNoRadio)
+#: rc.cpp:21
+#, kde-format
+msgid "Do not complete"
+msgstr ""
+
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
 #: rc.cpp:15
@@ -139,7 +146,7 @@ msgstr "句号风格"
 msgid "Rule"
 msgstr "规则"
 
-#: gui/adddictdialog.cpp:89 gui/adddictdialog.cpp:112
+#: gui/adddictdialog.cpp:95 gui/adddictdialog.cpp:118
 msgid "Select Dictionary File"
 msgstr "选择词典文件"
 
@@ -154,6 +161,20 @@ msgstr "单个候选词"
 #: gui/adddictdialog.cpp:32
 msgid "System"
 msgstr "系统"
+
+#. i18n: file: gui/adddictdialog.ui:90
+#. i18n: ectx: property (text), widget (QLabel, completeLabel)
+#: rc.cpp:18
+#, kde-format
+msgid "TextLabel"
+msgstr ""
+
+#. i18n: file: gui/adddictdialog.ui:109
+#. i18n: ectx: property (text), widget (QRadioButton, completeYesRadio)
+#: rc.cpp:24
+#, kde-format
+msgid "Use for complete"
+msgstr ""
 
 #: gui/adddictdialog.cpp:33
 msgid "User"

@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the fcitx5-cskk package.
 #
 # Translators:
-# JungHee Lee <daemul72@gmail.com>, 2022
+# Junghee Lee <daemul72@gmail.com>, 2022
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-11-20 06:33+0000\n"
+"POT-Creation-Date: 2023-02-13 22:18+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: JungHee Lee <daemul72@gmail.com>, 2022\n"
+"Last-Translator: Junghee Lee <daemul72@gmail.com>, 2022\n"
 "Language-Team: Korean (https://www.transifex.com/fcitx/teams/12005/ko/)\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -96,6 +96,13 @@ msgstr "사전"
 msgid "Dictionary Manager"
 msgstr "사전 관리자"
 
+#. i18n: file: gui/adddictdialog.ui:99
+#. i18n: ectx: property (text), widget (QRadioButton, completeNoRadio)
+#: rc.cpp:21
+#, kde-format
+msgid "Do not complete"
+msgstr ""
+
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
 #: rc.cpp:15
@@ -138,7 +145,7 @@ msgstr ""
 msgid "Rule"
 msgstr ""
 
-#: gui/adddictdialog.cpp:89 gui/adddictdialog.cpp:112
+#: gui/adddictdialog.cpp:95 gui/adddictdialog.cpp:118
 msgid "Select Dictionary File"
 msgstr ""
 
@@ -152,6 +159,20 @@ msgstr ""
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
+msgstr ""
+
+#. i18n: file: gui/adddictdialog.ui:90
+#. i18n: ectx: property (text), widget (QLabel, completeLabel)
+#: rc.cpp:18
+#, kde-format
+msgid "TextLabel"
+msgstr ""
+
+#. i18n: file: gui/adddictdialog.ui:109
+#. i18n: ectx: property (text), widget (QRadioButton, completeYesRadio)
+#: rc.cpp:24
+#, kde-format
+msgid "Use for complete"
 msgstr ""
 
 #: gui/adddictdialog.cpp:33
