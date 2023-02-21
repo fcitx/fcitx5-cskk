@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2023-02-13 22:18+0000\n"
+"POT-Creation-Date: 2023-02-21 20:25+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
 "Last-Translator: Neko ◣ 0xFF, 2022\n"
 "Language-Team: Chinese (Taiwan) (https://www.transifex.com/fcitx/teams/12005/"
@@ -66,6 +66,13 @@ msgstr "顯示候選字詞清單前的候選字詞個數"
 #: src/cskkconfig.h:97
 msgid "Comma style"
 msgstr "逗號樣式"
+
+#. i18n: file: gui/adddictdialog.ui:90
+#. i18n: ectx: property (text), widget (QLabel, completeLabel)
+#: rc.cpp:18
+#, kde-format
+msgid "Completion:"
+msgstr ""
 
 #: src/cskk.conf.in:3
 msgid "Cskk"
@@ -162,13 +169,6 @@ msgstr "單個候選詞"
 #: gui/adddictdialog.cpp:32
 msgid "System"
 msgstr "系統"
-
-#. i18n: file: gui/adddictdialog.ui:90
-#. i18n: ectx: property (text), widget (QLabel, completeLabel)
-#: rc.cpp:18
-#, kde-format
-msgid "TextLabel"
-msgstr ""
 
 #. i18n: file: gui/adddictdialog.ui:109
 #. i18n: ectx: property (text), widget (QRadioButton, completeYesRadio)

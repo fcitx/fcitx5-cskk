@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2023-02-13 22:18+0000\n"
+"POT-Creation-Date: 2023-02-21 20:25+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
 "Last-Translator: mar well <m.wellendorf@gmx.de>, 2022\n"
 "Language-Team: German (https://www.transifex.com/fcitx/teams/12005/de/)\n"
@@ -63,6 +63,13 @@ msgstr ""
 
 #: src/cskkconfig.h:97
 msgid "Comma style"
+msgstr ""
+
+#. i18n: file: gui/adddictdialog.ui:90
+#. i18n: ectx: property (text), widget (QLabel, completeLabel)
+#: rc.cpp:18
+#, kde-format
+msgid "Completion:"
 msgstr ""
 
 #: src/cskk.conf.in:3
@@ -159,13 +166,6 @@ msgstr ""
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
-msgstr ""
-
-#. i18n: file: gui/adddictdialog.ui:90
-#. i18n: ectx: property (text), widget (QLabel, completeLabel)
-#: rc.cpp:18
-#, kde-format
-msgid "TextLabel"
 msgstr ""
 
 #. i18n: file: gui/adddictdialog.ui:109

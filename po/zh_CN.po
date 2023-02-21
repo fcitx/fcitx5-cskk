@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the fcitx5-cskk package.
 #
 # Translators:
-# csslayer <wengxt@gmail.com>, 2022
+# csslayer <wengxt@gmail.com>, 2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2023-02-13 22:18+0000\n"
+"POT-Creation-Date: 2023-02-21 20:25+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: csslayer <wengxt@gmail.com>, 2022\n"
+"Last-Translator: csslayer <wengxt@gmail.com>, 2023\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/fcitx/teams/12005/"
 "zh_CN/)\n"
 "Language: zh_CN\n"
@@ -66,6 +66,13 @@ msgstr "显示候选词列表前的候选词个数"
 msgid "Comma style"
 msgstr "逗号风格"
 
+#. i18n: file: gui/adddictdialog.ui:90
+#. i18n: ectx: property (text), widget (QLabel, completeLabel)
+#: rc.cpp:18
+#, kde-format
+msgid "Completion:"
+msgstr ""
+
 #: src/cskk.conf.in:3
 msgid "Cskk"
 msgstr "Cskk"
@@ -102,7 +109,7 @@ msgstr "词典管理器"
 #: rc.cpp:21
 #, kde-format
 msgid "Do not complete"
-msgstr ""
+msgstr "不用于补全"
 
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
@@ -162,19 +169,12 @@ msgstr "单个候选词"
 msgid "System"
 msgstr "系统"
 
-#. i18n: file: gui/adddictdialog.ui:90
-#. i18n: ectx: property (text), widget (QLabel, completeLabel)
-#: rc.cpp:18
-#, kde-format
-msgid "TextLabel"
-msgstr ""
-
 #. i18n: file: gui/adddictdialog.ui:109
 #. i18n: ectx: property (text), widget (QRadioButton, completeYesRadio)
 #: rc.cpp:24
 #, kde-format
 msgid "Use for complete"
-msgstr ""
+msgstr "用于补全"
 
 #: gui/adddictdialog.cpp:33
 msgid "User"
