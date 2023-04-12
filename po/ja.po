@@ -4,16 +4,16 @@
 #
 # Translators:
 # UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2022
-# Akira KANASHIRO, 2022
+# Akira KANASHIRO, 2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2023-02-21 20:25+0000\n"
+"POT-Creation-Date: 2023-04-12 14:27+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: Akira KANASHIRO, 2022\n"
-"Language-Team: Japanese (https://www.transifex.com/fcitx/teams/12005/ja/)\n"
+"Last-Translator: Akira KANASHIRO, 2023\n"
+"Language-Team: Japanese (https://app.transifex.com/fcitx/teams/12005/ja/)\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -71,7 +71,7 @@ msgstr "読点スタイル"
 #: rc.cpp:18
 #, kde-format
 msgid "Completion:"
-msgstr ""
+msgstr "補完"
 
 #: src/cskk.conf.in:3
 msgid "Cskk"
@@ -159,7 +159,7 @@ msgstr "辞書ファイルを選択"
 
 #: src/cskkconfig.h:142
 msgid "Show Annotation when"
-msgstr ""
+msgstr "注釈を表示"
 
 #: src/cskkconfig.h:42
 msgid "SingleCandidate"
