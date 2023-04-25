@@ -5,15 +5,16 @@
 # Translators:
 # 黃柏諺 <s8321414@gmail.com>, 2022
 # Neko ◣ 0xFF, 2022
+# Lau YeeYu, 2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2023-02-21 20:25+0000\n"
+"POT-Creation-Date: 2023-04-25 20:24+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: Neko ◣ 0xFF, 2022\n"
-"Language-Team: Chinese (Taiwan) (https://www.transifex.com/fcitx/teams/12005/"
+"Last-Translator: Lau YeeYu, 2023\n"
+"Language-Team: Chinese (Taiwan) (https://app.transifex.com/fcitx/teams/12005/"
 "zh_TW/)\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
@@ -72,7 +73,7 @@ msgstr "逗號樣式"
 #: rc.cpp:18
 #, kde-format
 msgid "Completion:"
-msgstr ""
+msgstr "補全："
 
 #: src/cskk.conf.in:3
 msgid "Cskk"
@@ -110,7 +111,7 @@ msgstr "字典管理程式"
 #: rc.cpp:21
 #, kde-format
 msgid "Do not complete"
-msgstr ""
+msgstr "不用於補全"
 
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
@@ -175,7 +176,7 @@ msgstr "系統"
 #: rc.cpp:24
 #, kde-format
 msgid "Use for complete"
-msgstr ""
+msgstr "用於補全"
 
 #: gui/adddictdialog.cpp:33
 msgid "User"
