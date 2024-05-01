@@ -94,7 +94,8 @@ jobs:
         with:
           path: fcitx5-cskk
           cmake-option: >-
-            -DENABLE_QT=Off
+            -DENABLE_QT=On
+            -DUSE_QT6=On
       - name: Test
         run: |
           ctest --test-dir fcitx5-cskk/build

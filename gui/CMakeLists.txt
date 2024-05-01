@@ -18,12 +18,12 @@ set_target_properties(fcitx5-cskk-config PROPERTIES
         AUTOUIC_OPTIONS "-tr=fcitx::tr2fcitx;--include=fcitxqti18nhelper.h"
         )
 target_link_libraries(fcitx5-cskk-config
-        Qt5::Core
-        Qt5::Widgets
-        Fcitx5Qt5::WidgetsAddons
+        Qt${QT_MAJOR_VERSION}::Core
+        Qt${QT_MAJOR_VERSION}::Widgets
+        Fcitx5Qt${QT_MAJOR_VERSION}::WidgetsAddons
         Fcitx5::Utils
         PkgConfig::LIBCSKK
         )
 
 # Must install to same lib dir that Fcitx5Utils specify using FCITX_*DIR so that fcitx5 can find.
-install(TARGETS fcitx5-cskk-config DESTINATION ${FCITX_INSTALL_LIBDIR}/fcitx5/qt5)
+install(TARGETS fcitx5-cskk-config DESTINATION ${FCITX_INSTALL_LIBDIR}/fcitx5/qt${QT_MAJOR_VERSION})

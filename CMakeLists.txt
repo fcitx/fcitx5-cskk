@@ -10,6 +10,8 @@ message ("CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 find_package(ECM 1.0.0 REQUIRED)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+option(ENABLE_QT "Enable Qt for GUI configuration" On)
+option(USE_QT6 "Build against Qt6" On)
 include(FeatureSummary)
 include(GNUInstallDirs)
 include(ECMUninstallTarget)
@@ -24,15 +26,19 @@ find_package(Fcitx5Utils 5.0.6 REQUIRED)
 # GITHUB_ACTION_BUILD_CSKK_VERSION=3.0.0
 pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=3.0")
 
-option(ENABLE_QT "Enable Qt for GUI configuration" On)
-
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
 
 # GUI related libs
 if (ENABLE_QT)
+if (USE_QT6)
+    set(QT_MAJOR_VERSION 6)
+    find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+else()
+    set(QT_MAJOR_VERSION 5)
     find_package(Qt5 5.7 REQUIRED COMPONENTS Core Gui Widgets)
-    find_package(Fcitx5Qt5WidgetsAddons REQUIRED)
-endif ()
+endif()
+find_package(Fcitx5Qt${QT_MAJOR_VERSION}WidgetsAddons REQUIRED)
+endif()
 
 # make default value header searchable
 set(SKK_DICT_DEFAULT_PATH "/usr/share/skk/SKK-JISYO.L" CACHE STRING "Default path of SKK Dictionary file")

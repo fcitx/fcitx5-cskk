@@ -38,5 +38,5 @@ jobs:
           cxx: g++
           build-type: Release
           run-test: false
-          configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
+          configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON -DUSE_QT6=Off
           build-options: --verbose
