@@ -13,12 +13,12 @@
 namespace fcitx {
 
 class CskkConfigPlugin : public FcitxQtConfigUIPlugin {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    Q_PLUGIN_METADATA(IID FcitxQtConfigUIFactoryInterface_iid FILE
-                      "cskk-config.json")
-    explicit CskkConfigPlugin(QObject *parent = 0);
-    FcitxQtConfigUIWidget *create(const QString &key) override;
+  Q_PLUGIN_METADATA(IID FcitxQtConfigUIFactoryInterface_iid FILE
+                    "cskk-config.json")
+  explicit CskkConfigPlugin(QObject *parent = 0);
+  FcitxQtConfigUIWidget *create(const QString &key) override;
 };
 
 } // namespace fcitx
