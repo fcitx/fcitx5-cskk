@@ -1,7 +1,8 @@
 /*
  * Copyright (c) 2021 Naoaki Iwakiri
  * This program is released under GNU General Public License version 3 or later
- * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Creation Date: 2021-05-08
  *
