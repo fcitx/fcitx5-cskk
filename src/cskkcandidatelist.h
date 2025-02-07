@@ -16,8 +16,12 @@
 #define FCITX5_CSKK_CSKKCANDIDATELIST_H
 
 #include "cskk.h"
+#include "cskkconfig.h"
 #include <fcitx/candidatelist.h>
+#include <fcitx/text.h>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace fcitx {
 
@@ -67,7 +71,7 @@ public:
   int totalPages() const override;
   // NOLINTNEXTLINE(modernize-use-nodiscard)
   int currentPage() const override;
-  void setPage(int) override;
+  void setPage(int /*unused*/) override;
 
   const auto &to_composite() { return wordToComposite_; }
   /// cursorPosition is the position of the original cskk candidate list.

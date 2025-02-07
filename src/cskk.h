@@ -15,15 +15,27 @@
 #ifndef FCITX5_CSKK_CSKK_H
 #define FCITX5_CSKK_CSKK_H
 
+#include "cskkconfig.h"
+#include <cstdint>
+#include <fcitx-config/configuration.h>
+#include <fcitx-config/rawconfig.h>
+#include <fcitx-utils/key.h>
+#include <fcitx/addonfactory.h>
+#include <fcitx/addoninstance.h>
+#include <fcitx/candidatelist.h>
+#include <fcitx/event.h>
+#include <fcitx/inputcontextproperty.h>
+#include <fcitx/inputmethodengine.h>
+#include <fcitx/instance.h>
+#include <fcitx/text.h>
+#include <memory>
+#include <string>
+#include <tuple>
+#include <vector>
+
 extern "C" {
 #include <libcskk.h>
 }
-#include "cskkconfig.h"
-#include <fcitx/addonfactory.h>
-#include <fcitx/candidatelist.h>
-#include <fcitx/inputmethodengine.h>
-#include <fcitx/instance.h>
-#include <string>
 
 namespace fcitx {
 
@@ -36,13 +48,14 @@ public:
   ~FcitxCskkEngine() override;
 
   void keyEvent(const InputMethodEntry &entry, KeyEvent &keyEvent) override;
-  void activate(const InputMethodEntry &, InputContextEvent &) override;
+  void activate(const InputMethodEntry & /*entry*/,
+                InputContextEvent & /*event*/) override;
   void deactivate(const InputMethodEntry &entry,
                   InputContextEvent &event) override;
   void reset(const InputMethodEntry &entry, InputContextEvent &event) override;
   void save() override;
-  std::string subModeIconImpl(const InputMethodEntry &,
-                              InputContext &) override;
+  std::string subModeIconImpl(const InputMethodEntry & /*unused*/,
+                              InputContext & /*unused*/) override;
 
   // Configuration methods are called from fctix5-configtool via DBus message
   // to fcitx5 server.
@@ -66,9 +79,6 @@ private:
   FactoryFor<FcitxCskkContext> factory_;
   FcitxCskkConfig config_;
   std::vector<CskkDictionaryFfi *> dictionaries_;
-
-  // TODO: Change to string_view when fcitx5 moved to C++17 or later
-  static const std::string config_file_path;
 
   void loadDictionary();
   void freeDictionaries();

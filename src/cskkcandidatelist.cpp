@@ -13,8 +13,22 @@
  */
 
 #include "cskkcandidatelist.h"
+#include "cskk.h"
+#include "cskkconfig.h"
 #include "log.h"
 #include <algorithm>
+#include <cstdlib>
+#include <fcitx/candidatelist.h>
+#include <fcitx/inputcontext.h>
+#include <fcitx/text.h>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+extern "C" {
+#include <libcskk.h>
+}
 
 namespace fcitx {
 /*******************************************************************************
@@ -32,10 +46,10 @@ FcitxCskkCandidateList::FcitxCskkCandidateList(FcitxCskkEngine *engine,
   CskkContext *cskkContext = fcitxCskkContext->context();
 
   auto totalSize = skk_context_get_current_candidate_count(cskkContext);
-  // TODO?: 0 check here to skip some api calls
-  char **candidates = static_cast<char **>(malloc(sizeof(char *) * totalSize));
-  auto loadedSize =
-      skk_context_get_current_candidates(cskkContext, candidates, totalSize, 0);
+  std::vector<char *> candidates;
+  candidates.resize(totalSize);
+  auto loadedSize = skk_context_get_current_candidates(
+      cskkContext, candidates.data(), totalSize, 0);
   totalSize_ = loadedSize;
   for (auto i = 0; i < static_cast<int>(totalSize_); i++) {
     Text text;
@@ -44,14 +58,13 @@ FcitxCskkCandidateList::FcitxCskkCandidateList(FcitxCskkEngine *engine,
         std::make_unique<FcitxCskkCandidateWord>(engine_, text, i));
   }
 
-  skk_free_candidate_list(candidates, loadedSize);
-  free(candidates);
+  skk_free_candidate_list(candidates.data(), loadedSize);
 
-  auto &config = engine_->config();
+  const auto &config = engine_->config();
   auto labels =
       FcitxCskkCandidateList::getLabels(config.candidateSelectionKeys.value());
   for (char label : labels) {
-    auto theLabel = {label, '\0'};
+    auto theLabel = {label, ' ', '\0'};
     labels_.emplace_back(Text(theLabel));
   }
 
@@ -130,7 +143,8 @@ int FcitxCskkCandidateList::currentPage() const {
   return static_cast<int>(currentPage_);
 }
 void FcitxCskkCandidateList::setPage(int page) {
-  auto newCursorPos = static_cast<int>(pageStartOffset_ + page * pageSize_ + 1);
+  auto newCursorPos =
+      static_cast<int>(pageStartOffset_ + (page * pageSize_) + 1);
   setCursorPosition(newCursorPos);
 }
 bool FcitxCskkCandidateList::usedNextBefore() const { return usedNextBefore_; }
@@ -154,13 +168,13 @@ FcitxCskkCandidateList::~FcitxCskkCandidateList() = default;
  ******************************************************************************/
 FcitxCskkCandidateWord::FcitxCskkCandidateWord(FcitxCskkEngine *engine,
                                                Text text, int cursorPosition)
-    : CandidateWord(), engine_(engine), cursorPosition_(cursorPosition) {
+    : engine_(engine), cursorPosition_(cursorPosition) {
   CSKK_DEBUG() << "candidate word create: " << text.toString();
   setText(std::move(text));
 }
 void FcitxCskkCandidateWord::select(InputContext *inputContext) const {
   {
-    auto fcitxCskkContext = engine_->context(inputContext);
+    auto *fcitxCskkContext = engine_->context(inputContext);
     skk_context_confirm_candidate_at(fcitxCskkContext->context(),
                                      static_cast<int>(cursorPosition_));
     fcitxCskkContext->updateUI();

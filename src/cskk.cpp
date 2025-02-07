@@ -13,24 +13,41 @@
  */
 #include "cskk.h"
 #include "cskkcandidatelist.h"
+#include "cskkconfig.h"
 #include "log.h"
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <fcitx-config/iniparser.h>
+#include <fcitx-config/rawconfig.h>
+#include <fcitx-utils/capabilityflags.h>
 #include <fcitx-utils/fdstreambuf.h>
+#include <fcitx-utils/i18n.h>
+#include <fcitx-utils/key.h>
+#include <fcitx-utils/keysym.h>
+#include <fcitx-utils/log.h>
+#include <fcitx-utils/standardpath.h>
 #include <fcitx-utils/stringutils.h>
+#include <fcitx-utils/textformatflags.h>
+#include <fcitx/addoninstance.h>
 #include <fcitx/addonmanager.h>
+#include <fcitx/event.h>
+#include <fcitx/inputcontextproperty.h>
+#include <fcitx/inputmethodentry.h>
 #include <fcitx/inputpanel.h>
-#include <filesystem>
+#include <fcitx/text.h>
+#include <fcitx/userinterface.h>
 #include <istream>
+#include <memory>
 #include <string>
+#include <string_view>
+#include <tuple>
 #include <vector>
 
 extern "C" {
 #include <fcntl.h>
+#include <libcskk.h>
 }
-using std::getenv;
-using std::string;
 
 FCITX_DEFINE_LOG_CATEGORY(cskk_log, "cskk");
 
@@ -39,11 +56,11 @@ namespace fcitx {
 /*******************************************************************************
  * FcitxCskkEngine
  ******************************************************************************/
-const string FcitxCskkEngine::config_file_path = string{"conf/fcitx5-cskk"};
+constexpr std::string_view config_file_path = "conf/fcitx5-cskk";
 
 FcitxCskkEngine::FcitxCskkEngine(Instance *instance)
     : instance_{instance}, factory_([this](InputContext &ic) {
-        auto newCskkContext = new FcitxCskkContext(this, &ic);
+        auto *newCskkContext = new FcitxCskkContext(this, &ic);
         newCskkContext->applyConfig();
         return newCskkContext;
       }) {
@@ -53,11 +70,12 @@ FcitxCskkEngine::FcitxCskkEngine(Instance *instance)
 
 FcitxCskkEngine::~FcitxCskkEngine() = default;
 
-void FcitxCskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
+void FcitxCskkEngine::keyEvent(const InputMethodEntry & /*entry*/,
+                               KeyEvent &keyEvent) {
   CSKK_DEBUG() << "Engine keyEvent start: " << keyEvent.rawKey();
   // delegate to context
-  auto ic = keyEvent.inputContext();
-  auto context = ic->propertyFor(&factory_);
+  auto *ic = keyEvent.inputContext();
+  auto *context = ic->propertyFor(&factory_);
   context->keyEvent(keyEvent);
   CSKK_DEBUG() << "Engine keyEvent end";
 }
@@ -65,42 +83,43 @@ void FcitxCskkEngine::keyEvent(const InputMethodEntry &, KeyEvent &keyEvent) {
 void FcitxCskkEngine::save() {
   if (factory_.registered()) {
     instance_->inputContextManager().foreach ([this](InputContext *ic) {
-      auto context = ic->propertyFor(&factory_);
+      auto *context = ic->propertyFor(&factory_);
       return context->saveDictionary();
     });
   }
 }
 
-void FcitxCskkEngine::activate(const InputMethodEntry &, InputContextEvent &) {}
+void FcitxCskkEngine::activate(const InputMethodEntry & /*entry*/,
+                               InputContextEvent & /*event*/) {}
 
 void FcitxCskkEngine::deactivate(const InputMethodEntry &entry,
                                  InputContextEvent &event) {
   reset(entry, event);
 }
 
-void FcitxCskkEngine::reset(const InputMethodEntry &,
+void FcitxCskkEngine::reset(const InputMethodEntry & /*entry*/,
                             InputContextEvent &event) {
   CSKK_DEBUG() << "Reset";
-  auto ic = event.inputContext();
-  auto context = ic->propertyFor(&factory_);
+  auto *ic = event.inputContext();
+  auto *context = ic->propertyFor(&factory_);
   context->reset();
 }
 
 void FcitxCskkEngine::setConfig(const RawConfig &config) {
   CSKK_DEBUG() << "Cskk setconfig";
   config_.load(config, true);
-  safeSaveAsIni(config_, FcitxCskkEngine::config_file_path);
+  safeSaveAsIni(config_, std::string(config_file_path));
   reloadConfig();
 }
 
 void FcitxCskkEngine::reloadConfig() {
   CSKK_DEBUG() << "Cskkengine reload config";
-  readAsIni(config_, FcitxCskkEngine::config_file_path);
+  readAsIni(config_, std::string(config_file_path));
 
   loadDictionary();
   if (factory_.registered()) {
     instance_->inputContextManager().foreach ([this](InputContext *ic) {
-      auto context = ic->propertyFor(&factory_);
+      auto *context = ic->propertyFor(&factory_);
       context->applyConfig();
       return true;
     });
@@ -139,7 +158,7 @@ void FcitxCskkEngine::loadDictionary() {
     std::string encoding;
     bool complete = false;
 
-    for (auto &token : tokens) {
+    for (const auto &token : tokens) {
       auto equal = token.find('=');
       if (equal == std::string::npos) {
         continue;
@@ -177,40 +196,38 @@ void FcitxCskkEngine::loadDictionary() {
     if (type == FSDT_Invalid) {
       CSKK_WARN() << "Dictionary entry has invalid type. Ignored.";
       continue;
-    } else {
-      if (path.empty() || mode == 0) {
-        CSKK_WARN() << "Invalid dictionary path or mode. Ignored";
-        continue;
-      }
-      if (mode == 1) {
-        // readonly mode
-        auto *dict =
-            skk_file_dict_new(path.c_str(), encoding.c_str(), complete);
-        if (dict) {
-          CSKK_DEBUG() << "Adding file dict: " << path
-                       << " complete:" << complete;
-          dictionaries_.emplace_back(dict);
-        } else {
-          CSKK_WARN() << "Static dictionary load error. Ignored: " << path;
-        }
+    }
+    if (path.empty() || mode == 0) {
+      CSKK_WARN() << "Invalid dictionary path or mode. Ignored";
+      continue;
+    }
+    if (mode == 1) {
+      // readonly mode
+      auto *dict = skk_file_dict_new(path.c_str(), encoding.c_str(), complete);
+      if (dict) {
+        CSKK_DEBUG() << "Adding file dict: " << path
+                     << " complete:" << complete;
+        dictionaries_.emplace_back(dict);
       } else {
-        // read/write mode
-        constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
-        constexpr auto var_len = sizeof(configDir) - 1;
-        std::string realpath = path;
-        if (stringutils::startsWith(path, configDir)) {
-          realpath = stringutils::joinPath(
-              StandardPath::global().userDirectory(StandardPath::Type::PkgData),
-              path.substr(var_len));
-        }
-        auto *userdict =
-            skk_user_dict_new(realpath.c_str(), encoding.c_str(), complete);
-        if (userdict) {
-          CSKK_DEBUG() << "Adding user dict: " << realpath;
-          dictionaries_.emplace_back(userdict);
-        } else {
-          CSKK_WARN() << "User dictionary load error. Ignored: " << realpath;
-        }
+        CSKK_WARN() << "Static dictionary load error. Ignored: " << path;
+      }
+    } else {
+      // read/write mode
+      constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
+      constexpr auto var_len = sizeof(configDir) - 1;
+      std::string realpath = path;
+      if (stringutils::startsWith(path, configDir)) {
+        realpath = stringutils::joinPath(
+            StandardPath::global().userDirectory(StandardPath::Type::PkgData),
+            path.substr(var_len));
+      }
+      auto *userdict =
+          skk_user_dict_new(realpath.c_str(), encoding.c_str(), complete);
+      if (userdict) {
+        CSKK_DEBUG() << "Adding user dict: " << realpath;
+        dictionaries_.emplace_back(userdict);
+      } else {
+        CSKK_WARN() << "User dictionary load error. Ignored: " << realpath;
       }
     }
   }
@@ -218,7 +235,7 @@ void FcitxCskkEngine::loadDictionary() {
 
 void FcitxCskkEngine::freeDictionaries() {
   CSKK_DEBUG() << "Cskk free dict";
-  for (auto dictionary : dictionaries_) {
+  for (auto *dictionary : dictionaries_) {
     skk_free_dictionary(dictionary);
   }
   dictionaries_.clear();
@@ -247,9 +264,10 @@ KeyList FcitxCskkEngine::getSelectionKeys(
   }
 }
 
-std::string FcitxCskkEngine::subModeIconImpl(const InputMethodEntry &,
-                                             InputContext &ic) {
-  auto context = ic.propertyFor(&factory_);
+std::string
+FcitxCskkEngine::subModeIconImpl(const InputMethodEntry & /*unused*/,
+                                 InputContext &ic) {
+  auto *context = ic.propertyFor(&factory_);
   auto current_input_mode = context->getInputMode();
   switch (current_input_mode) {
   case InputMode::Ascii:
@@ -371,12 +389,12 @@ void FcitxCskkContext::updateUI() {
     CSKK_WARN() << "No context setup";
     return;
   }
-  auto &config = engine_->config();
+  const auto &config = engine_->config();
   auto &inputPanel = ic_->inputPanel();
   inputPanel.reset();
 
   // Output
-  if (auto output = skk_context_poll_output(context_)) {
+  if (auto *output = skk_context_poll_output(context_)) {
     CSKK_DEBUG() << "output: " << output;
     if (strlen(output) > 0) {
       ic_->commitString(output);
@@ -386,7 +404,7 @@ void FcitxCskkContext::updateUI() {
 
   // Preedit
   uint32_t stateStackLen;
-  auto preeditDetail = skk_context_get_preedit_detail(context_, &stateStackLen);
+  auto *preeditDetail = skk_context_get_preedit_detail(context_, &stateStackLen);
   auto [mainPreedit, supplementPreedit] =
       FcitxCskkContext::formatPreedit(preeditDetail, stateStackLen);
   skk_free_preedit_detail(preeditDetail, stateStackLen);
@@ -410,7 +428,7 @@ void FcitxCskkContext::updateUI() {
     } else {
       // Sync UI with actual data
       currentCandidateList->setCursorPosition(
-          static_cast<int>(currentCursorPosition));
+          currentCursorPosition);
     }
 
   } else {
@@ -442,7 +460,7 @@ void FcitxCskkContext::applyConfig() {
     CSKK_WARN() << "No context setup. Ignoring config.";
     return;
   }
-  auto &config = engine_->config();
+  const auto &config = engine_->config();
 
   skk_context_set_rule(context_, config.cskkRule->c_str());
   skk_context_set_input_mode(context_, *config.inputMode);
@@ -452,7 +470,7 @@ void FcitxCskkContext::applyConfig() {
   skk_context_set_comma_style(context_, *config.commaStyle);
 }
 
-void FcitxCskkContext::copyTo(InputContextProperty *) {
+void FcitxCskkContext::copyTo(InputContextProperty * /*unused*/) {
   // auto otherContext = dynamic_cast<FcitxCskkContext *>(context);
   // Ignored.
   // Even if fcitx5 global option is set to share input state、it only shares
@@ -491,9 +509,8 @@ FcitxCskkContext::formatPreedit(CskkStateInfoFfi *cskkStateInfoArray,
   std::string precomposition_marker = "▽";
   std::string selection_marker = "▼";
   std::string completion_marker = "■";
-  Text mainContent = Text(""), supplementContent = Text("");
-  mainContent.clear();
-  supplementContent.clear();
+  Text mainContent;
+  Text supplementContent;
   size_t mainCursorIdx = 0;
   for (uint32_t i = 0; i < stateLen; i++) {
     auto cskkStateInfo = cskkStateInfoArray[i];
@@ -649,14 +666,13 @@ AddonInstance *FcitxCskkFactory::create(AddonManager *manager) {
   {
     CSKK_DEBUG() << "**** CSKK FcitxCskkFactory Create ****";
     registerDomain("fcitx5-cskk", FCITX_INSTALL_LOCALEDIR);
-    auto engine = new FcitxCskkEngine(manager->instance());
+    auto *engine = new FcitxCskkEngine(manager->instance());
     if (engine->isEngineReady()) {
       return engine;
-    } else {
-      return nullptr;
     }
+    return nullptr;
   }
 }
 } // namespace fcitx
 
-FCITX_ADDON_FACTORY(fcitx::FcitxCskkFactory);
+FCITX_ADDON_FACTORY_V2(cskk, fcitx::FcitxCskkFactory);

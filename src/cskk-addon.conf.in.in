@@ -8,3 +8,6 @@ OnDemand=True
 Icon=cskk
 Configurable=True
 Version=@PROJECT_VERSION@
+
+[Addon/Dependencies]
+0=core:@REQUIRED_FCITX_VERSION@
