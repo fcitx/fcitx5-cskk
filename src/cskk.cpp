@@ -17,9 +17,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <fcitx-config/iniparser.h>
+#include <fcitx-utils/fdstreambuf.h>
+#include <fcitx-utils/stringutils.h>
 #include <fcitx/addonmanager.h>
 #include <fcitx/inputpanel.h>
 #include <filesystem>
+#include <istream>
 #include <string>
 #include <vector>
 
@@ -112,16 +115,16 @@ void FcitxCskkEngine::loadDictionary() {
   auto dict_config_file = StandardPath::global().open(
       StandardPath::Type::PkgData, "cskk/dictionary_list", O_RDONLY);
 
-  UniqueFilePtr fp(fdopen(dict_config_file.fd(), "rb"));
-  if (!fp) {
+  if (!dict_config_file.isValid()) {
     return;
   }
 
-  UniqueCPtr<char> buf;
-  size_t len = 0;
+  IFDStreamBuf buf(dict_config_file.fd());
+  std::istream in(&buf);
+  std::string line;
 
-  while (getline(buf, &len, fp.get()) != -1) {
-    const auto trimmed = stringutils::trim(buf.get());
+  while (std::getline(in, line)) {
+    const auto trimmed = stringutils::trimView(line);
     const auto tokens = stringutils::split(trimmed, ",");
 
     if (tokens.size() < 3) {
