@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the fcitx5-cskk package.
 #
 # Translators:
-# UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2022
 # Akira KANASHIRO, 2023
+# UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2025
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2023-04-12 14:27+0000\n"
+"POT-Creation-Date: 2025-02-28 20:24+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
-"Last-Translator: Akira KANASHIRO, 2023\n"
+"Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2025\n"
 "Language-Team: Japanese (https://app.transifex.com/fcitx/teams/12005/ja/)\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -60,7 +60,7 @@ msgstr "前の候補リストへの移動"
 
 #: src/cskkconfig.h:102
 msgid "Candidates to show before showing in list"
-msgstr ""
+msgstr "リストに表示される前に表示する候補"
 
 #: src/cskkconfig.h:97
 msgid "Comma style"
@@ -73,11 +73,11 @@ msgstr "読点スタイル"
 msgid "Completion:"
 msgstr "補完"
 
-#: src/cskk.conf.in:3
+#: src/cskk.conf.in:2
 msgid "Cskk"
 msgstr "CSKK"
 
-#: src/cskk-addon.conf.in.in:3
+#: src/cskk-addon.conf.in.in:2
 msgid "Cskk input method for Fcitx5"
 msgstr "Fcitx5 用の CSKK 入力メソッド"
 
@@ -129,7 +129,7 @@ msgstr "フォーム"
 msgid "Horizontal"
 msgstr "横"
 
-#: src/cskk-addon.conf.in.in:4
+#: src/cskk-addon.conf.in.in:3
 msgid "IM using libcskk"
 msgstr "libcskk を使用した IM"
 
@@ -188,6 +188,6 @@ msgstr "縦"
 msgid "fcitx5-cskk"
 msgstr "fcitx5-cskk"
 
-#: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:9
+#: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:8
 msgid "libCSKK Japanese input method"
 msgstr "libCSKK 日本語入力メソッド"
