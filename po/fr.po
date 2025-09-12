@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx5-cskk\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2025-09-11 20:24+0000\n"
+"POT-Creation-Date: 2025-09-12 20:25+0000\n"
 "PO-Revision-Date: 2022-10-21 07:47+0000\n"
 "Last-Translator: Popolon_Github, 2025\n"
 "Language-Team: French (https://app.transifex.com/fcitx/teams/12005/fr/)\n"
@@ -25,57 +25,57 @@ msgstr ""
 #: rc.cpp:12
 #, kde-format
 msgid "&Path:"
-msgstr ""
+msgstr "&Chemin :"
 
 #. i18n: file: gui/adddictdialog.ui:25
 #. i18n: ectx: property (text), widget (QLabel, typeLabel)
 #: rc.cpp:9
 #, kde-format
 msgid "&Type:"
-msgstr ""
+msgstr "&Type :"
 
 #: src/cskkconfig.h:41
 msgid "Always"
-msgstr ""
+msgstr "Toujours"
 
 #: src/cskkconfig.h:107
 msgid "Candidate Layout"
-msgstr ""
+msgstr "Mise en page des propositions"
 
 #: src/cskkconfig.h:104
 msgid "Candidate list page size"
-msgstr ""
+msgstr "Taille de la page de la liste des propositions"
 
 #: src/cskkconfig.h:137
 msgid "Candidate selection keys"
-msgstr ""
+msgstr "Touches de sélection des propositions"
 
 #: src/cskkconfig.h:130
 msgid "Candidates Page Next Page"
-msgstr ""
+msgstr "Page des propositions, page suivante"
 
 #: src/cskkconfig.h:124
 msgid "Candidates Page Previous Page"
-msgstr ""
+msgstr "Page des propositions, page précédente"
 
 #: src/cskkconfig.h:102
 msgid "Candidates to show before showing in list"
-msgstr ""
+msgstr "Propositions à montrer avant de les afficher en liste"
 
 #: src/cskkconfig.h:97
 msgid "Comma style"
-msgstr ""
+msgstr "Style de virgule"
 
 #. i18n: file: gui/adddictdialog.ui:90
 #. i18n: ectx: property (text), widget (QLabel, completeLabel)
 #: rc.cpp:18
 #, kde-format
 msgid "Completion:"
-msgstr ""
+msgstr "Complétion :"
 
 #: src/cskk.conf.in:2
 msgid "Cskk"
-msgstr ""
+msgstr "Cskk"
 
 #: src/cskk-addon.conf.in.in:2
 msgid "Cskk input method for Fcitx5"
@@ -83,110 +83,110 @@ msgstr "Méthode de saisie Cskk pour Fcitx5"
 
 #: src/cskkconfig.h:118
 msgid "Cursor Down"
-msgstr ""
+msgstr "Curseur bas"
 
 #: src/cskkconfig.h:112
 msgid "Cursor Up"
-msgstr ""
+msgstr "Curseur haut"
 
 #. i18n: file: gui/adddictdialog.ui:14
 #. i18n: ectx: property (windowTitle), widget (QDialog, AddDictDialog)
 #: rc.cpp:6
 #, kde-format
 msgid "Dialog"
-msgstr ""
+msgstr "Dialogue"
 
 #: src/cskkconfig.h:145
 msgid "Dictionary"
-msgstr ""
+msgstr "Dictionnaire"
 
 #: gui/dictwidget.cpp:46
 msgid "Dictionary Manager"
-msgstr ""
+msgstr "Gestionnaire de dictionnaires"
 
 #. i18n: file: gui/adddictdialog.ui:99
 #. i18n: ectx: property (text), widget (QRadioButton, completeNoRadio)
 #: rc.cpp:21
 #, kde-format
 msgid "Do not complete"
-msgstr ""
+msgstr "Ne pas compléter"
 
 #. i18n: file: gui/adddictdialog.ui:73
 #. i18n: ectx: property (text), widget (QLabel, encodingLabel)
 #: rc.cpp:15
 #, kde-format
 msgid "Encoding:"
-msgstr ""
+msgstr "Encodage :"
 
 #. i18n: file: gui/dictwidget.ui:14
 #. i18n: ectx: property (windowTitle), widget (QWidget, SkkDictWidget)
 #: rc.cpp:3
 #, kde-format
 msgid "Form"
-msgstr ""
+msgstr "Formulaire"
 
 #: src/cskkconfig.h:36
 msgid "Horizontal"
-msgstr ""
+msgstr "Horizontal"
 
 #: src/cskk-addon.conf.in.in:3
 msgid "IM using libcskk"
-msgstr ""
+msgstr "IM utilisant libcskk"
 
 #: src/cskkconfig.h:93
 msgid "InitialInputMode"
-msgstr ""
+msgstr "ModeDeSaisieInitial"
 
 #: src/cskkconfig.h:42
 msgid "Never"
-msgstr ""
+msgstr "Jamais"
 
 #: src/cskkconfig.h:35
 msgid "Not set"
-msgstr ""
+msgstr "Non définit"
 
 #: src/cskkconfig.h:95
 msgid "Period style"
-msgstr ""
+msgstr "Style de point"
 
 #: src/cskkconfig.h:91
 msgid "Rule"
-msgstr ""
+msgstr "Règle"
 
 #: gui/adddictdialog.cpp:95 gui/adddictdialog.cpp:118
 msgid "Select Dictionary File"
-msgstr ""
+msgstr "Choisir le fichier de dictionnaire"
 
 #: src/cskkconfig.h:142
 msgid "Show Annotation when"
-msgstr ""
+msgstr "Afficher l'annotation lorsque"
 
 #: src/cskkconfig.h:42
 msgid "SingleCandidate"
-msgstr ""
+msgstr "PropositionUnique"
 
 #: gui/adddictdialog.cpp:32
 msgid "System"
-msgstr ""
+msgstr "Système"
 
 #. i18n: file: gui/adddictdialog.ui:109
 #. i18n: ectx: property (text), widget (QRadioButton, completeYesRadio)
 #: rc.cpp:24
 #, kde-format
 msgid "Use for complete"
-msgstr ""
+msgstr "Utiliser pour compléter"
 
 #: gui/adddictdialog.cpp:33
 msgid "User"
-msgstr ""
+msgstr "Utilisateur"
 
 #: src/cskkconfig.h:36
 msgid "Vertical"
-msgstr ""
+msgstr "Vertical"
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:7
 msgid "fcitx5-cskk"
-msgstr ""
+msgstr "fcitx5-cskk"
 
 #: org.fcitx.Fcitx5.Addon.Cskk.metainfo.xml.in:8
 msgid "libCSKK Japanese input method"
