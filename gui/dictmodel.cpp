@@ -12,7 +12,7 @@
 #include <QStringList>
 #include <QTemporaryFile>
 #include <QtGlobal>
-#include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/standardpaths.h>
 #include <fcntl.h>
 #include <iostream>
 
@@ -23,16 +23,16 @@ const std::string config_path = "cskk/dictionary_list";
 SkkDictModel::SkkDictModel(QObject *parent) : QAbstractListModel(parent) {}
 
 void SkkDictModel::defaults() {
-  auto path = StandardPath::fcitxPath("pkgdatadir", config_path.c_str());
-  QFile f(path.data());
+  auto path = StandardPaths::fcitxPath("pkgdatadir", config_path.c_str());
+  QFile f(path);
   if (f.open(QIODevice::ReadOnly)) {
     load(f);
   }
 }
 
 void SkkDictModel::load() {
-  auto file = StandardPath::global().open(StandardPath::Type::PkgData,
-                                          config_path, O_RDONLY);
+  auto file =
+      StandardPaths::global().open(StandardPathsType::PkgData, config_path);
   if (file.fd() < 0) {
     return;
   }
@@ -61,8 +61,8 @@ void SkkDictModel::load(QFile &file) {
 }
 
 bool SkkDictModel::save() {
-  return StandardPath::global().safeSave(
-      StandardPath::Type::PkgData, config_path, [this](int fd) {
+  return StandardPaths::global().safeSave(
+      StandardPathsType::PkgData, config_path, [this](int fd) {
         QFile tempFile;
         if (!tempFile.open(fd, QIODevice::WriteOnly)) {
           return false;

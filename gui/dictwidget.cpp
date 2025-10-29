@@ -10,7 +10,7 @@
 #include "dictmodel.h"
 #include <QItemSelectionModel>
 #include <fcitx-utils/fs.h>
-#include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/standardpaths.h>
 #include <fcitx-utils/stringutils.h>
 #include <fcitxqti18nhelper.h>
 
@@ -21,9 +21,9 @@ SkkDictWidget::SkkDictWidget(QWidget *parent)
       m_ui(std::make_unique<Ui::SkkDictWidget>()) {
   m_ui->setupUi(this);
   m_dictModel = new SkkDictModel(this);
-  auto fcitxBasePath = stringutils::joinPath(
-      StandardPath::global().userDirectory(StandardPath::Type::PkgData),
-      "cskk");
+  auto fcitxBasePath =
+      StandardPaths::global().userDirectory(StandardPathsType::PkgData) /
+      "cskk";
   fs::makePath(fcitxBasePath);
 
   m_dictModel->load();
