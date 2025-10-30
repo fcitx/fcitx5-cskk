@@ -26,7 +26,7 @@
 #include <fcitx-utils/key.h>
 #include <fcitx-utils/keysym.h>
 #include <fcitx-utils/log.h>
-#include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/standardpaths.h>
 #include <fcitx-utils/stringutils.h>
 #include <fcitx-utils/textformatflags.h>
 #include <fcitx/addoninstance.h>
@@ -131,8 +131,8 @@ typedef enum _FcitxSkkDictType { FSDT_Invalid, FSDT_File } FcitxSkkDictType;
 void FcitxCskkEngine::loadDictionary() {
   freeDictionaries();
 
-  auto dict_config_file = StandardPath::global().open(
-      StandardPath::Type::PkgData, "cskk/dictionary_list", O_RDONLY);
+  auto dict_config_file = StandardPaths::global().open(
+      StandardPathsType::PkgData, "cskk/dictionary_list");
 
   if (!dict_config_file.isValid()) {
     return;
@@ -201,26 +201,29 @@ void FcitxCskkEngine::loadDictionary() {
       CSKK_WARN() << "Invalid dictionary path or mode. Ignored";
       continue;
     }
+
+    constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
+    constexpr auto var_len = sizeof(configDir) - 1;
+    std::string realpath = path;
+    if (stringutils::startsWith(path, configDir)) {
+      realpath =
+          StandardPaths::global().userDirectory(StandardPathsType::PkgData) /
+          path.substr(var_len);
+    }
+
     if (mode == 1) {
       // readonly mode
-      auto *dict = skk_file_dict_new(path.c_str(), encoding.c_str(), complete);
+      auto *dict =
+          skk_file_dict_new(realpath.c_str(), encoding.c_str(), complete);
       if (dict) {
-        CSKK_DEBUG() << "Adding file dict: " << path
+        CSKK_DEBUG() << "Adding file dict: " << realpath
                      << " complete:" << complete;
         dictionaries_.emplace_back(dict);
       } else {
-        CSKK_WARN() << "Static dictionary load error. Ignored: " << path;
+        CSKK_WARN() << "Static dictionary load error. Ignored: " << realpath;
       }
     } else {
       // read/write mode
-      constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
-      constexpr auto var_len = sizeof(configDir) - 1;
-      std::string realpath = path;
-      if (stringutils::startsWith(path, configDir)) {
-        realpath = stringutils::joinPath(
-            StandardPath::global().userDirectory(StandardPath::Type::PkgData),
-            path.substr(var_len));
-      }
       auto *userdict =
           skk_user_dict_new(realpath.c_str(), encoding.c_str(), complete);
       if (userdict) {
@@ -404,7 +407,8 @@ void FcitxCskkContext::updateUI() {
 
   // Preedit
   uint32_t stateStackLen;
-  auto *preeditDetail = skk_context_get_preedit_detail(context_, &stateStackLen);
+  auto *preeditDetail =
+      skk_context_get_preedit_detail(context_, &stateStackLen);
   auto [mainPreedit, supplementPreedit] =
       FcitxCskkContext::formatPreedit(preeditDetail, stateStackLen);
   skk_free_preedit_detail(preeditDetail, stateStackLen);
@@ -427,8 +431,7 @@ void FcitxCskkContext::updateUI() {
           std::make_unique<FcitxCskkCandidateList>(engine_, ic_));
     } else {
       // Sync UI with actual data
-      currentCandidateList->setCursorPosition(
-          currentCursorPosition);
+      currentCandidateList->setCursorPosition(currentCursorPosition);
     }
 
   } else {

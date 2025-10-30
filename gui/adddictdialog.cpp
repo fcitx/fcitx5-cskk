@@ -15,7 +15,7 @@
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QPushButton>
-#include <fcitx-utils/standardpath.h>
+#include <fcitx-utils/standardpaths.h>
 #include <fcitxqti18nhelper.h>
 
 #define FCITX_CONFIG_DIR "$FCITX_CONFIG_DIR"
@@ -95,17 +95,17 @@ void AddDictDialog::browseClicked() {
     path = QFileDialog::getOpenFileName(this, _("Select Dictionary File"),
                                         info.path());
   } else {
-    auto fcitxBasePath = stringutils::joinPath(
-        StandardPath::global().userDirectory(StandardPath::Type::PkgData),
-        "cskk");
+    auto fcitxBasePath =
+        StandardPaths::global().userDirectory(StandardPathsType::PkgData) /
+        "cskk";
     fs::makePath(fcitxBasePath);
     QString fcitxConfigBasePath =
         QDir::cleanPath(QString::fromStdString(fcitxBasePath));
 
     if (path.isEmpty()) {
-      auto baseDataPath = stringutils::joinPath(
-          StandardPath::global().userDirectory(StandardPath::Type::Data),
-          "fcitx5-cskk");
+      auto baseDataPath =
+          StandardPaths::global().userDirectory(StandardPathsType::Data) /
+          "fcitx5-cskk";
       fs::makePath(baseDataPath);
       QString basePath = QDir::cleanPath(QString::fromStdString(baseDataPath));
       path = basePath;
