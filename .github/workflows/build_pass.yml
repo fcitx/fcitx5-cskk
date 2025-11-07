@@ -1,6 +1,8 @@
 name: Build passes check
-on: [ push ]
-
+# Disabled for push for now.
+# Re-enable when github actions has good image for build environment. (Issue#83)
+#on: [ push ]
+on: workflow_dispatch
 concurrency:
   group: "continuous_test"
   cancel-in-progress: true
@@ -8,7 +10,7 @@ concurrency:
 jobs:
   build-check:
     name: Build check
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: checkout
         uses: actions/checkout@v3
