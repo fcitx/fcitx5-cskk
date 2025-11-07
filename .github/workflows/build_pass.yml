@@ -11,9 +11,7 @@ jobs:
     container: archlinux:latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
+        uses: actions/checkout@v4
       - name: check fcitx5-cskk version
         id: version
         run: |
