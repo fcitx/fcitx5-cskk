@@ -40,7 +40,7 @@ jobs:
         with:
           path: fcitx5-cskk
       - name: Install required build environment
-        uses: ./.github/actions/archlinux_build_environment_setup
+        uses: ./fcitx5-cskk/.github/actions/archlinux_build_environment_setup
       - name: Init CodeQL
         uses: github/codeql-action/init@v3
         with:
