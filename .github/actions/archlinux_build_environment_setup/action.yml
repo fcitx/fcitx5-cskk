@@ -24,6 +24,7 @@ runs:
         cmake-option: >-
           -DENABLE_KEYBOARD=Off -DENABLE_X11=Off -DENABLE_WAYLAND=Off -DENABLE_ENCHANT=Off
           -DENABLE_DBUS=Off -DENABLE_SERVER=Off -DENABLE_EMOJI=Off -DUSE_SYSTEMD=Off
+          -DBUILD_SPELL_DICT=OFF
     - uses: actions/checkout@v4
       with:
         repository: fcitx/fcitx5-qt
