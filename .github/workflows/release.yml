@@ -31,27 +31,62 @@ jobs:
       run: test "refs/tags/v${{ steps.version.outputs.version }}" = ${{ github.ref }}
     - name: Install required build environment
       uses: ./.github/actions/archlinux_build_environment_setup
-    - name: Build (and install) fcitx5-cskk
-      uses: fcitx/github-actions@cmake
-      with:
-        path: fcitx5-cskk
-        cmake-option: >-
-          -DENABLE_QT=On -DUSE_QT6=On -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
+    - name: Install dpkg for package verification
+      run: pacman -S --noconfirm dpkg
+    - name: Build fcitx5-cskk
+      run: |
+        cmake -B build \
+          -DCMAKE_PREFIX_PATH=/opt/fcitx \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCPACK_PACKAGING_INSTALL_PREFIX=/usr \
+          -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
+          -DENABLE_QT=On \
+          -DUSE_QT6=On
+        cmake --build build --parallel
     - name: Pack deb
       run: |
-        cd ${{ runner.workspace }}/build
-        cpack -G DEB -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=On
+        cd build
+        cpack -G DEB \
+          -DCPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64
+        cp _CPack_Packages/Linux/DEB/fcitx5-cskk_*.deb .
+#    - name: Debug - List build directory
+#      run: |
+#        echo "=== Contents of build/ directory ==="
+#        ls -la build/
+#        echo "=== Searching for .deb files ==="
+#        find build/ -name "*.deb" -ls
+    - name: Verify deb package contents
+      run: |
+        echo "=== Checking .deb package structure ==="
+        dpkg -c build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+        echo ""
+        echo "=== Verifying main plugin location ==="
+        if dpkg -c build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb | grep -q "./usr/lib/x86_64-linux-gnu/fcitx5/fcitx5-cskk.so"; then
+          echo "✓ Main plugin in correct location: /usr/lib/x86_64-linux-gnu/fcitx5/fcitx5-cskk.so"
+        else
+          echo "✗ ERROR: Main plugin not found at /usr/lib/x86_64-linux-gnu/fcitx5/fcitx5-cskk.so"
+          exit 1
+        fi
+    - name: Rename deb for workflow_dispatch builds
+      id: timestamp
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        mv build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb \
+           build/fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb
+        echo "Renamed to: fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb"
+        echo "timestamp=${TIMESTAMP}" >> ${GITHUB_OUTPUT}
     - name: Attatch artifact to Release
       if: github.event_name == 'release'
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ runner.workspace }}/fcitx5-cskk/_packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+          build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
     - name: Upload DEB artifact
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
-        name: fcitx5-cskk-deb
-        path: ${{ runner.workspace }}/fcitx5-cskk/_packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+        name: fcitx5-cskk-deb-${{ steps.timestamp.outputs.timestamp }}
+        path: build/fcitx5-cskk_*_amd64.deb
         if-no-files-found: error
         retention-days: 30

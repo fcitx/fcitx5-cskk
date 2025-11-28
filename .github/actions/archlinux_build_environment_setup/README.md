@@ -1,7 +1,8 @@
 # archlinux_build_environment_setup
 
 Installs one example environment's build dependencies for fcitx5-cskk. 
-Which means it installs wayland, qt6, fcitx5, cskk, and all dependencies of them.
+Which means it installs wayland, qt6, fcitx5, cskk, and all dependencies of them under /opt/fcitx. 
+Cmake files will be at /opt/fcitx/lib/cmake/Fcitx5Core/Fcitx5CoreConfig.cmake
 
 Depends on archlinux. Caller should use 
 

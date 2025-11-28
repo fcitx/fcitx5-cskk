@@ -22,13 +22,11 @@ jobs:
           echo cskk_version=`bin/cskk_version.sh` >> ${GITHUB_OUTPUT}
       - name: Install required build environment
         uses: ./.github/actions/archlinux_build_environment_setup
-      - name: Build
-        uses: ashutoshvarma/action-cmake-build@master
-        with:
-          build-dir: ${{ runner.workspace }}/build
-          cc: gcc
-          cxx: g++
-          build-type: Release
-          run-test: false
-          configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON -DUSE_QT6=Off
-          build-options: --verbose
+      - name: Build fcitx5-cskk
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH=/opt/fcitx \
+            -DENABLE_QT=On \
+            -DUSE_QT6=On \
+            -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
+          cmake --build build --parallel
