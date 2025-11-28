@@ -31,16 +31,12 @@ jobs:
       run: test "refs/tags/v${{ steps.version.outputs.version }}" = ${{ github.ref }}
     - name: Install required build environment
       uses: ./.github/actions/archlinux_build_environment_setup
-    - name: Build
-      uses: ashutoshvarma/action-cmake-build@master
+    - name: Build (and install) fcitx5-cskk
+      uses: fcitx/github-actions@cmake
       with:
-        build-dir: ${{ runner.workspace }}/build
-        cc: gcc
-        cxx: c++
-        build-type: Release
-        run-test: false
-        configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
-        build-options: --verbose
+        path: fcitx5-cskk
+        cmake-option: >-
+          -DENABLE_QT=On -DUSE_QT6=On -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
     - name: Pack deb
       run: |
         cd ${{ runner.workspace }}/build
