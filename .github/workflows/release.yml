@@ -1,23 +1,20 @@
 name: Release x86_64 deb artifact on release published
-# Disabled for release for now.
-# Re-enable when github actions has good image for build. (Issue#83)
-#on:
-#  release:
-#    types:
-#      - published
-on: workflow_dispatch
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
 
 jobs:
   Build:
     runs-on: ubuntu-24.04
+    container: archlinux:latest
 #    strategy:
 #      matrix:
 #        cskk_ver: [0.8.1]
     steps:
     - name: checkout
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
+      uses: actions/checkout@v4
     - name: check fcitx5-cskk version
       id: version
       run: |
@@ -30,31 +27,66 @@ jobs:
       run: |
         bin/metainfo_version.sh
     - name: Check release tag matches version
+      if: github.event_name == 'release'
       run: test "refs/tags/v${{ steps.version.outputs.version }}" = ${{ github.ref }}
-    - name: Download & install libcskk
+    - name: Install required build environment
+      uses: ./.github/actions/archlinux_build_environment_setup
+    - name: Install dpkg for package verification
+      run: pacman -S --noconfirm dpkg
+    - name: Build fcitx5-cskk
       run: |
-        wget https://github.com/naokiri/cskk/releases/download/v${{ steps.cskk_version.outputs.cskk_version }}/libcskk_${{ steps.cskk_version.outputs.cskk_version }}_amd64.deb
-        sudo apt-get install ./libcskk_${{ steps.cskk_version.outputs.cskk_version }}_amd64.deb
-    - name: Install required libs and dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install extra-cmake-modules libfcitx5core-dev qtbase5-dev libfcitx5-qt-dev gettext
-    - name: Build
-      uses: ashutoshvarma/action-cmake-build@master
-      with:
-        build-dir: ${{ runner.workspace }}/build
-        cc: gcc
-        cxx: c++
-        build-type: Release
-        run-test: false
-        configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
-        build-options: --verbose
+        cmake -B build \
+          -DCMAKE_PREFIX_PATH=/opt/fcitx \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCPACK_PACKAGING_INSTALL_PREFIX=/usr \
+          -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
+          -DENABLE_QT=On \
+          -DUSE_QT6=On
+        cmake --build build --parallel
     - name: Pack deb
       run: |
-        cd ${{ runner.workspace }}/build
-        cpack -G DEB -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=On
+        cd build
+        cpack -G DEB \
+          -DCPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64
+        cp _CPack_Packages/Linux/DEB/fcitx5-cskk_*.deb .
+#    - name: Debug - List build directory
+#      run: |
+#        echo "=== Contents of build/ directory ==="
+#        ls -la build/
+#        echo "=== Searching for .deb files ==="
+#        find build/ -name "*.deb" -ls
+    - name: Verify deb package contents
+      run: |
+        echo "=== Checking .deb package structure ==="
+        dpkg -c build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+        echo ""
+        echo "=== Verifying main plugin location ==="
+        if dpkg -c build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb | grep -q "./usr/lib/x86_64-linux-gnu/fcitx5/fcitx5-cskk.so"; then
+          echo "✓ Main plugin in correct location: /usr/lib/x86_64-linux-gnu/fcitx5/fcitx5-cskk.so"
+        else
+          echo "✗ ERROR: Main plugin not found at /usr/lib/x86_64-linux-gnu/fcitx5/fcitx5-cskk.so"
+          exit 1
+        fi
+    - name: Rename deb for workflow_dispatch builds
+      id: timestamp
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        mv build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb \
+           build/fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb
+        echo "Renamed to: fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb"
+        echo "timestamp=${TIMESTAMP}" >> ${GITHUB_OUTPUT}
     - name: Attatch artifact to Release
+      if: github.event_name == 'release'
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ runner.workspace }}/fcitx5-cskk/_packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+          build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+    - name: Upload DEB artifact
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: fcitx5-cskk-deb-${{ steps.timestamp.outputs.timestamp }}
+        path: build/fcitx5-cskk_*_amd64.deb
+        if-no-files-found: error
+        retention-days: 30
