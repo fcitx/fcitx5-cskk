@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 cmake_policy(SET CMP0063 NEW)
 project(fcitx5-cskk VERSION 1.2.0)
-set(REQUIIRED_FCITX_VERSION 5.1.13)
+set(REQUIRED_FCITX_VERSION 5.1.13)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_STANDARD 17)
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -10,19 +10,18 @@ ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 message ("CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 find_package(ECM 1.0.0 REQUIRED)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 option(USE_QT6 "Build against Qt6" On)
 include(FeatureSummary)
 include(GNUInstallDirs)
 include(ECMUninstallTarget)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # See Fcitx5UtilsConfig.cmake
 add_definitions(-DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON)
 find_package(PkgConfig REQUIRED)
-find_package(Fcitx5Core ${REQUIIRED_FCITX_VERSION} REQUIRED)
-find_package(Fcitx5Utils ${REQUIIRED_FCITX_VERSION} REQUIRED)
+find_package(Fcitx5Core ${REQUIRED_FCITX_VERSION} REQUIRED)
+find_package(Fcitx5Utils ${REQUIRED_FCITX_VERSION} REQUIRED)
 
 # GITHUB_ACTION_BUILD_CSKK_VERSION=3.0.0
 pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=3.0")
