@@ -13,7 +13,7 @@ Same as other fcitx5 plugin project.
 
 For example in Debian,
 
-    $ sudo apt install gettext cmake extra-cmake-modules fcitx5-modules-dev qtbase5-dev qtdeclarative5-dev libfcitx5-qt-dev
+    $ sudo apt install gettext cmake extra-cmake-modules fcitx5-modules-dev qtbase6-dev qt6-wayland qtdeclarative6-dev libfcitx6-qt-dev
 
 For full features.
 
