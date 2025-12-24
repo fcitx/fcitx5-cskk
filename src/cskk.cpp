@@ -202,35 +202,31 @@ void FcitxCskkEngine::loadDictionary() {
       continue;
     }
 
-    constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
-    constexpr auto var_len = sizeof(configDir) - 1;
-    std::string realpath = path;
-    if (stringutils::startsWith(path, configDir)) {
-      realpath =
-          StandardPaths::global().userDirectory(StandardPathsType::PkgData) /
-          path.substr(var_len);
+    std::string_view partialpath = path;
+    if (stringutils::consumePrefix(partialpath, "$FCITX_CONFIG_DIR/")) {
+      path = StandardPaths::global().userDirectory(StandardPathsType::PkgData) /
+             partialpath;
     }
 
     if (mode == 1) {
       // readonly mode
-      auto *dict =
-          skk_file_dict_new(realpath.c_str(), encoding.c_str(), complete);
+      auto *dict = skk_file_dict_new(path.c_str(), encoding.c_str(), complete);
       if (dict) {
-        CSKK_DEBUG() << "Adding file dict: " << realpath
+        CSKK_DEBUG() << "Adding file dict: " << path
                      << " complete:" << complete;
         dictionaries_.emplace_back(dict);
       } else {
-        CSKK_WARN() << "Static dictionary load error. Ignored: " << realpath;
+        CSKK_WARN() << "Static dictionary load error. Ignored: " << path;
       }
     } else {
       // read/write mode
       auto *userdict =
-          skk_user_dict_new(realpath.c_str(), encoding.c_str(), complete);
+          skk_user_dict_new(path.c_str(), encoding.c_str(), complete);
       if (userdict) {
-        CSKK_DEBUG() << "Adding user dict: " << realpath;
+        CSKK_DEBUG() << "Adding user dict: " << path;
         dictionaries_.emplace_back(userdict);
       } else {
-        CSKK_WARN() << "User dictionary load error. Ignored: " << realpath;
+        CSKK_WARN() << "User dictionary load error. Ignored: " << path;
       }
     }
   }
