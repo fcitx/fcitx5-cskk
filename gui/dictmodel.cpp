@@ -12,7 +12,13 @@
 #include <QStringList>
 #include <QTemporaryFile>
 #include <QtGlobal>
+#if __has_include(<fcitx-utils/standardpaths.h>)
 #include <fcitx-utils/standardpaths.h>
+#define FCITX_HAS_STANDARDPATHS 1
+#else
+#include <fcitx-utils/standardpath.h>
+#define FCITX_HAS_STANDARDPATHS 0
+#endif
 #include <fcntl.h>
 #include <iostream>
 
@@ -23,16 +29,26 @@ const std::string config_path = "cskk/dictionary_list";
 SkkDictModel::SkkDictModel(QObject *parent) : QAbstractListModel(parent) {}
 
 void SkkDictModel::defaults() {
+#if FCITX_HAS_STANDARDPATHS
   auto path = StandardPaths::fcitxPath("pkgdatadir", config_path.c_str());
   QFile f(path);
+#else
+  auto path = StandardPath::fcitxPath("pkgdatadir", config_path.c_str());
+  QFile f(path.data());
+#endif
   if (f.open(QIODevice::ReadOnly)) {
     load(f);
   }
 }
 
 void SkkDictModel::load() {
+#if FCITX_HAS_STANDARDPATHS
   auto file =
       StandardPaths::global().open(StandardPathsType::PkgData, config_path);
+#else
+  auto file = StandardPath::global().open(StandardPath::Type::PkgData,
+                                          config_path, O_RDONLY);
+#endif
   if (file.fd() < 0) {
     return;
   }
@@ -61,8 +77,13 @@ void SkkDictModel::load(QFile &file) {
 }
 
 bool SkkDictModel::save() {
+#if FCITX_HAS_STANDARDPATHS
   return StandardPaths::global().safeSave(
       StandardPathsType::PkgData, config_path, [this](int fd) {
+#else
+  return StandardPath::global().safeSave(
+      StandardPath::Type::PkgData, config_path, [this](int fd) {
+#endif
         QFile tempFile;
         if (!tempFile.open(fd, QIODevice::WriteOnly)) {
           return false;
