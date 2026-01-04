@@ -17,7 +17,6 @@
 #include "cskkconfig.h"
 #include "log.h"
 #include <cstdint>
-#include <cstdlib>
 #include <cstring>
 #include <fcitx-config/iniparser.h>
 #include <fcitx-config/rawconfig.h>

@@ -37,5 +37,6 @@ jobs:
             -DCPACK_PACKAGING_INSTALL_PREFIX=/usr \
             -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
             -DENABLE_QT=On \
+            -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON \
             -DUSE_QT6=Off
           cmake --build build --parallel
