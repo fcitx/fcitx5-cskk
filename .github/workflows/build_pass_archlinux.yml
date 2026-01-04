@@ -1,7 +1,7 @@
 name: Build passes on Arch Linux with latest fcitx5 and cskk
 on: [ push ]
 concurrency:
-  group: "continuous_test"
+  group: "archlinux_build"
   cancel-in-progress: true
 
 jobs:

@@ -2,7 +2,7 @@
 name: Build passes on Ubuntu check
 on: [ push , workflow_dispatch]
 concurrency:
-  group: "continuous_test"
+  group: "ubuntu_build"
   cancel-in-progress: true
 jobs:
   build-check:
