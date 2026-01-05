@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 cmake_policy(SET CMP0063 NEW)
 project(fcitx5-cskk VERSION 1.2.0)
-set(REQUIRED_FCITX_VERSION 5.1.13)
+set(REQUIRED_FCITX_VERSION 5.1.7)
 set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_STANDARD 17)
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -23,7 +23,8 @@ find_package(PkgConfig REQUIRED)
 find_package(Fcitx5Core ${REQUIRED_FCITX_VERSION} REQUIRED)
 find_package(Fcitx5Utils ${REQUIRED_FCITX_VERSION} REQUIRED)
 
-# GITHUB_ACTION_BUILD_CSKK_VERSION=3.0.0
+# See bin/ and github actions file for this comment. This is used on CI.
+# GITHUB_ACTION_BUILD_CSKK_VERSION=3.2.1
 pkg_check_modules(LIBCSKK REQUIRED IMPORTED_TARGET "cskk>=3.0")
 
 include("${FCITX_INSTALL_CMAKECONFIG_DIR}/Fcitx5Utils/Fcitx5CompilerSettings.cmake")
@@ -76,8 +77,8 @@ find_package(Gettext REQUIRED)
 add_definitions(-DFCITX_GETTEXT_DOMAIN=\"fcitx5-cskk\" -D_GNU_SOURCE)
 fcitx5_add_i18n_definition()
 
-# Don't remove RPATH on installing/packing so that fcitx can find cskk library
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+# If CSKK is not setting proper ldconfig on your runtime environment, set this to TRUE to store the cskk library path in fcitx5-cskk library.
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 add_subdirectory(src)
 add_subdirectory(data)

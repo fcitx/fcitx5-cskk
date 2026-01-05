@@ -11,22 +11,34 @@
  * SPDX-FileName: cskk.cpp
  * SPDX-FileCopyrightText: Copyright (c) 2021 Naoaki Iwakiri
  */
+// Check some fcitx utils existence to support some old versions of fcitx5.
 #include "cskk.h"
 #include "cskkcandidatelist.h"
 #include "cskkconfig.h"
 #include "log.h"
 #include <cstdint>
-#include <cstdlib>
 #include <cstring>
 #include <fcitx-config/iniparser.h>
 #include <fcitx-config/rawconfig.h>
 #include <fcitx-utils/capabilityflags.h>
+#if __has_include(<fcitx-utils/fdstreambuf.h>)
 #include <fcitx-utils/fdstreambuf.h>
+#define FCITX_HAS_FDSTREAMBUF 1
+#else
+#include <fcitx-utils/misc.h>
+#define FCITX_HAS_FDSTREAMBUF 0
+#endif
 #include <fcitx-utils/i18n.h>
 #include <fcitx-utils/key.h>
 #include <fcitx-utils/keysym.h>
 #include <fcitx-utils/log.h>
+#if __has_include(<fcitx-utils/standardpaths.h>)
 #include <fcitx-utils/standardpaths.h>
+#define FCITX_HAS_STANDARDPATHS 1
+#else
+#include <fcitx-utils/standardpath.h>
+#define FCITX_HAS_STANDARDPATHS 0
+#endif
 #include <fcitx-utils/stringutils.h>
 #include <fcitx-utils/textformatflags.h>
 #include <fcitx/addoninstance.h>
@@ -131,19 +143,38 @@ typedef enum _FcitxSkkDictType { FSDT_Invalid, FSDT_File } FcitxSkkDictType;
 void FcitxCskkEngine::loadDictionary() {
   freeDictionaries();
 
+#if FCITX_HAS_STANDARDPATHS
   auto dict_config_file = StandardPaths::global().open(
       StandardPathsType::PkgData, "cskk/dictionary_list");
+#else
+  auto dict_config_file = StandardPath::global().open(
+      StandardPath::Type::PkgData, "cskk/dictionary_list", O_RDONLY);
+#endif
 
   if (!dict_config_file.isValid()) {
     return;
   }
 
+#if FCITX_HAS_FDSTREAMBUF
   IFDStreamBuf buf(dict_config_file.fd());
   std::istream in(&buf);
   std::string line;
 
   while (std::getline(in, line)) {
     const auto trimmed = stringutils::trimView(line);
+#else
+  UniqueFilePtr fp(fdopen(dict_config_file.fd(), "rb"));
+  if (!fp) {
+    return;
+  }
+  dict_config_file.release();
+
+  UniqueCPtr<char> line;
+  size_t len = 0;
+
+  while (getline(line, &len, fp.get()) != -1) {
+    const auto trimmed = stringutils::trim(line.get());
+#endif
     const auto tokens = stringutils::split(trimmed, ",");
 
     if (tokens.size() < 3) {
@@ -202,11 +233,21 @@ void FcitxCskkEngine::loadDictionary() {
       continue;
     }
 
+#if FCITX_HAS_STANDARDPATHS
     std::string_view partialpath = path;
     if (stringutils::consumePrefix(partialpath, "$FCITX_CONFIG_DIR/")) {
       path = StandardPaths::global().userDirectory(StandardPathsType::PkgData) /
              partialpath;
     }
+#else
+    constexpr char configDir[] = "$FCITX_CONFIG_DIR/";
+    constexpr auto var_len = sizeof(configDir) - 1;
+    if (stringutils::startsWith(path, configDir)) {
+      path = stringutils::joinPath(
+          StandardPath::global().userDirectory(StandardPath::Type::PkgData),
+          path.substr(var_len));
+    }
+#endif
 
     if (mode == 1) {
       // readonly mode
@@ -674,4 +715,8 @@ AddonInstance *FcitxCskkFactory::create(AddonManager *manager) {
 }
 } // namespace fcitx
 
-FCITX_ADDON_FACTORY_V2(cskk, fcitx::FcitxCskkFactory);
+#ifdef FCITX_ADDON_FACTORY_V2
+FCITX_ADDON_FACTORY_V2(cskk, fcitx::FcitxCskkFactory)
+#else
+FCITX_ADDON_FACTORY(fcitx::FcitxCskkFactory)
+#endif
