@@ -29,6 +29,7 @@ jobs:
         run: |
           bin/metainfo_version.sh
       - name: Check release tag matches version
+        if: github.event_name == 'release'
         run: test "refs/tags/v${{ steps.version.outputs.version }}" = ${{ github.ref }}
       - name: Download & install libcskk
         run: |
@@ -52,8 +53,24 @@ jobs:
         run: |
           cd ${{ runner.workspace }}/build
           cpack -G DEB -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
+      - name: Rename deb for workflow_dispatch builds
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          mv build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb \
+          build/fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb
+          echo "Renamed to: fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb"
       - name: Attatch artifact to Release
+        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
           files: |
             ${{ runner.workspace }}/fcitx5-cskk/_packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+      - name: Upload DEB artifact to manual run
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fcitx5-cskk-deb
+          path: build/fcitx5-cskk_*_amd64.deb
+          if-no-files-found: error
+          retention-days: 30
