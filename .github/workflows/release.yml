@@ -54,7 +54,7 @@ jobs:
             -DUSE_QT6=Off
           cmake --build build --parallel
       - name: Pack deb
-        run: cpack -G DEB -B build
+        run: cpack --config build/CPackConfig.cmake -G DEB
       - name: Rename deb for workflow_dispatch builds
         if: github.event_name == 'workflow_dispatch'
         run: |
