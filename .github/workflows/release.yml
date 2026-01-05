@@ -30,7 +30,7 @@ jobs:
           bin/metainfo_version.sh
       - name: check github event name
         run: |
-          echo github.event_name
+          echo "${{ github.event_name }}"
       - name: Check release tag matches version
         if: github.event_name == 'release'
         run: test "refs/tags/v${{ steps.version.outputs.version }}" = ${{ github.ref }}
@@ -54,26 +54,25 @@ jobs:
             -DUSE_QT6=Off
           cmake --build build --parallel
       - name: Pack deb
-        run: |
-          cpack -B build -G DEB -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON
+        run: cpack -G DEB -B build
       - name: Rename deb for workflow_dispatch builds
         if: github.event_name == 'workflow_dispatch'
         run: |
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          mv build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb \
-          build/fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb
+          mv _packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb \
+          _packages/fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb
           echo "Renamed to: fcitx5-cskk_${{ steps.version.outputs.version }}_${TIMESTAMP}_amd64.deb"
       - name: Attach artifact to Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            build/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
+            _packages/fcitx5-cskk_${{ steps.version.outputs.version }}_amd64.deb
       - name: Upload DEB artifact to manual run
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: fcitx5-cskk-deb
-          path: build/fcitx5-cskk_*_amd64.deb
+          path: _packages/fcitx5-cskk_*_amd64.deb
           if-no-files-found: error
           retention-days: 30
