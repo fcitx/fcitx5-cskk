@@ -1,19 +1,16 @@
-name: Build passes check
-# Disabled for push for now.
-# Re-enable when github actions has good image for build environment. (Issue#83)
-#on: [ push ]
-on: workflow_dispatch
+# Build check on default Ubuntu package manager versions
+name: Build passes on Ubuntu check
+on: [ push , workflow_dispatch]
 concurrency:
-  group: "continuous_test"
+  group: "ubuntu_build"
   cancel-in-progress: true
-
 jobs:
   build-check:
     name: Build check
     runs-on: ubuntu-24.04
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: check fcitx5-cskk version
@@ -31,14 +28,15 @@ jobs:
       - name: Install required libs and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install gettext cmake extra-cmake-modules fcitx5-modules-dev libfcitx5core-dev qtbase5-dev libfcitx5-qt-dev
-      - name: Build
-        uses: ashutoshvarma/action-cmake-build@master
-        with:
-          build-dir: ${{ runner.workspace }}/build
-          cc: gcc
-          cxx: g++
-          build-type: Release
-          run-test: false
-          configure-options: -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON -DUSE_QT6=Off
-          build-options: --verbose
+          sudo apt-get install gettext cmake extra-cmake-modules fcitx5-modules-dev libfcitx5core-dev qtbase5-dev libfcitx5-qt-dev libxkbcommon-dev
+      - name: Build fcitx5-cskk
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH=/opt/fcitx \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCPACK_PACKAGING_INSTALL_PREFIX=/usr \
+            -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu \
+            -DENABLE_QT=On \
+            -DFCITX_INSTALL_USE_FCITX_SYS_PATHS=ON \
+            -DUSE_QT6=Off
+          cmake --build build --parallel

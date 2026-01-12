@@ -13,7 +13,7 @@ Same as other fcitx5 plugin project.
 
 For example in Debian,
 
-    $ sudo apt install gettext cmake extra-cmake-modules fcitx5-modules-dev qtbase5-dev qtdeclarative5-dev libfcitx5-qt-dev
+    $ sudo apt install gettext cmake extra-cmake-modules fcitx5-modules-dev qtbase6-dev qt6-wayland qtdeclarative6-dev libfcitx6-qt-dev libxkbcommon-dev
 
 For full features.
 
@@ -44,6 +44,11 @@ For full features.
 GOOGLETESTフラグはキャッシュされるのでライブラリ生成時には注意が必要
 
 ## 開発状況
+### 対応バージョン
+
+  日本人の利用が多いため、特に日本でのシェアが大きいUbuntu LTSを2バージョン程度はサポートしたいと目標にしている。
+  しかし絶対ではなく、fcitx5の開発によってはUbuntu LTSで採用されているバージョンのfcitx5であっても切り捨てる可能性がある。
+
 ### 実装予定(いつかは)
 - [x] ひらがな・カタカナ・漢字入力
 - [x] 変換候補リスト表示

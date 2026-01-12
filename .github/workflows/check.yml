@@ -36,55 +36,11 @@ jobs:
       CC: ${{ matrix.compiler }}
       CXX: ${{ matrix.cxx_compiler }}
     steps:
-      - name: Install dependencies
-        run: |
-          pacman -Syu --noconfirm base-devel clang cmake ninja extra-cmake-modules fmt libuv boost git qt6-base qt6-wayland libxkbcommon skk-jisyo cargo-c cbindgen
-      - uses: actions/checkout@v4
-        with:
-          repository: fcitx/fcitx5
-          path: fcitx5
-      - name: Cache fcitx5 data files
-        uses: actions/cache@v4
-        with:
-          path: 'fcitx5/**/*.tar.*'
-          key: ${{ runner.os }}-${{ hashFiles('fcitx5/src/modules/spell/CMakeLists.txt')
-            }}
-      - name: Build and Install fcitx5
-        uses: fcitx/github-actions@cmake
-        with:
-          path: fcitx5
-          cmake-option: >-
-            -DENABLE_KEYBOARD=Off -DENABLE_X11=Off -DENABLE_WAYLAND=Off -DENABLE_ENCHANT=Off
-            -DENABLE_DBUS=Off -DENABLE_SERVER=Off -DENABLE_EMOJI=Off -DUSE_SYSTEMD=Off
-      - uses: actions/checkout@v4
-        with:
-          repository: fcitx/fcitx5-qt
-          path: fcitx5-qt
-      - name: Build and Install fcitx5-qt
-        uses: fcitx/github-actions@cmake
-        with:
-          repository: fcitx/fcitx5-qt
-          path: fcitx5-qt
-          cmake-option: >-
-            -DENABLE_QT4=Off -DENABLE_QT5=Off -DENABLE_QT6=On
-      - uses: actions/checkout@v4
-        with:
-          repository: naokiri/cskk
-          path: cskk
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Build and install cskk
-        shell: bash
-        run: "cd cskk\ncargo cinstall --release --prefix=/usr          \n"
       - uses: actions/checkout@v4
         with:
           path: fcitx5-cskk
+      - name: Install required build environment
+        uses: ./fcitx5-cskk/.github/actions/archlinux_build_environment_setup
       - name: Init CodeQL
         uses: github/codeql-action/init@v3
         with:
